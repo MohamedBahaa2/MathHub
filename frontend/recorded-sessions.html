@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MathHub — Recorded Sessions</title>
+  <meta name="description" content="Browse and watch recorded math sessions — deep-dive intensives in calculus, algebra, topology, and more.">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap">
+  <link rel="stylesheet" href="/css/design-system.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/recorded-sessions.css">
+</head>
+<body>
+  <div class="page">
+
+    <!-- ========== SIDEBAR ========== -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-brand-icon">
+          <span class="material-symbols-outlined icon-filled">function</span>
+        </div>
+        <div class="sidebar-brand-text">
+          <h2>MathHub</h2>
+          <span>Digital Atheneum</span>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="index.html" class="sidebar-link" id="nav-dashboard">
+          <span class="material-symbols-outlined">dashboard</span>
+          <span>Dashboard</span>
+        </a>
+        <a href="recorded-sessions.html" class="sidebar-link active" id="nav-recorded">
+          <span class="material-symbols-outlined icon-filled">video_library</span>
+          <span>Recorded Sessions</span>
+        </a>
+        <a href="live-sessions.html" class="sidebar-link" id="nav-live">
+          <span class="material-symbols-outlined">live_tv</span>
+          <span>Live Sessions</span>
+        </a>
+        <a href="assignments.html" class="sidebar-link" id="nav-assignments">
+          <span class="material-symbols-outlined">assignment</span>
+          <span>Assignments</span>
+        </a>
+        <a href="quizzes.html" class="sidebar-link" id="nav-quizzes">
+          <span class="material-symbols-outlined">quiz</span>
+          <span>Quizzes</span>
+        </a>
+        <a href="analytics.html" class="sidebar-link" id="nav-analytics">
+          <span class="material-symbols-outlined">analytics</span>
+          <span>Analytics</span>
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="#" class="sidebar-footer-link"><span class="material-symbols-outlined">help</span><span>Support</span></a>
+        <a href="#" class="sidebar-footer-link"><span class="material-symbols-outlined">logout</span><span>Sign Out</span></a>
+      </div>
+    </aside>
+
+    <!-- ========== TOPBAR ========== -->
+    <header class="topbar">
+      <button class="btn-icon mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle menu">
+        <span class="material-symbols-outlined">menu</span>
+      </button>
+      <div class="topbar-search">
+        <span class="material-symbols-outlined">search</span>
+        <input type="text" class="input-search" placeholder="Search sessions..." id="search-input">
+      </div>
+      <div class="topbar-actions">
+        <button class="btn-icon" aria-label="Notifications"><span class="material-symbols-outlined">notifications</span></button>
+        <button class="btn-icon" aria-label="Settings"><span class="material-symbols-outlined">settings</span></button>
+        <div class="topbar-avatar"><div style="width:100%;height:100%;background:var(--color-primary);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:0.875rem;">A</div></div>
+      </div>
+    </header>
+
+    <!-- ========== MAIN CONTENT ========== -->
+    <main class="main-content">
+      <div class="content-area">
+
+        <!-- Page Header -->
+        <div class="page-header page-header-row animate-fade-in-up">
+          <div>
+            <h1>Recorded Sessions</h1>
+            <p>Deep-dive intensives designed to transform theoretical concepts into intuitive mastery.</p>
+          </div>
+          <div class="filter-pill" id="filter-level">
+            <span class="material-symbols-outlined" style="font-size:16px;">filter_list</span>
+            <span>Filter by Level</span>
+          </div>
+        </div>
+
+        <!-- Sessions Grid -->
+        <div class="sessions-grid stagger">
+
+          <!-- Session 1 -->
+          <div class="glass-card session-card animate-fade-in-up" id="session-calculus">
+            <div class="session-card-icon rust">
+              <span class="material-symbols-outlined icon-filled">calculate</span>
+            </div>
+            <h3>Intro to Calculus</h3>
+            <p class="session-desc">Master multivariable integration and vector fields through visual proofing.</p>
+            <div class="session-thumbnail">
+              <span class="material-symbols-outlined">play_circle</span>
+            </div>
+            <div class="session-meta">
+              <div class="session-meta-left">
+                <span class="material-symbols-outlined" style="font-size:16px;">schedule</span>
+                <span>2.5 hours</span>
+              </div>
+              <span class="session-meta-right">65% Done</span>
+            </div>
+            <div class="progress-track"><div class="progress-fill" style="width:65%"></div></div>
+            <div class="session-card-footer">
+              <button class="btn btn-secondary btn-full">Continue Session</button>
+            </div>
+          </div>
+
+          <!-- Session 2 -->
+          <div class="glass-card session-card animate-fade-in-up" id="session-differentiation">
+            <div class="session-card-icon teal">
+              <span class="material-symbols-outlined icon-filled">view_in_ar</span>
+            </div>
+            <h3>Differentiation</h3>
+            <p class="session-desc">A structural approach to matrices, eigenvectors, and coordinate transformations.</p>
+            <div class="session-thumbnail">
+              <span class="material-symbols-outlined">play_circle</span>
+            </div>
+            <div class="session-meta">
+              <div class="session-meta-left">
+                <span class="material-symbols-outlined" style="font-size:16px;">schedule</span>
+                <span>3 hours</span>
+              </div>
+              <span class="session-meta-right">12% Done</span>
+            </div>
+            <div class="progress-track"><div class="progress-fill" style="width:12%"></div></div>
+            <div class="session-card-footer">
+              <button class="btn btn-secondary btn-full">Continue Session</button>
+            </div>
+          </div>
+
+          <!-- Session 3 -->
+          <div class="glass-card session-card animate-fade-in-up" id="session-topology">
+            <div class="session-card-icon neutral">
+              <span class="material-symbols-outlined icon-filled">change_history</span>
+            </div>
+            <h3>Topology Foundations</h3>
+            <p class="session-desc">Deformable spaces and the mathematical foundation of continuous shapes.</p>
+            <div class="session-thumbnail">
+              <span class="material-symbols-outlined">play_circle</span>
+            </div>
+            <div class="session-meta">
+              <div class="session-meta-left">
+                <span class="material-symbols-outlined" style="font-size:16px;">schedule</span>
+                <span>4 hours</span>
+              </div>
+              <span class="session-meta-right">88% Done</span>
+            </div>
+            <div class="progress-track"><div class="progress-fill" style="width:88%"></div></div>
+            <div class="session-card-footer">
+              <button class="btn btn-secondary btn-full">Continue Session</button>
+            </div>
+          </div>
+
+          <!-- Session 4 -->
+          <div class="glass-card session-card animate-fade-in-up" id="session-dynamic">
+            <div class="session-card-icon teal">
+              <span class="material-symbols-outlined icon-filled">data_exploration</span>
+            </div>
+            <h3>Dynamic Systems</h3>
+            <p class="session-desc">Modeling dynamic systems and finding harmony in the rates of change.</p>
+            <div class="session-thumbnail">
+              <span class="material-symbols-outlined">play_circle</span>
+            </div>
+            <div class="session-meta">
+              <div class="session-meta-left">
+                <span class="material-symbols-outlined" style="font-size:16px;">schedule</span>
+                <span>2 hours</span>
+              </div>
+              <span class="session-meta-right">45% Done</span>
+            </div>
+            <div class="progress-track"><div class="progress-fill" style="width:45%"></div></div>
+            <div class="session-card-footer">
+              <button class="btn btn-secondary btn-full">Continue Session</button>
+            </div>
+          </div>
+
+          <!-- Session 5 -->
+          <div class="glass-card session-card animate-fade-in-up" id="session-stats">
+            <div class="session-card-icon rust">
+              <span class="material-symbols-outlined icon-filled">bar_chart</span>
+            </div>
+            <h3>Statistical Mechanics</h3>
+            <p class="session-desc">Exploring the laws of large numbers and entropy in physical systems.</p>
+            <div class="session-thumbnail">
+              <span class="material-symbols-outlined">play_circle</span>
+            </div>
+            <div class="session-meta">
+              <div class="session-meta-left">
+                <span class="material-symbols-outlined" style="font-size:16px;">schedule</span>
+                <span>3.5 hours</span>
+              </div>
+              <span class="session-meta-right">0% Done</span>
+            </div>
+            <div class="progress-track"><div class="progress-fill" style="width:0%"></div></div>
+            <div class="session-card-footer">
+              <button class="btn btn-secondary btn-full">Start Session</button>
+            </div>
+          </div>
+
+          <!-- Request Topic Card -->
+          <div class="card-dashed animate-fade-in-up" id="request-topic">
+            <div style="width:64px;height:64px;border-radius:var(--radius-full);background:var(--color-primary-xlight);display:flex;align-items:center;justify-content:center;color:var(--color-primary);margin-bottom:var(--space-4);">
+              <span class="material-symbols-outlined" style="font-size:28px;">add</span>
+            </div>
+            <h3 style="font-family:'Manrope';font-weight:700;font-size:1.125rem;margin-bottom:var(--space-2);">Request a Topic</h3>
+            <p style="font-size:0.875rem;color:var(--color-text-secondary);padding:0 var(--space-4);">Can't find what you're looking for? Suggest a new session topic to the faculty.</p>
+            <button class="btn btn-ghost" style="margin-top:var(--space-4);">Submit Proposal</button>
+          </div>
+
+        </div>
+      </div>
+    </main>
+
+  </div>
+  <script src="/js/sidebar.js"></script>
+</body>
+</html>

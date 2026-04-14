@@ -1,0 +1,293 @@
+/* ======================================================
+   MathHub Dashboard — Page Styles
+   ====================================================== */
+
+/* ---------- Welcome Section ---------- */
+.welcome-section {
+  margin-bottom: var(--space-8);
+}
+
+.welcome-section h1 {
+  font-family: 'Manrope', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.welcome-section p {
+  color: var(--color-text-secondary);
+  font-size: 1rem;
+  margin-top: var(--space-1);
+}
+
+/* ---------- Active Modules ---------- */
+.modules-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-6);
+  margin-bottom: var(--space-8);
+}
+
+.module-card {
+  padding: var(--space-6);
+}
+
+.module-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-6);
+}
+
+.module-badge {
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+.module-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+.module-icon.teal {
+  background: var(--color-secondary-light);
+  color: var(--color-secondary);
+}
+
+.module-title {
+  font-family: 'Manrope', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: var(--space-6);
+}
+
+.module-mastery {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+}
+
+.module-mastery-label {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.module-mastery-value {
+  font-family: 'Manrope', sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--color-primary);
+}
+
+.module-mastery-value.teal {
+  color: var(--color-secondary);
+}
+
+.module-next {
+  margin-top: var(--space-4);
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+}
+.module-next strong {
+  color: var(--color-text-primary);
+}
+
+/* ---------- Dashboard Bottom Row ---------- */
+.dashboard-bottom {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--space-6);
+}
+
+/* ---------- Daily Challenge ---------- */
+.challenge-card {
+  padding: var(--space-8) var(--space-10);
+  position: relative;
+  overflow: hidden;
+}
+
+.challenge-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-primary);
+  margin-bottom: var(--space-4);
+}
+
+.challenge-title {
+  font-family: 'Manrope', sans-serif;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--color-white);
+  margin-bottom: var(--space-3);
+  line-height: 1.2;
+}
+
+.challenge-desc {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9375rem;
+  max-width: 400px;
+  line-height: 1.6;
+  margin-bottom: var(--space-8);
+}
+
+.challenge-xp {
+  position: absolute;
+  top: var(--space-8);
+  right: var(--space-10);
+  font-family: 'Manrope', sans-serif;
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  line-height: 1;
+  opacity: 0.9;
+}
+.challenge-xp span {
+  display: block;
+  font-size: 1.5rem;
+}
+
+.challenge-actions {
+  display: flex;
+  gap: var(--space-4);
+}
+
+/* ---------- Recent Activity ---------- */
+.activity-card {
+  padding: var(--space-6);
+}
+
+.activity-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-6);
+}
+
+.activity-header h3 {
+  font-family: 'Manrope', sans-serif;
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+.activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.activity-item {
+  display: flex;
+  gap: var(--space-4);
+}
+
+.activity-dot {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.activity-dot.primary {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+}
+.activity-dot.secondary {
+  background: var(--color-secondary-light);
+  color: var(--color-secondary);
+}
+.activity-dot.warning {
+  background: var(--color-warning-light);
+  color: #8B6914;
+}
+
+.activity-content h4 {
+  font-weight: 600;
+  font-size: 0.875rem;
+  margin-bottom: var(--space-1);
+}
+
+.activity-content p {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+}
+
+.activity-time {
+  font-size: 0.75rem;
+  color: var(--color-primary);
+  margin-top: var(--space-1);
+  font-weight: 500;
+}
+
+.activity-footer {
+  margin-top: var(--space-6);
+}
+
+.activity-footer a {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--color-secondary);
+  transition: opacity var(--transition-fast);
+}
+.activity-footer a:hover {
+  opacity: 0.8;
+}
+
+/* ---------- Quick Actions ---------- */
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+  margin-top: var(--space-6);
+}
+
+.quick-action-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  cursor: pointer;
+}
+
+.quick-action-tile .material-symbols-outlined {
+  font-size: 28px;
+  color: var(--color-text-secondary);
+}
+
+.quick-action-tile span:last-child {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1024px) {
+  .modules-grid {
+    grid-template-columns: 1fr;
+  }
+  .dashboard-bottom {
+    grid-template-columns: 1fr;
+  }
+}

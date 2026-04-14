@@ -1,0 +1,369 @@
+/* ======================================================
+   MathHub Components — Buttons, Cards, Badges, etc.
+   ====================================================== */
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-6);
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 0.875rem;
+  border-radius: var(--radius-xl);
+  transition: all var(--transition-normal);
+  cursor: pointer;
+  white-space: nowrap;
+  line-height: 1.4;
+}
+
+.btn:active {
+  transform: scale(0.95);
+}
+
+.btn-primary {
+  background: var(--gradient-primary);
+  color: var(--color-text-on-primary);
+  box-shadow: var(--shadow-primary);
+}
+.btn-primary:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+  box-shadow: 0 12px 28px rgba(144, 51, 17, 0.25);
+}
+
+.btn-secondary {
+  background: var(--color-surface-highest);
+  color: var(--color-primary);
+}
+.btn-secondary:hover {
+  background: var(--color-primary);
+  color: var(--color-text-on-primary);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--color-primary);
+  border: 1.5px solid var(--color-primary);
+}
+.btn-outline:hover {
+  background: var(--color-primary-light);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--color-primary);
+}
+.btn-ghost:hover {
+  background: var(--color-primary-xlight);
+}
+
+.btn-teal {
+  background: var(--color-secondary);
+  color: var(--color-text-on-secondary);
+  box-shadow: var(--shadow-secondary);
+}
+.btn-teal:hover {
+  background: var(--color-secondary-hover);
+  transform: translateY(-1px);
+}
+
+.btn-dark {
+  background: var(--color-black);
+  color: var(--color-text-on-dark);
+}
+.btn-dark:hover {
+  background: #2D2D2D;
+}
+
+.btn-lg {
+  padding: var(--space-4) var(--space-8);
+  font-size: 1rem;
+  border-radius: var(--radius-xl);
+}
+
+.btn-sm {
+  padding: var(--space-2) var(--space-4);
+  font-size: 0.75rem;
+  border-radius: var(--radius-full);
+}
+
+.btn-full {
+  width: 100%;
+}
+
+.btn-icon {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--color-text-secondary);
+  transition: all var(--transition-normal);
+}
+.btn-icon:hover {
+  background: var(--color-primary-xlight);
+  color: var(--color-primary);
+}
+
+/* ---------- Glass Card ---------- */
+.glass-card {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-smooth);
+}
+
+.glass-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-4px);
+}
+
+.glass-card-static {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ---------- Solid Card ---------- */
+.card {
+  background: var(--color-surface-lowest);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-smooth);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.card-flat {
+  background: var(--color-surface-low);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+}
+
+/* ---------- Dark Card ---------- */
+.card-dark {
+  background: var(--gradient-dark);
+  color: var(--color-text-on-dark);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-lg);
+}
+
+/* ---------- Accent Card ---------- */
+.card-accent {
+  background: var(--color-secondary);
+  color: var(--color-text-on-secondary);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-secondary);
+}
+
+/* ---------- Badges ---------- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.badge-primary {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+}
+.badge-secondary {
+  background: var(--color-secondary-light);
+  color: var(--color-secondary);
+}
+.badge-neutral {
+  background: var(--color-surface-high);
+  color: var(--color-text-secondary);
+}
+.badge-error {
+  background: var(--color-error);
+  color: var(--color-white);
+}
+.badge-warning {
+  background: var(--color-warning-light);
+  color: #8B6914;
+}
+.badge-success {
+  background: var(--color-secondary-light);
+  color: var(--color-secondary);
+}
+.badge-live {
+  background: var(--color-error);
+  color: var(--color-white);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* ---------- Progress Bar ---------- */
+.progress-track {
+  width: 100%;
+  height: 6px;
+  background: var(--color-surface-high);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: var(--radius-full);
+  transition: width var(--transition-smooth);
+}
+
+.progress-fill-teal {
+  height: 100%;
+  background: var(--color-secondary);
+  border-radius: var(--radius-full);
+  transition: width var(--transition-smooth);
+}
+
+.progress-thick {
+  height: 8px;
+}
+
+/* ---------- Icon Container ---------- */
+.icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-xl);
+}
+
+.icon-container-primary {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+}
+.icon-container-secondary {
+  background: var(--color-secondary-light);
+  color: var(--color-secondary);
+}
+.icon-container-neutral {
+  background: var(--color-surface-high);
+  color: var(--color-text-secondary);
+}
+
+.icon-sm { width: 36px; height: 36px; }
+.icon-md { width: 44px; height: 44px; }
+.icon-lg { width: 56px; height: 56px; }
+
+/* ---------- Avatar ---------- */
+.avatar {
+  border-radius: var(--radius-full);
+  object-fit: cover;
+  border: 2px solid var(--color-border);
+}
+.avatar-sm { width: 32px; height: 32px; }
+.avatar-md { width: 40px; height: 40px; }
+.avatar-lg { width: 48px; height: 48px; }
+
+/* ---------- Input ---------- */
+.input-search {
+  width: 100%;
+  padding: var(--space-2) var(--space-4) var(--space-2) var(--space-10);
+  background: var(--color-surface-low);
+  border-radius: var(--radius-full);
+  font-size: 0.8125rem;
+  color: var(--color-text-primary);
+  transition: all var(--transition-normal);
+}
+.input-search::placeholder {
+  color: var(--color-text-secondary);
+}
+.input-search:focus {
+  background: var(--color-surface-lowest);
+  box-shadow: 0 0 0 3px var(--color-primary-light);
+}
+
+/* ---------- Stat Card ---------- */
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-6);
+}
+
+.stat-label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-text-secondary);
+}
+
+.stat-value {
+  font-family: 'Manrope', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--color-text-primary);
+}
+
+/* ---------- Table ---------- */
+.table-container {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  text-align: left;
+  border-collapse: collapse;
+}
+
+.table thead th {
+  padding: var(--space-5) var(--space-6);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-text-secondary);
+  background: var(--color-surface-low);
+}
+
+.table tbody tr {
+  transition: background var(--transition-fast);
+}
+
+.table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.table tbody td {
+  padding: var(--space-5) var(--space-6);
+}
+
+/* ---------- Divider ---------- */
+.divider {
+  height: 1px;
+  background: var(--color-border);
+  margin: var(--space-4) 0;
+}
+
+/* ---------- Dashed Card (Placeholder) ---------- */
+.card-dashed {
+  border: 2px dashed var(--color-border-strong);
+  border-radius: var(--radius-2xl);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--space-8);
+  transition: border-color var(--transition-normal);
+}
+.card-dashed:hover {
+  border-color: var(--color-primary);
+}

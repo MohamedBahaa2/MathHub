@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MathHub — Analytics</title>
+  <meta name="description" content="Real-time student analytics dashboard — track grades, completion rates, topic performance, and insights.">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap">
+  <link rel="stylesheet" href="/css/design-system.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/analytics.css">
+</head>
+<body>
+  <div class="page">
+
+    <!-- ========== SIDEBAR ========== -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand"><div class="sidebar-brand-icon"><span class="material-symbols-outlined icon-filled">function</span></div><div class="sidebar-brand-text"><h2>MathHub</h2><span>Digital Atheneum</span></div></div>
+      <nav class="sidebar-nav">
+        <a href="index.html" class="sidebar-link"><span class="material-symbols-outlined">dashboard</span><span>Dashboard</span></a>
+        <a href="recorded-sessions.html" class="sidebar-link"><span class="material-symbols-outlined">video_library</span><span>Recorded Sessions</span></a>
+        <a href="live-sessions.html" class="sidebar-link"><span class="material-symbols-outlined">live_tv</span><span>Live Sessions</span></a>
+        <a href="assignments.html" class="sidebar-link"><span class="material-symbols-outlined">assignment</span><span>Assignments</span></a>
+        <a href="quizzes.html" class="sidebar-link"><span class="material-symbols-outlined">quiz</span><span>Quizzes</span></a>
+        <a href="analytics.html" class="sidebar-link active"><span class="material-symbols-outlined icon-filled">analytics</span><span>Analytics</span></a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="#" class="sidebar-footer-link"><span class="material-symbols-outlined">help</span><span>Support</span></a>
+        <a href="#" class="sidebar-footer-link"><span class="material-symbols-outlined">logout</span><span>Sign Out</span></a>
+      </div>
+    </aside>
+
+    <!-- ========== TOPBAR ========== -->
+    <header class="topbar">
+      <button class="btn-icon mobile-menu-btn" aria-label="Toggle menu"><span class="material-symbols-outlined">menu</span></button>
+      <div class="topbar-search"><span class="material-symbols-outlined">search</span><input type="text" class="input-search" placeholder="Search analytics..."></div>
+      <div class="topbar-actions">
+        <button class="btn-icon" aria-label="Notifications"><span class="material-symbols-outlined">notifications</span></button>
+        <button class="btn-icon" aria-label="Settings"><span class="material-symbols-outlined">settings</span></button>
+        <div class="topbar-avatar"><div style="width:100%;height:100%;background:var(--color-primary);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:0.875rem;">A</div></div>
+      </div>
+    </header>
+
+    <!-- ========== MAIN CONTENT ========== -->
+    <main class="main-content">
+      <div class="content-area">
+
+        <!-- Page Header -->
+        <div class="page-header page-header-row animate-fade-in-up">
+          <div>
+            <p style="font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--color-primary);margin-bottom:var(--space-1);">Student Analytics</p>
+            <h1>Cognitive Trajectory</h1>
+            <p>Real-time intelligence dashboard tracking your mathematical growth and conceptual mastery.</p>
+          </div>
+          <div style="display:flex;align-items:center;gap:var(--space-3);">
+            <span style="font-size:0.8125rem;color:var(--color-text-secondary);">Export Ledger</span>
+            <div style="padding:var(--space-2) var(--space-4);background:var(--color-secondary);color:white;border-radius:var(--radius-full);font-size:0.75rem;font-weight:700;">Academic Period: Spring 2024</div>
+          </div>
+        </div>
+
+        <!-- Bento Analytics Grid -->
+        <div class="analytics-grid stagger">
+
+          <!-- Grade Velocity (Wide) -->
+          <div class="glass-card-static grade-card animate-fade-in-up" id="grade-card">
+            <div class="grade-card-header">
+              <div>
+                <h3>Grade Velocity</h3>
+                <p>Performance trend over time</p>
+              </div>
+              <span class="material-symbols-outlined" style="color:var(--color-text-secondary);">trending_up</span>
+            </div>
+            <div class="grade-velocity">
+              <span class="grade-velocity-value">3.88</span>
+              <span class="grade-velocity-label">GPA</span>
+            </div>
+            <div class="chart-bars">
+              <div class="chart-bar" style="height:40%"></div>
+              <div class="chart-bar" style="height:55%"></div>
+              <div class="chart-bar" style="height:48%"></div>
+              <div class="chart-bar highlight" style="height:85%">
+                <div class="chart-bar-tooltip">92%</div>
+              </div>
+              <div class="chart-bar" style="height:62%"></div>
+              <div class="chart-bar" style="height:72%"></div>
+              <div class="chart-bar highlight" style="height:92%"></div>
+            </div>
+            <div class="chart-labels">
+              <span>Sept</span><span>Oct</span><span>Nov</span><span>Dec</span><span>Jan</span><span>Feb</span><span>Mar</span>
+            </div>
+            <p class="grade-subtitle">92nd percentile against historical cohort</p>
+          </div>
+
+          <!-- Completion Rate (Ring) -->
+          <div class="glass-card-static completion-card animate-fade-in-up" id="completion-card">
+            <h3>Proof Completion</h3>
+            <p class="subtitle">Curriculum progress</p>
+            <div class="completion-ring">
+              <svg viewBox="0 0 192 192">
+                <circle class="track" cx="96" cy="96" r="80"></circle>
+                <circle class="fill" cx="96" cy="96" r="80" 
+                  stroke-dasharray="502.6" 
+                  stroke-dashoffset="90.5"></circle>
+              </svg>
+              <div class="completion-ring-text">
+                <span class="completion-ring-value">82%</span>
+                <span class="completion-ring-label">Mastery</span>
+              </div>
+            </div>
+            <div class="completion-stats">
+              <div class="completion-stat">
+                <p class="completion-stat-label">Completed</p>
+                <p class="completion-stat-value">142 <span class="completion-stat-unit">units</span></p>
+              </div>
+              <div class="completion-stat">
+                <p class="completion-stat-label">Pending</p>
+                <p class="completion-stat-value">31 <span class="completion-stat-unit">units</span></p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Intelligence Insights (Teal Accent) -->
+          <div class="insights-card animate-fade-in-up" id="insights-card">
+            <h3>
+              <span class="material-symbols-outlined icon-filled" style="font-size:20px;">lightbulb</span>
+              Intelligence Insights
+            </h3>
+            <div class="insight-block">
+              <h4>Focus Recommendation</h4>
+              <p>"Your derivation speed in <strong>Vector Calculus</strong> is exceptional, but retention in <strong>Topology</strong> drops after 48 hours. Suggesting a 15-minute recursive review cycle."</p>
+            </div>
+            <div class="insight-block">
+              <h4>Logic Pattern</h4>
+              <p>Detected high proficiency in "Proof by Contradiction". You are solving these 22% faster than the median academic pace.</p>
+            </div>
+            <button class="insights-cta" id="btn-logic-map">Unlock Detailed Logic Map</button>
+          </div>
+
+          <!-- Topic Performance -->
+          <div class="glass-card-static topic-card animate-fade-in-up" id="topic-card">
+            <div class="topic-card-header">
+              <div>
+                <h3>Disciplinary Performance</h3>
+                <p>Granular mastery metrics across mathematical disciplines</p>
+              </div>
+            </div>
+            <div class="topic-legend">
+              <div class="legend-item"><div class="legend-dot" style="background:var(--color-primary);"></div> Calculus</div>
+              <div class="legend-item"><div class="legend-dot" style="background:var(--color-secondary);"></div> Algebra</div>
+              <div class="legend-item"><div class="legend-dot" style="background:var(--color-text-secondary);"></div> Statistics</div>
+            </div>
+            <div class="topic-list">
+              <div class="topic-item">
+                <div class="topic-item-header">
+                  <span class="topic-item-name">Advanced Calculus</span>
+                  <span class="topic-item-value">98%</span>
+                </div>
+                <div class="progress-track progress-thick"><div class="progress-fill" style="width:98%"></div></div>
+              </div>
+              <div class="topic-item">
+                <div class="topic-item-header">
+                  <span class="topic-item-name">Linear Algebra</span>
+                  <span class="topic-item-value" style="color:var(--color-secondary);">84%</span>
+                </div>
+                <div class="progress-track progress-thick"><div class="progress-fill-teal" style="width:84%"></div></div>
+              </div>
+              <div class="topic-item">
+                <div class="topic-item-header">
+                  <span class="topic-item-name">Discrete Mathematics</span>
+                  <span class="topic-item-value warning">71%</span>
+                </div>
+                <div class="progress-track progress-thick"><div class="progress-fill" style="width:71%;background:var(--color-error);"></div></div>
+              </div>
+              <div class="topic-item">
+                <div class="topic-item-header">
+                  <span class="topic-item-name">Bayesian Statistics</span>
+                  <span class="topic-item-value" style="color:var(--color-secondary);">65%</span>
+                </div>
+                <div class="progress-track progress-thick"><div class="progress-fill-teal" style="width:65%"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Row: Submissions + Milestones -->
+          <div class="analytics-bottom">
+
+            <!-- Recent Submissions -->
+            <div class="glass-card-static submissions-card animate-fade-in-up">
+              <h3>Recent Proof Submissions</h3>
+              <div class="submission-item">
+                <div class="submission-icon" style="background:var(--color-primary-light);color:var(--color-primary);">Σ</div>
+                <div class="submission-info">
+                  <h4>Riemann Hypothesis Sub-case</h4>
+                  <p>Calculus · 2 hours ago</p>
+                </div>
+                <span class="submission-grade badge badge-primary">A+</span>
+              </div>
+              <div class="submission-item">
+                <div class="submission-icon" style="background:var(--color-secondary-light);color:var(--color-secondary);">×</div>
+                <div class="submission-info">
+                  <h4>Affine Transformations</h4>
+                  <p>Geometry · Yesterday</p>
+                </div>
+                <span class="submission-grade badge badge-secondary">B</span>
+              </div>
+              <div class="submission-item">
+                <div class="submission-icon" style="background:var(--color-surface-high);color:var(--color-text-secondary);">μ</div>
+                <div class="submission-info">
+                  <h4>Null Hypothesis Testing</h4>
+                  <p>Statistics · 3 days ago</p>
+                </div>
+                <span class="submission-grade badge badge-primary">A</span>
+              </div>
+            </div>
+
+            <!-- Academic Milestones -->
+            <div class="glass-card-static milestones-card animate-fade-in-up">
+              <h3>
+                <span class="material-symbols-outlined" style="color:var(--color-primary);font-size:20px;">emoji_events</span>
+                Academic Milestones
+              </h3>
+              <div class="milestone-stats">
+                <div class="milestone-stat">
+                  <p class="milestone-stat-value">100</p>
+                  <p class="milestone-stat-label">Theorems Proved</p>
+                </div>
+                <div class="milestone-stat" style="border-color:var(--color-secondary);">
+                  <p class="milestone-stat-value" style="color:var(--color-secondary);">12k</p>
+                  <p class="milestone-stat-label">Logic Chains</p>
+                </div>
+                <div class="milestone-stat" style="border-color:var(--color-text-secondary);">
+                  <p class="milestone-stat-value" style="color:var(--color-text-secondary);">14</p>
+                  <p class="milestone-stat-label">Collab Projects</p>
+                </div>
+              </div>
+              <div class="milestone-next">
+                Next Milestone: <strong>Digital Archimedes</strong> (5 Proofs remaining)
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </main>
+
+  </div>
+  <script src="/js/sidebar.js"></script>
+</body>
+</html>
