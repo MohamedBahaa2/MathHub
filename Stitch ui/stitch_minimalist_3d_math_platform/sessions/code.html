@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Theorem - Sessions</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-tertiary-container": "#610244",
+                      "tertiary": "#983772",
+                      "on-primary-fixed-variant": "#1a0099",
+                      "secondary-fixed-dim": "#d0b8ff",
+                      "secondary-fixed": "#dcc9ff",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-tint": "#4a40e0",
+                      "on-secondary": "#f8f0ff",
+                      "primary-fixed-dim": "#8885ff",
+                      "primary-dim": "#3d30d4",
+                      "primary-container": "#9795ff",
+                      "outline-variant": "#abadaf",
+                      "on-secondary-container": "#5b00c7",
+                      "primary-fixed": "#9795ff",
+                      "error-container": "#f74b6d",
+                      "inverse-primary": "#8582ff",
+                      "on-secondary-fixed-variant": "#6514d6",
+                      "on-background": "#2c2f31",
+                      "inverse-on-surface": "#9a9d9f",
+                      "secondary-container": "#dcc9ff",
+                      "on-surface-variant": "#595c5e",
+                      "surface-dim": "#d0d5d8",
+                      "on-tertiary-fixed-variant": "#6d104e",
+                      "on-error-container": "#510017",
+                      "tertiary-container": "#fd8bca",
+                      "surface-container-high": "#dfe3e6",
+                      "surface-container": "#e5e9eb",
+                      "error": "#b41340",
+                      "surface-container-highest": "#d9dde0",
+                      "tertiary-dim": "#892a65",
+                      "tertiary-fixed": "#fd8bca",
+                      "surface-variant": "#d9dde0",
+                      "on-primary-fixed": "#000000",
+                      "on-primary-container": "#14007e",
+                      "secondary-dim": "#6411d5",
+                      "on-tertiary": "#ffeff4",
+                      "error-dim": "#a70138",
+                      "surface": "#f5f7f9",
+                      "primary": "#4a40e0",
+                      "tertiary-fixed-dim": "#ee7ebc",
+                      "on-error": "#ffefef",
+                      "surface-bright": "#f5f7f9",
+                      "inverse-surface": "#0b0f10",
+                      "on-secondary-fixed": "#430097",
+                      "on-primary": "#f4f1ff",
+                      "surface-container-low": "#eef1f3",
+                      "outline": "#747779",
+                      "on-tertiary-fixed": "#360024",
+                      "on-surface": "#2c2f31",
+                      "background": "#f5f7f9",
+                      "secondary": "#702ae1"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "1.5rem",
+                      "full": "9999px"
+              },
+              "fontFamily": {
+                      "headline": ["Manrope"],
+                      "body": ["Inter"],
+                      "label": ["Inter"]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body min-h-screen">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-slate-50/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-xl shadow-slate-900/5 flex justify-between items-center px-8 h-16 w-full">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-black text-indigo-600 dark:text-indigo-400 tracking-tighter font-headline">Theorem</span>
+<div class="hidden md:flex gap-6">
+<a class="text-slate-500 dark:text-slate-400 font-['Manrope'] font-bold tracking-tight hover:bg-indigo-50/50 dark:hover:bg-indigo-900/20 transition-colors px-3 py-1 rounded-lg" href="#">Dashboard</a>
+<a class="text-indigo-700 dark:text-indigo-300 font-bold border-b-2 border-indigo-600 font-['Manrope'] tracking-tight px-3 py-1" href="#">Sessions</a>
+<a class="text-slate-500 dark:text-slate-400 font-['Manrope'] font-bold tracking-tight hover:bg-indigo-50/50 dark:hover:bg-indigo-900/20 transition-colors px-3 py-1 rounded-lg" href="#">Problem Sets</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-slate-500 hover:bg-indigo-50/50 rounded-full transition-all duration-300 scale-95 active:scale-90">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-slate-500 hover:bg-indigo-50/50 rounded-full transition-all duration-300 scale-95 active:scale-90">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<img alt="User profile" class="w-8 h-8 rounded-full border-2 border-primary-container object-cover" data-alt="Close up portrait of a young academic professional with a friendly expression in a brightly lit modern office" src="https://lh3.googleusercontent.com/aida-public/AB6AXuATXGRSG1OFMUq4KjBdzlLpZcGP9WAQA5D5zxwoWfMAGzdO04MMHPR_mUD6LX9b3XHnAdzlYtqQlkx2aqjPx9eWdpk60hRKLX-5dP_EWc-e_72HmuhVovRMAeNx-7nbs3MTpbt7phUtyQGyZWAvED4GzGISKToo0URBm5rGCZE1sSOAkhx9VgK9CjEnoj2qcAZotBNtgoe2Bnn6dn62euHHVJmBMEDmCglULPrk57V3OdohmPNGj8lRKLMVY-ixO0dEHRJ9iQpFzWM"/>
+</div>
+</nav>
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full w-64 z-40 bg-slate-50/90 dark:bg-slate-950/90 backdrop-blur-2xl flex flex-col p-6 space-y-4 h-screen hidden md:flex">
+<div class="flex items-center gap-3 mb-8 pt-16">
+<div class="w-10 h-10 bg-primary-container rounded-xl flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-container" style='font-variation-settings: "FILL" 1;'>functions</span>
+</div>
+<div>
+<h2 class="text-xl font-bold text-slate-900 dark:text-slate-100 font-headline">The Sanctuary</h2>
+<p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Level 4 Mathematician</p>
+</div>
+</div>
+<nav class="flex-1 space-y-2">
+<a class="flex items-center gap-3 p-3 text-slate-600 dark:text-slate-400 hover:text-indigo-500 font-['Manrope'] text-sm font-semibold hover:translate-x-1 transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 p-3 bg-indigo-600/10 dark:bg-indigo-400/10 text-indigo-600 dark:text-indigo-400 rounded-xl font-['Manrope'] text-sm font-semibold hover:translate-x-1 transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="menu_book" style='font-variation-settings: "FILL" 1;'>menu_book</span>
+<span>Sessions</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-slate-600 dark:text-slate-400 hover:text-indigo-500 font-['Manrope'] text-sm font-semibold hover:translate-x-1 transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="functions">functions</span>
+<span>Problem Sets</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-slate-600 dark:text-slate-400 hover:text-indigo-500 font-['Manrope'] text-sm font-semibold hover:translate-x-1 transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="local_library">local_library</span>
+<span>Library</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-slate-600 dark:text-slate-400 hover:text-indigo-500 font-['Manrope'] text-sm font-semibold hover:translate-x-1 transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="insights">insights</span>
+<span>Progress</span>
+</a>
+</nav>
+<button class="w-full py-4 bg-gradient-to-br from-primary to-primary-container text-on-primary rounded-xl font-bold font-headline shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform active:scale-95">
+            New Session
+        </button>
+<div class="pt-6 border-t border-slate-200/50 space-y-2">
+<a class="flex items-center gap-3 p-3 text-slate-600 font-['Manrope'] text-sm font-semibold hover:translate-x-1 transition-all duration-300" href="#">
+<span class="material-symbols-outlined">help</span>
+<span>Help</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-slate-600 font-['Manrope'] text-sm font-semibold hover:translate-x-1 transition-all duration-300" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span>Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="md:ml-64 pt-24 px-6 pb-12 relative overflow-hidden">
+<!-- Abstract Math Objects Background -->
+<div class="absolute top-20 right-[-10%] opacity-20 pointer-events-none w-1/2 select-none">
+<img alt="3D Math Objects" class="w-full h-auto" data-alt="Abstract 3D floating geometric shapes including spheres, pyramids, and tori in a soft ethereal lighting with translucent materials" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDMqsHSb6d9zusjThPtMMmJmPpgajhlkPc5j3ZcaA0X4K1LG0X0LQpDT96pqQEyokgYRi1w2bY8eFRxvXaj4MPaBqDXxssS2ee8kxjgEe2IihDKji8ww4fGivyLaCMhQ87sIS3iRK7s44lXH8C9FfbyT3QN4jKTkAywN615WGjhdXQ8-tbEr2Ne02wVW99aY0z7NI5pIdOk5ZsSZgxPmD7fHkXXnN6cBMLVgNd0IuCSdv8MPG8PErVzXvVfW6Ghw8lGxsTOsF2aY40"/>
+</div>
+<div class="absolute bottom-10 left-0 opacity-10 pointer-events-none w-1/3 select-none">
+<img alt="Mathematical Formulas" class="w-full h-auto" data-alt="Soft focused background of handwritten mathematical equations and geometric sketches on high-quality vellum paper" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDcwk-y6hXBlP1uldlSDA_FmleUGLVsL5kG4prYaFyjCvIxW5whRSme7GaVZePDI5In_51v00uCYNV_IptiZKwdD2fOZDea51B4TGBT2hwK88_EKsyaJ4IXiiCHb815I3dl7VXQMerXaSfR63cmh2-iZJf2yA4RHeFakjIxW5I0KCY-vD54pyCOxkGudH53vHu_4lSGG6ojMT4_PRQL0z-AwN8m5_RiIdwrpJUU_nf-C9uUyKSRraXhZ9fAMcDatKpR08mdSFWEeSA"/>
+</div>
+<div class="relative z-10 max-w-7xl mx-auto">
+<!-- Header Section -->
+<div class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div>
+<h1 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter text-on-surface mb-2">Mathematical Sessions</h1>
+<p class="text-on-surface-variant text-lg font-body max-w-xl">Deep-dive intensives designed to transform theoretical concepts into intuitive mastery.</p>
+</div>
+<div class="flex gap-3">
+<div class="bg-surface-container-low px-4 py-2 rounded-xl flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">filter_list</span>
+<span class="text-sm font-semibold">Filter by Level</span>
+</div>
+</div>
+</div>
+<!-- Sessions Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- Session Card 1 -->
+<div class="glass-card relative group p-6 rounded-xl border border-white/40 shadow-2xl shadow-slate-900/5 hover:translate-y-[-4px] transition-all duration-500 overflow-hidden flex flex-col">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center text-indigo-600">
+<span class="material-symbols-outlined" style='font-variation-settings: "FILL" 1;'>calculate</span>
+</div>
+</div>
+<div class="mb-2">
+<h3 class="text-xl font-bold font-headline mb-1 text-on-surface">Intro to Calculus</h3>
+<p "="" class="text-on-surface-variant text-sm">Master multivariable integration and vector fields through visual proofing.</p>
+</div>
+<div class="flex-1 flex items-center justify-center my-6">
+<img alt="Calculus Visualization" class="w-24 h-24 object-contain opacity-80 group-hover:opacity-100 transition-opacity" data-alt="A clean 3D render of a colorful Möbius strip on a white background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDcwk-y6hXBlP1uldlSDA_FmleUGLVsL5kG4prYaFyjCvIxW5whRSme7GaVZePDI5In_51v00uCYNV_IptiZKwdD2fOZDea51B4TGBT2hwK88_EKsyaJ4IXiiCHb815I3dl7VXQMerXaSfR63cmh2-iZJf2yA4RHeFakjIxW5I0KCY-vD54pyCOxkGudH53vHu_4lSGG6ojMT4_PRQL0z-AwN8m5_RiIdwrpJUU_nf-C9uUyKSRraXhZ9fAMcDatKpR08mdSFWEeSA"/>
+</div>
+<div class="space-y-4">
+<div class="flex items-center justify-between text-sm">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<span>2.5 hours</span>
+</div>
+<span class="font-bold text-primary">65% Done</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 65%"></div>
+</div>
+</div>
+<div class="mt-8 flex items-center justify-between gap-4">
+<button class="flex-1 py-3 bg-surface-container-highest group-hover:bg-primary group-hover:text-on-primary text-on-surface font-bold rounded-xl transition-colors duration-300">
+                        Continue Session
+                    </button>
+<span class="text-xl font-black font-headline text-primary whitespace-nowrap">$49</span>
+</div>
+</div>
+<!-- Session Card 2 -->
+<div class="glass-card relative group p-6 rounded-xl border border-white/40 shadow-2xl shadow-slate-900/5 hover:translate-y-[-4px] transition-all duration-500 overflow-hidden flex flex-col">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-xl bg-violet-100 flex items-center justify-center text-violet-600">
+<span class="material-symbols-outlined" style='font-variation-settings: "FILL" 1;'>view_in_ar</span>
+</div>
+</div>
+<div class="mb-2">
+<h3 class="text-xl font-bold font-headline mb-1 text-on-surface">Differentiation</h3>
+<p class="text-on-surface-variant text-sm">A structural approach to matrices, eigenvectors, and coordinate transformations.</p>
+</div>
+<div class="flex-1 flex items-center justify-center my-6">
+<img alt="Geometric Shape" class="w-24 h-24 object-contain opacity-80 group-hover:opacity-100 transition-opacity" data-alt="A translucent 3D glass dodecahedron floating in empty space" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDMqsHSb6d9zusjThPtMMmJmPpgajhlkPc5j3ZcaA0X4K1LG0X0LQpDT96pqQEyokgYRi1w2bY8eFRxvXaj4MPaBqDXxssS2ee8kxjgEe2IihDKji8ww4fGivyLaCMhQ87sIS3iRK7s44lXH8C9FfbyT3QN4jKTkAywN615WGjhdXQ8-tbEr2Ne02wVW99aY0z7NI5pIdOk5ZsSZgxPmD7fHkXXnN6cBMLVgNd0IuCSdv8MPG8PErVzXvVfW6Ghw8lGxsTOsF2aY40"/>
+</div>
+<div class="space-y-4">
+<div class="flex items-center justify-between text-sm">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<span>3 hours</span>
+</div>
+<span class="font-bold text-primary">12% Done</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 12%"></div>
+</div>
+</div>
+<div class="mt-8 flex items-center justify-between gap-4">
+<button class="flex-1 py-3 bg-surface-container-highest group-hover:bg-primary group-hover:text-on-primary text-on-surface font-bold rounded-xl transition-colors duration-300">
+                        Continue Session
+                    </button>
+<span class="text-xl font-black font-headline text-primary whitespace-nowrap">$35</span>
+</div>
+</div>
+<!-- Session Card 3 -->
+<div class="glass-card relative group p-6 rounded-xl border border-white/40 shadow-2xl shadow-slate-900/5 hover:translate-y-[-4px] transition-all duration-500 overflow-hidden flex flex-col">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-xl bg-pink-100 flex items-center justify-center text-pink-600">
+<span class="material-symbols-outlined" style='font-variation-settings: "FILL" 1;'>change_history</span>
+</div>
+</div>
+<div class="mb-2">
+<h3 class="text-xl font-bold font-headline mb-1 text-on-surface">Topology Foundations</h3>
+<p class="text-on-surface-variant text-sm">Deformable spaces and the mathematical foundation of continuous shapes.</p>
+</div>
+<div class="flex-1 flex items-center justify-center my-6">
+<img alt="Topology Concept" class="w-24 h-24 object-contain opacity-80 group-hover:opacity-100 transition-opacity" data-alt="A 3D gold torus shape with complex surface detail" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDMqsHSb6d9zusjThPtMMmJmPpgajhlkPc5j3ZcaA0X4K1LG0X0LQpDT96pqQEyokgYRi1w2bY8eFRxvXaj4MPaBqDXxssS2ee8kxjgEe2IihDKji8ww4fGivyLaCMhQ87sIS3iRK7s44lXH8C9FfbyT3QN4jKTkAywN615WGjhdXQ8-tbEr2Ne02wVW99aY0z7NI5pIdOk5ZsSZgxPmD7fHkXXnN6cBMLVgNd0IuCSdv8MPG8PErVzXvVfW6Ghw8lGxsTOsF2aY40"/>
+</div>
+<div class="space-y-4">
+<div class="flex items-center justify-between text-sm">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<span>4 hours</span>
+</div>
+<span class="font-bold text-primary">88% Done</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 88%"></div>
+</div>
+</div>
+<div class="mt-8 flex items-center justify-between gap-4">
+<button class="flex-1 py-3 bg-surface-container-highest group-hover:bg-primary group-hover:text-on-primary text-on-surface font-bold rounded-xl transition-colors duration-300">
+                        Continue Session
+                    </button>
+<span class="text-xl font-black font-headline text-primary whitespace-nowrap">$55</span>
+</div>
+</div>
+<!-- Session Card 4 -->
+<div class="glass-card relative group p-6 rounded-xl border border-white/40 shadow-2xl shadow-slate-900/5 hover:translate-y-[-4px] transition-all duration-500 overflow-hidden flex flex-col">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-xl bg-sky-100 flex items-center justify-center text-sky-600">
+<span class="material-symbols-outlined" style='font-variation-settings: "FILL" 1;'>data_exploration</span>
+</div>
+</div>
+<div class="mb-2">
+<h3 class="text-xl font-bold font-headline mb-1 text-on-surface">Dynamic Systems</h3>
+<p class="text-on-surface-variant text-sm">Modeling dynamic systems and finding harmony in the rates of change.</p>
+</div>
+<div class="flex-1 flex items-center justify-center my-6">
+<img alt="Dynamic Abstract" class="w-24 h-24 object-contain opacity-80 group-hover:opacity-100 transition-opacity" data-alt="A series of glowing 3D rings interlocking together" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDcwk-y6hXBlP1uldlSDA_FmleUGLVsL5kG4prYaFyjCvIxW5whRSme7GaVZePDI5In_51v00uCYNV_IptiZKwdD2fOZDea51B4TGBT2hwK88_EKsyaJ4IXiiCHb815I3dl7VXQMerXaSfR63cmh2-iZJf2yA4RHeFakjIxW5I0KCY-vD54pyCOxkGudH53vHu_4lSGG6ojMT4_PRQL0z-AwN8m5_RiIdwrpJUU_nf-C9uUyKSRraXhZ9fAMcDatKpR08mdSFWEeSA"/>
+</div>
+<div class="space-y-4">
+<div class="flex items-center justify-between text-sm">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<span>2 hours</span>
+</div>
+<span class="font-bold text-primary">45% Done</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 45%"></div>
+</div>
+</div>
+<div class="mt-8 flex items-center justify-between gap-4">
+<button class="flex-1 py-3 bg-surface-container-highest group-hover:bg-primary group-hover:text-on-primary text-on-surface font-bold rounded-xl transition-colors duration-300">
+                        Continue Session
+                    </button>
+<span class="text-xl font-black font-headline text-primary whitespace-nowrap">$42</span>
+</div>
+</div>
+<!-- Session Card 5 -->
+<div class="glass-card relative group p-6 rounded-xl border border-white/40 shadow-2xl shadow-slate-900/5 hover:translate-y-[-4px] transition-all duration-500 overflow-hidden flex flex-col">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center text-orange-600">
+<span class="material-symbols-outlined" style='font-variation-settings: "FILL" 1;'>analytics</span>
+</div>
+</div>
+<div class="mb-2">
+<h3 class="text-xl font-bold font-headline mb-1 text-on-surface">Statistical Mechanics</h3>
+<p class="text-on-surface-variant text-sm">Exploring the laws of large numbers and entropy in physical systems.</p>
+</div>
+<div class="flex-1 flex items-center justify-center my-6">
+<img alt="Entropy Logic" class="w-24 h-24 object-contain opacity-80 group-hover:opacity-100 transition-opacity" data-alt="A 3D cluster of polished metallic spheres of varying sizes" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDMqsHSb6d9zusjThPtMMmJmPpgajhlkPc5j3ZcaA0X4K1LG0X0LQpDT96pqQEyokgYRi1w2bY8eFRxvXaj4MPaBqDXxssS2ee8kxjgEe2IihDKji8ww4fGivyLaCMhQ87sIS3iRK7s44lXH8C9FfbyT3QN4jKTkAywN615WGjhdXQ8-tbEr2Ne02wVW99aY0z7NI5pIdOk5ZsSZgxPmD7fHkXXnN6cBMLVgNd0IuCSdv8MPG8PErVzXvVfW6Ghw8lGxsTOsF2aY40"/>
+</div>
+<div class="space-y-4">
+<div class="flex items-center justify-between text-sm">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<span>3.5 hours</span>
+</div>
+<span class="font-bold text-primary">0% Done</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 0%"></div>
+</div>
+</div>
+<div class="mt-8 flex items-center justify-between gap-4">
+<button class="flex-1 py-3 bg-surface-container-highest group-hover:bg-primary group-hover:text-on-primary text-on-surface font-bold rounded-xl transition-colors duration-300">
+                        Start Session
+                    </button>
+<span class="text-xl font-black font-headline text-primary whitespace-nowrap">$29</span>
+</div>
+</div>
+<!-- Browse More / CTA Card -->
+<div class="p-6 rounded-xl border-2 border-dashed border-primary/20 flex flex-col items-center justify-center text-center gap-4 hover:border-primary/50 transition-colors">
+<div class="w-16 h-16 rounded-full bg-primary/5 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-3xl">add</span>
+</div>
+<div>
+<h3 class="text-lg font-bold font-headline text-on-surface">Request a Topic</h3>
+<p class="text-on-surface-variant text-sm px-4">Can't find what you're looking for? Suggest a new session topic to the faculty.</p>
+</div>
+<button class="text-primary font-bold text-sm hover:underline">Submit Proposal</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full bg-white/80 backdrop-blur-lg border-t border-slate-100 px-6 py-3 flex justify-between items-center z-50">
+<button class="flex flex-col items-center gap-1 text-slate-400">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-[10px] font-bold">HOME</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-primary">
+<span class="material-symbols-outlined" style='font-variation-settings: "FILL" 1;'>menu_book</span>
+<span class="text-[10px] font-bold">SESSIONS</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-400">
+<span class="material-symbols-outlined">functions</span>
+<span class="text-[10px] font-bold">SETS</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-400">
+<span class="material-symbols-outlined">local_library</span>
+<span class="text-[10px] font-bold">LIB</span>
+</button>
+</nav>
+</body></html>

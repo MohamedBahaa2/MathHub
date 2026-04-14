@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Theorem | Student Analytics</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;600;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-surface-variant": "#595c5e",
+                    "on-secondary-fixed": "#430097",
+                    "tertiary-container": "#fd8bca",
+                    "primary-fixed": "#9795ff",
+                    "surface-container-high": "#dfe3e6",
+                    "on-tertiary": "#ffeff4",
+                    "on-secondary-container": "#5b00c7",
+                    "inverse-on-surface": "#9a9d9f",
+                    "primary": "#4a40e0",
+                    "primary-container": "#9795ff",
+                    "on-primary": "#f4f1ff",
+                    "tertiary-dim": "#892a65",
+                    "secondary-fixed": "#dcc9ff",
+                    "inverse-surface": "#0b0f10",
+                    "tertiary-fixed": "#fd8bca",
+                    "on-secondary-fixed-variant": "#6514d6",
+                    "surface": "#f5f7f9",
+                    "on-error": "#ffefef",
+                    "tertiary-fixed-dim": "#ee7ebc",
+                    "secondary-fixed-dim": "#d0b8ff",
+                    "surface-tint": "#4a40e0",
+                    "on-surface": "#2c2f31",
+                    "on-primary-fixed-variant": "#1a0099",
+                    "secondary": "#702ae1",
+                    "surface-dim": "#d0d5d8",
+                    "surface-variant": "#d9dde0",
+                    "on-tertiary-container": "#610244",
+                    "surface-container-highest": "#d9dde0",
+                    "primary-fixed-dim": "#8885ff",
+                    "on-tertiary-fixed-variant": "#6d104e",
+                    "on-primary-container": "#14007e",
+                    "on-primary-fixed": "#000000",
+                    "error": "#b41340",
+                    "surface-container": "#e5e9eb",
+                    "surface-bright": "#f5f7f9",
+                    "on-tertiary-fixed": "#360024",
+                    "background": "#f5f7f9",
+                    "tertiary": "#983772",
+                    "outline-variant": "#abadaf",
+                    "inverse-primary": "#8582ff",
+                    "outline": "#747779",
+                    "primary-dim": "#3d30d4",
+                    "on-background": "#2c2f31",
+                    "secondary-dim": "#6411d5",
+                    "secondary-container": "#dcc9ff",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary": "#f8f0ff",
+                    "error-dim": "#a70138",
+                    "surface-container-low": "#eef1f3",
+                    "error-container": "#f74b6d",
+                    "on-error-container": "#510017"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .font-manrope { font-family: 'Manrope', sans-serif; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .ethereal-bg {
+            background: radial-gradient(circle at 10% 20%, rgba(74, 64, 224, 0.05) 0%, transparent 40%),
+                        radial-gradient(circle at 90% 80%, rgba(151, 149, 255, 0.08) 0%, transparent 40%);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface overflow-x-hidden ethereal-bg">
+<!-- TopNavBar Execution -->
+<nav class="fixed top-0 w-full z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl flex justify-between items-center px-6 h-16 w-full shadow-xl shadow-slate-900/5 font-manrope tracking-tight">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold text-slate-900 dark:text-slate-100">The Mathematical Sanctuary</span>
+<div class="hidden md:flex relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="pl-10 pr-4 py-1.5 bg-surface-container border-none rounded-full text-sm focus:ring-2 focus:ring-primary w-64 transition-all" placeholder="Search insights..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="h-8 w-8 rounded-full overflow-hidden ml-2 border border-outline-variant/20">
+<img alt="Student profile avatar" class="w-full h-full object-cover" data-alt="close-up portrait of a young professional student smiling in a brightly lit modern study environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGrsb7O3der7xiq3JEaJUCaJtX_gpdHwVHQRVxPDPt4jOjko5ldH8KEv3tGB7BAWzfuVm6yeWTFpu-mnFQnXIJg0W0C7njd9fkpjBlwtGVx0jl4I1BpHlVbLUtS9F9huS4YCJ8u_CpIpv2BoA1hymr8hkodOHo8FHWQ_gdLcjpVRiTuABHAfMLKVAjZF1hi_hgXy7RKRuf5vm8O-uXhrVkUt1TbU7qPgc5rRTgMxI3pSkWMNZc_tcpAaTleRMGAhLOunOm2K6Sry0"/>
+</div>
+</div>
+</nav>
+<!-- SideNavBar Execution -->
+<aside class="fixed left-0 top-0 h-full w-64 z-50 flex flex-col p-4 gap-2 w-64 h-screen border-r border-slate-200/50 dark:border-slate-800/50 bg-slate-50 dark:bg-slate-950 font-manrope font-semibold text-sm">
+<div class="flex items-center gap-3 mb-8 px-2 pt-2">
+<div class="w-10 h-10 bg-primary-container rounded-xl flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined text-2xl" data-icon="functions" data-weight="fill" style="font-variation-settings: 'FILL' 1;">functions</span>
+</div>
+<div>
+<h2 class="text-lg font-black text-slate-900 dark:text-white leading-none">The Sanctuary</h2>
+<span class="text-[10px] font-medium text-slate-500 uppercase tracking-widest">Math Intelligence</span>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 rounded-xl hover:scale-[1.02] transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="grid_view">grid_view</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 rounded-xl hover:scale-[1.02] transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="menu_book">menu_book</span>
+<span>Lessons</span>
+</a>
+<!-- Active Tab: Analytics -->
+<a class="flex items-center gap-3 px-4 py-3 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 rounded-xl shadow-sm hover:scale-[1.02] transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="analytics" data-weight="fill" style="font-variation-settings: 'FILL' 1;">analytics</span>
+<span>Analytics</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 rounded-xl hover:scale-[1.02] transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="military_tech">military_tech</span>
+<span>Achievements</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 rounded-xl hover:scale-[1.02] transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="local_library">local_library</span>
+<span>Library</span>
+</a>
+</nav>
+<div class="mt-auto pt-4 border-t border-slate-200/50">
+<div class="p-4 bg-primary/5 rounded-2xl mb-4">
+<p class="text-xs text-on-surface-variant mb-2">Power user features unlocked.</p>
+<button class="w-full py-2 bg-primary text-on-primary rounded-xl text-xs font-bold hover:shadow-lg transition-all active:scale-95">Upgrade to Pro</button>
+</div>
+<a class="flex items-center gap-3 px-4 py-2 text-slate-500 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span>Support</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-slate-500 hover:text-error transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span>Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="pl-64 pt-16 min-h-screen">
+<!-- Floating 3D Objects (Background Depth) -->
+<div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
+<img class="absolute top-20 right-[-100px] w-[500px] opacity-10 rotate-12" data-alt="floating translucent 3D geometric shapes like spheres and toruses in a soft violet and blue gradient light with bokeh background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBsImJZ1tiNZFu-HtUYzUomve-A0h_0W-wgXnx0HaOPTZtFfvAmGHkPoL2xZxNqHtt7SNYh8euS5NQki2CeGS0fE3GVJ4JKQEmWWV271g5pFd4Uq3F4w_4ovRf_NIGmxh1G28j_eL2A3w0hr1RAZ0__SDvaGqP6o0vLWPDAT5Sl4AOYqAJeE521OPHMFJr4d6qGuBeJJYqZZlmp2eUxCYX_y3FtQ6djQpeYuZn65bfVrLwvxavKxNwc11_tgnUrfo7QcqRYsqCa7qs"/>
+<img class="absolute bottom-[-50px] left-[-50px] w-[400px] opacity-10 -rotate-12" data-alt="stylized 3D rendering of a golden ratio spiral and mathematical constants floating in a soft ethereal hazy atmosphere" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCz8m2xJPOvtcalxmDJEdghNO1iGZcoBgG2gOqScWPnb-wJsr2QoLcs-SSeHuA9G0y0LGbD-bmNK1J3u2I3uwmM2bqXYKwH2rY4E9ys9hs9B3RBAqdWT0IAtHD0bXJ2nveRufIPEUpVLOtmP0WiAWN-4D7gzMXh7-RD1LbWTNOXHWAoBVyA5HMCXJxPuXScjIQrQ5UpWF84pngqCvifX3fPT5Azi_Tsm_flzyCPNMFsmwBVzXGgOAYBhZP4iFFV_tX39y4W2Q-xi8k"/>
+</div>
+<div class="max-w-7xl mx-auto px-8 py-12 relative z-10">
+<!-- Header Section -->
+<header class="mb-12 flex items-end justify-between">
+<div>
+<h1 class="text-4xl font-extrabold font-manrope tracking-tight text-on-surface mb-2">Student Analytics</h1>
+<p class="text-on-surface-variant max-w-md font-body">Real-time intelligence dashboard tracking your mathematical growth and conceptual mastery.</p>
+</div>
+<div class="flex gap-3">
+<div class="bg-surface-container-high px-4 py-2 rounded-xl text-xs font-semibold text-on-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="calendar_today">calendar_today</span>
+                        Last 30 Days
+                    </div>
+</div>
+</header>
+<!-- Analytics Bento Grid -->
+<div class="grid grid-cols-12 gap-6">
+<!-- Grade Overview: Primary Wide Card -->
+<div class="col-span-12 lg:col-span-8 glass-card rounded-[2rem] p-8 shadow-sm transition-transform hover:scale-[1.005]">
+<div class="flex items-center justify-between mb-8">
+<div>
+<h3 class="text-xl font-bold font-manrope">Grade Overview</h3>
+<p class="text-sm text-on-surface-variant">Averaged score performance over the semester</p>
+</div>
+<div class="flex gap-2">
+<span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-[10px] font-bold uppercase tracking-wider">Ascending Trend</span>
+</div>
+</div>
+<!-- Mock Chart Visualization -->
+<div class="h-64 flex items-end justify-between gap-4 px-2">
+<div class="w-full bg-surface-container-high h-[40%] rounded-t-2xl relative group">
+<div class="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity rounded-t-2xl"></div>
+</div>
+<div class="w-full bg-surface-container-high h-[55%] rounded-t-2xl relative group">
+<div class="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity rounded-t-2xl"></div>
+</div>
+<div class="w-full bg-surface-container-high h-[45%] rounded-t-2xl relative group">
+<div class="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity rounded-t-2xl"></div>
+</div>
+<div class="w-full bg-primary h-[85%] rounded-t-2xl relative shadow-lg shadow-primary/20">
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-on-surface text-surface text-[10px] px-2 py-1 rounded font-bold">92%</div>
+</div>
+<div class="w-full bg-surface-container-high h-[60%] rounded-t-2xl relative group">
+<div class="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity rounded-t-2xl"></div>
+</div>
+<div class="w-full bg-primary/40 h-[75%] rounded-t-2xl relative"></div>
+<div class="w-full bg-primary h-[95%] rounded-t-2xl shadow-lg shadow-primary/20"></div>
+</div>
+<div class="flex justify-between mt-4 text-[10px] text-on-surface-variant font-bold uppercase tracking-tighter">
+<span>Sept</span><span>Oct</span><span>Nov</span><span>Dec</span><span>Jan</span><span>Feb</span><span>Mar</span>
+</div>
+</div>
+<!-- Completion Rates: Radial Focus Card -->
+<div class="col-span-12 lg:col-span-4 glass-card rounded-[2rem] p-8 shadow-sm flex flex-col items-center justify-center text-center">
+<h3 class="text-xl font-bold font-manrope mb-1">Completion Rate</h3>
+<p class="text-sm text-on-surface-variant mb-8">Curriculum progress</p>
+<div class="relative w-48 h-48 flex items-center justify-center">
+<!-- Progress Ring SVG -->
+<svg class="w-full h-full -rotate-90">
+<circle class="text-surface-container-high" cx="96" cy="96" fill="transparent" r="80" stroke="currentColor" stroke-width="12"></circle>
+<circle class="text-primary" cx="96" cy="96" fill="transparent" r="80" stroke="currentColor" stroke-dasharray="502.6" stroke-dashoffset="125.6" stroke-linecap="round" stroke-width="12"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-4xl font-extrabold font-manrope">75%</span>
+<span class="text-[10px] text-on-surface-variant font-bold uppercase">Mastered</span>
+</div>
+</div>
+<div class="mt-8 grid grid-cols-2 gap-4 w-full">
+<div class="text-left p-3 bg-surface-container-low rounded-2xl">
+<p class="text-[10px] text-on-surface-variant uppercase font-bold">Completed</p>
+<p class="text-lg font-bold">124 <span class="text-xs font-normal opacity-50">units</span></p>
+</div>
+<div class="text-left p-3 bg-surface-container-low rounded-2xl">
+<p class="text-[10px] text-on-surface-variant uppercase font-bold">Pending</p>
+<p class="text-lg font-bold">42 <span class="text-xs font-normal opacity-50">units</span></p>
+</div>
+</div>
+</div>
+<!-- Quiz Performance: Radar/Topic Breakdown -->
+<div class="col-span-12 lg:col-span-7 glass-card rounded-[2rem] p-8 shadow-sm">
+<div class="flex justify-between items-start mb-10">
+<div>
+<h3 class="text-xl font-bold font-manrope">Topic Performance</h3>
+<p class="text-sm text-on-surface-variant">Proficiency across math disciplines</p>
+</div>
+<button class="p-2 hover:bg-surface-container rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+<div class="space-y-6">
+<div class="group">
+<div class="flex justify-between items-center mb-2">
+<span class="text-sm font-semibold">Calculus &amp; Limits</span>
+<span class="text-sm font-bold text-primary">88%</span>
+</div>
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[88%] rounded-full group-hover:brightness-110 transition-all"></div>
+</div>
+</div>
+<div class="group">
+<div class="flex justify-between items-center mb-2">
+<span class="text-sm font-semibold">Linear Algebra</span>
+<span class="text-sm font-bold text-primary">94%</span>
+</div>
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[94%] rounded-full group-hover:brightness-110 transition-all"></div>
+</div>
+</div>
+<div class="group">
+<div class="flex justify-between items-center mb-2">
+<span class="text-sm font-semibold">Discrete Mathematics</span>
+<span class="text-sm font-bold text-tertiary">62%</span>
+</div>
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-tertiary w-[62%] rounded-full group-hover:brightness-110 transition-all"></div>
+</div>
+</div>
+<div class="group">
+<div class="flex justify-between items-center mb-2">
+<span class="text-sm font-semibold">Statistics &amp; Probability</span>
+<span class="text-sm font-bold text-primary">76%</span>
+</div>
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[76%] rounded-full group-hover:brightness-110 transition-all"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Assignment Completions & Trends -->
+<div class="col-span-12 lg:col-span-5 flex flex-col gap-6">
+<!-- Task Summary Card -->
+<div class="glass-card rounded-[2rem] p-6 shadow-sm flex-1">
+<div class="flex items-center gap-4 mb-6">
+<div class="w-12 h-12 rounded-2xl bg-secondary-container text-on-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="task_alt">task_alt</span>
+</div>
+<div>
+<p class="text-xs text-on-surface-variant font-bold uppercase">Tasks Completed</p>
+<h4 class="text-2xl font-black">28 / 32</h4>
+</div>
+</div>
+<div class="p-4 bg-surface-container-low rounded-2xl flex items-center justify-between">
+<div>
+<p class="text-[10px] text-on-surface-variant font-bold uppercase">This Week</p>
+<p class="text-sm font-bold text-primary">+12% vs last week</p>
+</div>
+<div class="w-24 h-10 flex items-end gap-1">
+<div class="w-2 h-4 bg-primary/20 rounded-t"></div>
+<div class="w-2 h-6 bg-primary/20 rounded-t"></div>
+<div class="w-2 h-5 bg-primary/20 rounded-t"></div>
+<div class="w-2 h-8 bg-primary rounded-t"></div>
+<div class="w-2 h-9 bg-primary rounded-t"></div>
+</div>
+</div>
+</div>
+<!-- Rapid Insight / Tip Card -->
+<div class="bg-primary p-8 rounded-[2rem] shadow-xl shadow-primary/20 text-on-primary relative overflow-hidden group">
+<span class="material-symbols-outlined absolute right-[-10px] top-[-10px] text-8xl opacity-10 rotate-12 group-hover:scale-110 transition-transform" data-icon="lightbulb">lightbulb</span>
+<h4 class="text-lg font-bold mb-2">Intelligence Insight</h4>
+<p class="text-sm opacity-80 leading-relaxed mb-4">Your performance in Calculus peaks between 4 PM and 6 PM. Schedule your hardest problem sets during this window for optimal mastery.</p>
+<button class="text-xs font-bold underline decoration-2 underline-offset-4 hover:opacity-100 opacity-80 transition-opacity">View detailed schedule report</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Contextual FAB (Hidden on Mobile) -->
+<button class="fixed bottom-8 right-8 w-14 h-14 bg-primary text-on-primary rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-50">
+<span class="material-symbols-outlined" data-icon="edit_note">edit_note</span>
+</button>
+</body></html>

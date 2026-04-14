@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Theorem - Mathematical Sanctuary Resources</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "error": "#b41340",
+                    "secondary-fixed": "#dcc9ff",
+                    "on-primary": "#f4f1ff",
+                    "error-container": "#f74b6d",
+                    "on-error": "#ffefef",
+                    "tertiary-fixed": "#fd8bca",
+                    "on-secondary-container": "#5b00c7",
+                    "on-surface": "#2c2f31",
+                    "secondary-fixed-dim": "#d0b8ff",
+                    "primary-dim": "#3d30d4",
+                    "on-secondary-fixed": "#430097",
+                    "on-secondary": "#f8f0ff",
+                    "surface-tint": "#4a40e0",
+                    "tertiary-dim": "#892a65",
+                    "surface-container-highest": "#d9dde0",
+                    "on-tertiary-container": "#610244",
+                    "surface-dim": "#d0d5d8",
+                    "secondary-container": "#dcc9ff",
+                    "inverse-surface": "#0b0f10",
+                    "secondary-dim": "#6411d5",
+                    "primary-container": "#9795ff",
+                    "on-primary-fixed": "#000000",
+                    "surface-container-lowest": "#ffffff",
+                    "inverse-primary": "#8582ff",
+                    "inverse-on-surface": "#9a9d9f",
+                    "primary-fixed-dim": "#8885ff",
+                    "on-primary-fixed-variant": "#1a0099",
+                    "background": "#f5f7f9",
+                    "tertiary-fixed-dim": "#ee7ebc",
+                    "error-dim": "#a70138",
+                    "on-primary-container": "#14007e",
+                    "surface-container-high": "#dfe3e6",
+                    "surface-container": "#e5e9eb",
+                    "primary": "#4a40e0",
+                    "surface-container-low": "#eef1f3",
+                    "on-surface-variant": "#595c5e",
+                    "on-secondary-fixed-variant": "#6514d6",
+                    "tertiary-container": "#fd8bca",
+                    "secondary": "#702ae1",
+                    "on-tertiary-fixed-variant": "#6d104e",
+                    "on-error-container": "#510017",
+                    "surface-bright": "#f5f7f9",
+                    "outline-variant": "#abadaf",
+                    "surface-variant": "#d9dde0",
+                    "surface": "#f5f7f9",
+                    "on-background": "#2c2f31",
+                    "outline": "#747779",
+                    "primary-fixed": "#9795ff",
+                    "on-tertiary": "#ffeff4",
+                    "tertiary": "#983772",
+                    "on-tertiary-fixed": "#360024"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "2xl": "1.5rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .math-blur-bg {
+            background: radial-gradient(circle at 10% 20%, rgba(74, 64, 224, 0.05) 0%, transparent 40%),
+                        radial-gradient(circle at 90% 80%, rgba(151, 149, 255, 0.08) 0%, transparent 40%);
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body min-h-screen flex overflow-hidden">
+<!-- Sidebar Navigation Shell -->
+<aside class="h-screen w-72 sticky left-0 bg-slate-100 dark:bg-slate-950 flex flex-col py-8 gap-2 font-headline z-50">
+<div class="px-8 mb-8">
+<h1 class="text-xl font-extrabold text-indigo-700 dark:text-indigo-300">The Sanctuary</h1>
+<p class="text-xs text-slate-500 uppercase tracking-widest mt-1">Math Excellence</p>
+</div>
+<nav class="flex-1 flex flex-col gap-2">
+<a class="text-slate-500 flex items-center gap-3 py-3 px-6 hover:bg-slate-200/50 transition-all duration-300 translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="title-lg">Dashboard</span>
+</a>
+<a class="text-slate-500 flex items-center gap-3 py-3 px-6 hover:bg-slate-200/50 transition-all duration-300 translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="menu_book">menu_book</span>
+<span class="title-lg">Study Materials</span>
+</a>
+<a class="text-slate-500 flex items-center gap-3 py-3 px-6 hover:bg-slate-200/50 transition-all duration-300 translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="storefront">storefront</span>
+<span class="title-lg">Marketplace</span>
+</a>
+<a class="text-indigo-600 dark:text-indigo-400 font-bold flex items-center gap-3 py-3 px-6 bg-white dark:bg-slate-900 rounded-r-full shadow-lg shadow-indigo-500/10 transition-all duration-300 translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="library_books">library_books</span>
+<span class="title-lg">My Resources</span>
+</a>
+<a class="text-slate-500 flex items-center gap-3 py-3 px-6 hover:bg-slate-200/50 transition-all duration-300 translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="calculate">calculate</span>
+<span class="title-lg">Calculators</span>
+</a>
+</nav>
+<div class="px-6 mt-auto">
+<button class="w-full py-4 bg-gradient-to-br from-primary to-primary-container text-on-primary rounded-2xl font-bold text-sm shadow-xl shadow-primary/20 hover:scale-105 transition-transform">
+                Upgrade to Premium
+            </button>
+</div>
+<div class="mt-6 flex flex-col gap-1">
+<a class="text-slate-500 flex items-center gap-3 py-2 px-6 hover:bg-slate-200/50 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="body-md">Settings</span>
+</a>
+<a class="text-slate-500 flex items-center gap-3 py-2 px-6 hover:bg-slate-200/50 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span class="body-md">Support</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col h-screen overflow-y-auto math-blur-bg relative">
+<!-- Floating 3D Symbols (Background Decor) -->
+<div class="absolute inset-0 pointer-events-none overflow-hidden opacity-20">
+<img class="absolute top-20 right-20 w-64 h-64 object-contain" data-alt="floating 3D translucent mathematical symbols like pi, integrals, and sigma revolving in a soft ethereal blue space with depth of field" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAsltsDz7z_yix5uzX93CVkmf9P8kWHjS71k3f1pADlK7zhBNGBCWSJ4SIPzmCuF6yOC53qZ-m2Yye_cw9P8MIkoRVl2rz1ugd0Sx2hKJWHNFQTESr2Z350BKT_GKlRNb5x_EYr9KyoFwVLRaIaoi6ARu7v6R3B68VX7FhE7IuVX7Fo53eObOwvIhRZB_egEIwc_OFY1Mw7omDDvS28z9Bnm3JFw-CXjo0xhDZJgxBHxodXxoZT43DyfFdmKDor7sQ62fN1wSotEqM"/>
+<img class="absolute bottom-40 left-10 w-48 h-48 object-contain" data-alt="minimalist 3D geometric math shapes floating against a soft gradient background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDOENxchr3OtNeZTyVsNc_YE8S3jRvbqOcTADsUEBnKSbYjKIFJlELbyiD8jvQ7SJcLihAJGN7KeUKYIGBga55ojk-GAWnTUlEx6O1J7GmzP_rkO3z4XMVQhAeqPHSxOZ9ltdqFZ3ZHqcXYg99vS0R8gojVnOOfxaGVoASmuMdy_XVmTT5xE92mejixDSXU1n6P1_s9TEADEcXTqU63XMq1vMvpaeW6qYoAPGrEpoyHBA7Uuob_aQEE5LoExrxbIa8o9mRVByX_jE8"/>
+</div>
+<!-- Top Navigation Bar -->
+<header class="w-full sticky top-0 z-40 bg-slate-50/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-sm shadow-indigo-500/5 px-8 py-4">
+<div class="flex justify-between items-center w-full max-w-screen-2xl mx-auto">
+<div class="flex items-center gap-6">
+<span class="text-2xl font-bold bg-gradient-to-br from-indigo-600 to-indigo-400 bg-clip-text text-transparent font-headline tracking-tight">Mathematical Sanctuary</span>
+<div class="hidden md:flex items-center bg-surface-container-low rounded-full px-4 py-2 w-96">
+<span class="material-symbols-outlined text-outline" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-full font-body" placeholder="Search calculus resources..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-slate-600 hover:text-indigo-500 transition-colors">
+<span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+</button>
+<button class="p-2 text-slate-600 hover:text-indigo-500 transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<img alt="User profile" class="w-10 h-10 rounded-full border-2 border-primary-container object-cover" data-alt="professional headshot of a student for user profile avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDf57tvl8sK8gfbr2SzQRuplBBs58qM4HHuIHTNyLHmBmSShwzz9HEg9pBrfNIxsIBJZmsQyl8lQLgWoY9Xl7LFQq5OQ0asT6ISDCraHYCJZiZtAOmc4eZ-KXG8Hm78QBsT5fWt0HheXAmmOz_SZxDdr5r8FQYNOaG0QDcqy8aP7cNxYwDU7bQG88os7MtRjO8QymeU7WajmJ6x621nKRPK8YjqbeLTyal3_kpcLDp5k79CzpRTwl9xgjZT_xgeT0bEaWhdM7CJNcY"/>
+</div>
+</div>
+</header>
+<!-- Resource Marketplace Content -->
+<div class="relative z-10 px-8 pt-8 pb-20 max-w-screen-2xl mx-auto w-full">
+<!-- Page Header & Filters -->
+<section class="mb-12">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+<div>
+<h2 class="text-4xl font-extrabold text-on-surface font-headline tracking-tight mb-2">Resource Marketplace</h2>
+<p class="text-on-surface-variant text-lg">Curated high-performance study guides and interactive formulas.</p>
+</div>
+<div class="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-hide">
+<button class="px-6 py-2 bg-primary text-on-primary rounded-full font-medium text-sm whitespace-nowrap shadow-lg shadow-primary/20">All Subjects</button>
+<button class="px-6 py-2 bg-surface-container-highest text-on-surface rounded-full font-medium text-sm whitespace-nowrap hover:bg-primary-container/20 transition-colors">Calculus</button>
+<button class="px-6 py-2 bg-surface-container-highest text-on-surface rounded-full font-medium text-sm whitespace-nowrap hover:bg-primary-container/20 transition-colors">Linear Algebra</button>
+<button class="px-6 py-2 bg-surface-container-highest text-on-surface rounded-full font-medium text-sm whitespace-nowrap hover:bg-primary-container/20 transition-colors">Cheat Sheets</button>
+<button class="px-6 py-2 bg-surface-container-highest text-on-surface rounded-full font-medium text-sm whitespace-nowrap hover:bg-primary-container/20 transition-colors">Formulas</button>
+</div>
+</div>
+<!-- Bento Grid Marketplace -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+<!-- Resource Card 1 -->
+<div class="group bg-surface-container-lowest rounded-2xl p-4 shadow-sm hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-500 flex flex-col h-full">
+<div class="relative rounded-xl overflow-hidden aspect-[4/3] mb-4 bg-surface-container">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="clean minimal document preview showing mathematical calculus formulas with elegant typography on white paper" src="https://lh3.googleusercontent.com/aida-public/AB6AXuClVNRBMwlN2cNLlgdC-Hve5mkVZbPlKPqpUh1qccG6jGb6-xxJMvtW00DrrWJIkFm3CHJN_xfV9ir89_JRFeeu6Vl9EF1W6Ti89dRvlsKGenDwWiaRWFv0CpdxIOnKQsnGMPWpS-CscQfRkFS6RgnXoFct5t5YE6zxiV-yaBW3rS-fZaJD7pYDU_X4P0T2B5I_v49oKxBCYET1l0ql6cjLCljv1eQ1MflvCIN2r0FEyGzG0T7LzJSVLJVJV0d5Zb-6rg62HeN5PXY"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+<span class="absolute top-3 right-3 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-primary shadow-sm">$4.99</span>
+</div>
+<h3 class="font-headline font-bold text-lg mb-1 group-hover:text-primary transition-colors">The Ultimate Derivative Cheat Sheet</h3>
+<p class="text-on-surface-variant text-sm body-md mb-6 flex-1">All major differentiation rules including chain rule and trig identities on one page.</p>
+<button class="w-full py-3 bg-primary text-on-primary rounded-xl font-bold flex items-center justify-center gap-2 hover:brightness-110 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-sm" data-icon="shopping_cart">shopping_cart</span>
+                            Buy Now
+                        </button>
+</div>
+<!-- Resource Card 2 (Owned) -->
+<div class="group bg-surface-container-lowest rounded-2xl p-4 shadow-sm hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-500 flex flex-col h-full border border-primary/5">
+<div class="relative rounded-xl overflow-hidden aspect-[4/3] mb-4 bg-surface-container">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="mathematical matrix diagrams and linear algebra vector notes on a minimalist digital canvas" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC9DiE8M0p4OEKrGYPQEQy8_cDzZcl1LrMvZd3s_3XpwGnVJsTvT20iMA8FmAAiE2p538eud4Tc_YikqDLp2HSz5ZF6vpSI11RCYUdOjWtScq5jVWoOlvKdMMgYdMph-WAb320QoWvqEg0PIDchESNb_S2CAL4r_IseSNYHYQ2ryy3TK5q8D2Or7DtB3UNOCgW2MjQJSqUXeQ_WemmprF_a0CWWqU3zl_ErRgisjtdktLXmxWQQfnebwfpG8oPYZO5itfCUTtJqi9s"/>
+<div class="absolute inset-0 bg-primary/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="bg-white/90 p-3 rounded-full shadow-lg">
+<span class="material-symbols-outlined text-primary" data-icon="visibility">visibility</span>
+</span>
+</div>
+<span class="absolute top-3 right-3 bg-primary/10 text-primary backdrop-blur px-3 py-1 rounded-full text-xs font-bold">Purchased</span>
+</div>
+<h3 class="font-headline font-bold text-lg mb-1 group-hover:text-primary transition-colors">Linear Algebra Master Maps</h3>
+<p class="text-on-surface-variant text-sm body-md mb-6 flex-1">Visualizing vector spaces and transformations through geometric mapping.</p>
+<button class="w-full py-3 bg-surface-container-highest text-primary rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-primary-container hover:text-on-primary-container transition-all">
+<span class="material-symbols-outlined text-sm" data-icon="menu_book">menu_book</span>
+                            View Resource
+                        </button>
+</div>
+<!-- Resource Card 3 -->
+<div class="group bg-surface-container-lowest rounded-2xl p-4 shadow-sm hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-500 flex flex-col h-full">
+<div class="relative rounded-xl overflow-hidden aspect-[4/3] mb-4 bg-surface-container">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="blueprint style technical drawing of trigonometry identities and unit circle in minimalist indigo ink" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBYPPOA7J6jVEUBKPe0LJ34nx9vBtNPKqQnw9T_2auoJdYG3iKdXGc7KC6j2izXUI9GCPSp0zqkAUPfvv_laTKxINiFIoxBIaQHLv4PMwG4XgZ94G8irXpi7-tPJh2Sp8pvYUnidqkIDoGd1DAlAblGWhwZUzez_VOk3kBR1iCcTALn6nTRCbXl_DVToUztopnNzXPeapM-7xD0AtaLKAbZFhGatUdfID5zod3x2Yz4uboutdXjV-2TEn8MZQL9Ukbov8wqNRsV9oQ"/>
+<span class="absolute top-3 right-3 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-primary shadow-sm">Free</span>
+</div>
+<h3 class="font-headline font-bold text-lg mb-1 group-hover:text-primary transition-colors">Trig Identity Quick-Reference</h3>
+<p class="text-on-surface-variant text-sm body-md mb-6 flex-1">A compact guide to essential trigonometric identities and the unit circle.</p>
+<button class="w-full py-3 bg-primary text-on-primary rounded-xl font-bold flex items-center justify-center gap-2 hover:brightness-110 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-sm" data-icon="download">download</span>
+                            Add to Library
+                        </button>
+</div>
+<!-- Resource Card 4 -->
+<div class="group bg-surface-container-lowest rounded-2xl p-4 shadow-sm hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-500 flex flex-col h-full">
+<div class="relative rounded-xl overflow-hidden aspect-[4/3] mb-4 bg-surface-container">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="infographic about statistics and probability distributions with clean data visualizations and soft colors" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2RQ57LNpHClbbR4MIcwkZLQbWzFiaciR9qLk4O4o9YDffqnE84lwSkNx0i8IjrHcqCYEZ6uBmAoj1dn0KOSSrdsQZzLWaQ-KAVoUPBOeKguRtNNnw9FbZx6d3z-EfEnR9nRbcchYMrhTy8rDVhos649DiUoPx9IDStsLWgM7GHnHrKAlyNEmauA7V-L2VEKGseZ51zT3sefuRKmn_oRRhVyndhkYi5VptT6RV6C4FvIfKWIB3grs8b5l-rkVHonsHEvPKdxCJeKg"/>
+<span class="absolute top-3 right-3 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-primary shadow-sm">$2.99</span>
+</div>
+<h3 class="font-headline font-bold text-lg mb-1 group-hover:text-primary transition-colors">Probability Distributions</h3>
+<p class="text-on-surface-variant text-sm body-md mb-6 flex-1">Detailed breakdowns of Normal, Binomial, and Poisson distributions.</p>
+<button class="w-full py-3 bg-primary text-on-primary rounded-xl font-bold flex items-center justify-center gap-2 hover:brightness-110 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-sm" data-icon="shopping_cart">shopping_cart</span>
+                            Buy Now
+                        </button>
+</div>
+</div>
+</section>
+<!-- Secure Viewer Mockup (Secondary Action) -->
+<section class="mt-20">
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-primary" data-icon="security" style="font-variation-settings: 'FILL' 1;">security</span>
+<h2 class="text-2xl font-bold font-headline">Secure Document Viewer</h2>
+</div>
+<!-- Mockup Container -->
+<div class="glass-panel border-4 border-white/50 rounded-2xl overflow-hidden shadow-2xl h-[600px] flex flex-col relative">
+<!-- Viewer Header -->
+<div class="bg-white/80 border-b border-surface-container px-6 py-4 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-surface-container-low rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<div>
+<h4 class="font-bold font-headline text-on-surface">The Ultimate Derivative Cheat Sheet.pdf</h4>
+<p class="text-xs text-on-surface-variant">2 Pages • Secure Sanctuary View</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-on-surface hover:bg-surface-container-low rounded-lg transition-colors">
+<span class="material-symbols-outlined text-lg" data-icon="print">print</span>
+                                Print
+                            </button>
+<button class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-on-surface hover:bg-surface-container-low rounded-lg transition-colors">
+<span class="material-symbols-outlined text-lg" data-icon="download">download</span>
+                                Download
+                            </button>
+</div>
+</div>
+<!-- Viewer Workspace -->
+<div class="flex-1 flex overflow-hidden">
+<!-- Sidebar / Navigation within Document -->
+<div class="w-64 bg-slate-50/50 border-r border-surface-container p-4 hidden md:block">
+<h5 class="text-xs font-bold text-outline uppercase tracking-widest mb-4">Outline</h5>
+<ul class="space-y-3">
+<li class="text-sm font-bold text-primary flex items-center gap-2 bg-primary/5 p-2 rounded-lg">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                                    Introduction to Rules
+                                </li>
+<li class="text-sm text-on-surface-variant flex items-center gap-2 p-2 hover:bg-white/50 rounded-lg cursor-pointer">
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+                                    Chain &amp; Power Rule
+                                </li>
+<li class="text-sm text-on-surface-variant flex items-center gap-2 p-2 hover:bg-white/50 rounded-lg cursor-pointer">
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+                                    Trig Functions
+                                </li>
+<li class="text-sm text-on-surface-variant flex items-center gap-2 p-2 hover:bg-white/50 rounded-lg cursor-pointer">
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+                                    Practice Problems
+                                </li>
+</ul>
+</div>
+<!-- Document Area with Watermark -->
+<div class="flex-1 bg-surface-container-low overflow-y-auto p-8 flex justify-center relative">
+<!-- Security Watermarks -->
+<div class="absolute inset-0 pointer-events-none grid grid-cols-4 grid-rows-6 opacity-[0.03] rotate-[-25deg] select-none">
+<span class="text-4xl font-bold whitespace-nowrap">THEOREMSANCTUARY</span>
+<span class="text-4xl font-bold whitespace-nowrap">THEOREMSANCTUARY</span>
+<span class="text-4xl font-bold whitespace-nowrap">THEOREMSANCTUARY</span>
+<span class="text-4xl font-bold whitespace-nowrap">THEOREMSANCTUARY</span>
+<span class="text-4xl font-bold whitespace-nowrap">THEOREMSANCTUARY</span>
+<span class="text-4xl font-bold whitespace-nowrap">THEOREMSANCTUARY</span>
+<span class="text-4xl font-bold whitespace-nowrap">THEOREMSANCTUARY</span>
+<span class="text-4xl font-bold whitespace-nowrap">THEOREMSANCTUARY</span>
+</div>
+<!-- Document Mockup Page -->
+<div class="bg-white w-full max-w-2xl shadow-xl p-12 min-h-[1000px] relative">
+<div class="border-b-2 border-primary-container pb-4 mb-8">
+<h1 class="text-3xl font-extrabold text-indigo-900 font-headline">Derivative Mastery Guide</h1>
+<p class="text-slate-500 font-medium italic">Theorem Exclusive Study Materials • Spring 2024</p>
+</div>
+<div class="space-y-12">
+<div class="space-y-4">
+<h3 class="text-xl font-bold text-indigo-700">1. Basic Differentiation Rules</h3>
+<div class="bg-slate-50 p-6 rounded-xl space-y-4 border border-indigo-50">
+<div class="flex items-center justify-between">
+<span class="font-bold">Power Rule</span>
+<code class="bg-white px-4 py-2 rounded-lg shadow-sm font-mono text-primary">d/dx [x^n] = nx^(n-1)</code>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-bold">Product Rule</span>
+<code class="bg-white px-4 py-2 rounded-lg shadow-sm font-mono text-primary">d/dx [f(x)g(x)] = f'g + fg'</code>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-bold">Quotient Rule</span>
+<code class="bg-white px-4 py-2 rounded-lg shadow-sm font-mono text-primary">d/dx [f/g] = (f'g - fg') / g^2</code>
+</div>
+</div>
+</div>
+<div class="space-y-4">
+<h3 class="text-xl font-bold text-indigo-700">2. Trigonometric Derivatives</h3>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-slate-50 p-4 rounded-lg flex items-center justify-between border border-indigo-50">
+<span class="text-sm">d/dx [sin x]</span>
+<code class="font-bold text-indigo-600">cos x</code>
+</div>
+<div class="bg-slate-50 p-4 rounded-lg flex items-center justify-between border border-indigo-50">
+<span class="text-sm">d/dx [cos x]</span>
+<code class="font-bold text-indigo-600">-sin x</code>
+</div>
+<div class="bg-slate-50 p-4 rounded-lg flex items-center justify-between border border-indigo-50">
+<span class="text-sm">d/dx [tan x]</span>
+<code class="font-bold text-indigo-600">sec² x</code>
+</div>
+<div class="bg-slate-50 p-4 rounded-lg flex items-center justify-between border border-indigo-50">
+<span class="text-sm">d/dx [csc x]</span>
+<code class="font-bold text-indigo-600">-csc x cot x</code>
+</div>
+</div>
+</div>
+<div class="p-8 border-2 border-dashed border-primary-container/30 rounded-2xl text-center">
+<p class="text-slate-400 italic">... Practice problems and advanced applications continue on Page 2 ...</p>
+</div>
+</div>
+<!-- Page Footer (In Viewer) -->
+<div class="absolute bottom-8 left-0 right-0 px-12 flex justify-between items-center text-xs text-slate-300">
+<span>© 2024 Mathematical Sanctuary Premium Resources</span>
+<span>Document ID: TH-DRV-9942-A</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Floating Viewer Controls -->
+<div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-surface-container-highest/80 backdrop-blur-lg px-4 py-2 rounded-full shadow-2xl">
+<button class="p-2 hover:bg-white/50 rounded-full transition-colors"><span class="material-symbols-outlined" data-icon="zoom_out">zoom_out</span></button>
+<span class="px-4 font-bold text-sm">100%</span>
+<button class="p-2 hover:bg-white/50 rounded-full transition-colors"><span class="material-symbols-outlined" data-icon="zoom_in">zoom_in</span></button>
+<div class="w-px h-4 bg-outline-variant mx-2"></div>
+<button class="p-2 hover:bg-white/50 rounded-full transition-colors"><span class="material-symbols-outlined" data-icon="chevron_left">chevron_left</span></button>
+<span class="px-2 text-sm">Page 1 of 2</span>
+<button class="p-2 hover:bg-white/50 rounded-full transition-colors"><span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span></button>
+</div>
+</div>
+</section>
+</div>
+<!-- Bottom Section: Trending & Suggestions -->
+<section class="bg-surface-container px-8 py-16">
+<div class="max-w-screen-2xl mx-auto">
+<div class="flex items-center justify-between mb-8">
+<h3 class="text-xl font-bold font-headline">Recommended for Your Courses</h3>
+<a class="text-primary font-bold text-sm flex items-center gap-1 hover:underline" href="#">
+                        View Personalized Library
+                        <span class="material-symbols-outlined text-base" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</div>
+<div class="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
+<!-- Simple Item 1 -->
+<div class="min-w-[200px] bg-surface-container-lowest p-4 rounded-xl shadow-sm flex items-center gap-4 hover:scale-105 transition-transform cursor-pointer">
+<div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="functions">functions</span>
+</div>
+<div>
+<p class="font-bold text-sm">Integration Kit</p>
+<p class="text-xs text-on-surface-variant">Free Guide</p>
+</div>
+</div>
+<!-- Simple Item 2 -->
+<div class="min-w-[200px] bg-surface-container-lowest p-4 rounded-xl shadow-sm flex items-center gap-4 hover:scale-105 transition-transform cursor-pointer">
+<div class="w-12 h-12 bg-secondary/10 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary" data-icon="show_chart">show_chart</span>
+</div>
+<div>
+<p class="font-bold text-sm">Graphing Hacks</p>
+<p class="text-xs text-on-surface-variant">$1.99</p>
+</div>
+</div>
+<!-- Simple Item 3 -->
+<div class="min-w-[200px] bg-surface-container-lowest p-4 rounded-xl shadow-sm flex items-center gap-4 hover:scale-105 transition-transform cursor-pointer">
+<div class="w-12 h-12 bg-tertiary/10 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-tertiary" data-icon="grid_4x4">grid_4x4</span>
+</div>
+<div>
+<p class="font-bold text-sm">Matrix Solver</p>
+<p class="text-xs text-on-surface-variant">$3.50</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Floating Action Button - Suppression Rule: Suppressed for Resources/Details screens as per mandate -->
+</body></html>

@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>The Sanctuary - Live Sessions</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary": "#983772",
+                        "on-secondary-fixed-variant": "#6514d6",
+                        "background": "#f5f7f9",
+                        "on-secondary-container": "#5b00c7",
+                        "on-secondary": "#f8f0ff",
+                        "inverse-on-surface": "#9a9d9f",
+                        "tertiary-fixed-dim": "#ee7ebc",
+                        "secondary": "#702ae1",
+                        "on-tertiary": "#ffeff4",
+                        "on-background": "#2c2f31",
+                        "inverse-primary": "#8582ff",
+                        "surface-container-high": "#dfe3e6",
+                        "surface-bright": "#f5f7f9",
+                        "outline-variant": "#abadaf",
+                        "primary-fixed-dim": "#8885ff",
+                        "on-primary-container": "#14007e",
+                        "surface-tint": "#4a40e0",
+                        "tertiary-fixed": "#fd8bca",
+                        "on-surface": "#2c2f31",
+                        "on-tertiary-container": "#610244",
+                        "tertiary-container": "#fd8bca",
+                        "on-primary": "#f4f1ff",
+                        "on-primary-fixed": "#000000",
+                        "surface-container": "#e5e9eb",
+                        "tertiary-dim": "#892a65",
+                        "on-error": "#ffefef",
+                        "inverse-surface": "#0b0f10",
+                        "primary-container": "#9795ff",
+                        "surface-dim": "#d0d5d8",
+                        "primary-fixed": "#9795ff",
+                        "surface-variant": "#d9dde0",
+                        "on-primary-fixed-variant": "#1a0099",
+                        "on-tertiary-fixed": "#360024",
+                        "primary": "#4a40e0",
+                        "outline": "#747779",
+                        "on-surface-variant": "#595c5e",
+                        "surface": "#f5f7f9",
+                        "on-tertiary-fixed-variant": "#6d104e",
+                        "on-secondary-fixed": "#430097",
+                        "secondary-fixed-dim": "#d0b8ff",
+                        "secondary-dim": "#6411d5",
+                        "secondary-container": "#dcc9ff",
+                        "on-error-container": "#510017",
+                        "primary-dim": "#3d30d4",
+                        "secondary-fixed": "#dcc9ff",
+                        "error-container": "#f74b6d",
+                        "surface-container-low": "#eef1f3",
+                        "surface-container-highest": "#d9dde0",
+                        "error": "#b41340",
+                        "error-dim": "#a70138"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "xxl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .font-manrope { font-family: 'Manrope', sans-serif; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .math-symbol-float {
+            position: absolute;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.15;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen">
+<!-- Sidebar Navigation -->
+<aside class="h-full w-64 fixed left-0 top-0 bg-slate-50/90 backdrop-blur-lg flex flex-col gap-2 p-4 z-40">
+<div class="mb-8 px-4 py-2">
+<h1 class="text-xl font-extrabold text-indigo-600 tracking-tighter">The Sanctuary</h1>
+<p class="text-xs font-semibold text-slate-500 uppercase tracking-widest mt-1">Ethereal Mathematics</p>
+</div>
+<nav class="flex flex-col gap-2">
+<a class="flex items-center gap-3 text-slate-500 px-4 py-3 hover:bg-slate-200/50 rounded-xl transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="grid_view">grid_view</span>
+<span class="font-manrope font-semibold text-base">Dashboard</span>
+</a>
+<!-- Active Tab -->
+<a class="flex items-center gap-3 text-indigo-700 bg-white/50 rounded-xl px-4 py-3 translate-x-1 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="live_tv" style="font-variation-settings: 'FILL' 1;">live_tv</span>
+<span class="font-manrope font-semibold text-base">Live Sessions</span>
+</a>
+<a class="flex items-center gap-3 text-slate-500 px-4 py-3 hover:bg-slate-200/50 rounded-xl transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="auto_stories">auto_stories</span>
+<span class="font-manrope font-semibold text-base">Curriculum</span>
+</a>
+<a class="flex items-center gap-3 text-slate-500 px-4 py-3 hover:bg-slate-200/50 rounded-xl transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="military_tech">military_tech</span>
+<span class="font-manrope font-semibold text-base">Achievements</span>
+</a>
+<a class="flex items-center gap-3 text-slate-500 px-4 py-3 hover:bg-slate-200/50 rounded-xl transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="local_library">local_library</span>
+<span class="font-manrope font-semibold text-base">Library</span>
+</a>
+</nav>
+<div class="mt-auto p-4 bg-primary/5 rounded-xxl">
+<p class="text-xs font-bold text-primary mb-2">NEXT UP</p>
+<p class="text-sm font-manrope font-semibold text-on-surface">Calculus III: Vector Fields</p>
+<p class="text-xs text-slate-500 mb-4">Starts in 12 mins</p>
+<button class="w-full py-3 bg-gradient-to-br from-primary to-primary-container text-on-primary rounded-xl font-bold text-sm shadow-lg shadow-primary/20">Join Live Now</button>
+</div>
+</aside>
+<!-- Top AppBar Integration -->
+<header class="fixed top-0 right-0 left-64 h-16 px-8 flex justify-between items-center bg-slate-50/80 backdrop-blur-xl z-30">
+<div class="flex items-center gap-8">
+<nav class="flex gap-6">
+<a class="text-slate-500 font-manrope text-sm font-medium hover:text-indigo-500 transition-colors duration-300" href="#">Explore</a>
+<a class="text-indigo-700 border-b-2 border-indigo-500 pb-1 font-manrope text-sm font-medium" href="#">Practice</a>
+<a class="text-slate-500 font-manrope text-sm font-medium hover:text-indigo-500 transition-colors duration-300" href="#">Sanctuary</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-slate-500 hover:text-indigo-500 cursor-pointer">notifications</span>
+<span class="material-symbols-outlined text-slate-500 hover:text-indigo-500 cursor-pointer">settings</span>
+<div class="w-8 h-8 rounded-full overflow-hidden bg-surface-container-high ml-2">
+<img alt="User profile avatar" data-alt="Close up portrait of a young woman with a calm expression in a modern professional setting with soft lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBquBeKyHd7wxJyyBOa1Sly72FiIX-eCu2VjMjquYykPWi2JlKTrLeYylSGg3iRYs1Ge6gqprUnNdsjHekYEFd4hCpG4_IRs2mRknnX-gzONEj-XXFQ2YS9NIpM82N8RfYCm3CTAupdad15R75tCUFYYK3NBG1j4dX2juZm6olbxWogtMz-g3rPFH-byQiXBTymfAoGdrVxExYNJhVswINhw8DKSfxoTc_hzkuqGp_JaiO9qk1zAQtNz980Xm1EffuCgP7BtjwXV0w"/>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="ml-64 pt-24 pb-12 px-12 relative overflow-hidden">
+<!-- Background 3D Math Symbols -->
+<div class="math-symbol-float top-20 right-10 text-9xl font-headline opacity-5">∫</div>
+<div class="math-symbol-float bottom-40 left-20 text-8xl font-headline opacity-5">∑</div>
+<div class="math-symbol-float top-1/2 right-1/4 text-9xl font-headline opacity-5">π</div>
+<div class="math-symbol-float top-1/4 left-1/3 text-6xl font-headline opacity-5">√</div>
+<div class="math-symbol-float bottom-10 right-10 text-9xl font-headline opacity-5">∞</div>
+<div class="max-w-6xl mx-auto relative z-10">
+<!-- Featured Live Session -->
+<section class="mb-16">
+<div class="relative w-full aspect-[21/9] rounded-xxl overflow-hidden bg-surface-container-low group shadow-2xl shadow-primary/10">
+<img alt="Cinematic mathematical visualization" class="absolute inset-0 w-full h-full object-crop" data-alt="Abstract cinematic 3D render of complex mathematical geometric structures with glowing blue and violet lines in a deep dark space" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-D6H7mRr_jkw7AKhUZsZRzdBVsPXDoE64CfzgIoyEpesVa1d0llfvylcCmYUsaPyYdDyWaf3GwRHhDoqnMwej8oftPK0eup3niyOcm03xov12O3PWP320_m3xw1VL_aKu_P0-Bs3IvYZ51c5OURO-c4vasywJ6PrtRKuZq8A7OSER0sVdF7_PU4I_1StVPZiTVHBRe7okhQVY_RvIaiwLkuEMEBqSvgtFnDepeUSHJoL9KRuyt2f_tje8c9V8EzDRoTE7zb4XVq0"/>
+<div class="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-slate-950/40 to-transparent flex flex-col justify-center px-12">
+<div class="inline-flex items-center gap-2 px-3 py-1 bg-error rounded-full text-on-error text-xs font-bold w-fit mb-4 uppercase tracking-widest animate-pulse">
+<span class="w-2 h-2 rounded-full bg-on-error"></span>
+                            Live Now
+                        </div>
+<h2 class="text-5xl font-manrope font-extrabold text-white mb-4 tracking-tight leading-tight">Complex Analysis:<br/>The Riemann Hypothesis</h2>
+<div class="flex items-center gap-6 mb-8">
+<div class="flex items-center gap-2">
+<img class="w-8 h-8 rounded-full border border-white/20" data-alt="Portrait of a distinguished professor with glasses and a kind smile in a academic office" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlOAG-0hs2uyd_pcSEGoLLwzpCDoTfPIfk7wQNz_mXgVmvPjOowBIvLTTVB9AvGQ3jX0Ls1GjhyXiKnXOc86Dt49m8aLz_d2GLMQzfj8zQaG8mdV5meFX_hLkxoY9FFM7vKIkx8XAh9Fo8zg59sc14viMd7vI8fxRNYqxFqUXi3mdhbMRF6kbopr3ivjllwhXmUroXQSmf3JZ_xkwFpS8g3CJchpu1f3qBwU_MMrKUusJIxCL0xL4v2o48nJCnQCGIIHiltQLIYnw"/>
+<span class="text-white/90 font-medium">Dr. Julian Thorne</span>
+</div>
+<span class="text-white/60 text-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">group</span> 2.4k Students
+                            </span>
+</div>
+<div class="flex gap-4">
+<button class="px-8 py-4 bg-primary text-on-primary rounded-xl font-bold text-lg hover:scale-105 transition-transform flex items-center gap-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+                                Join Live Session
+                            </button>
+<button class="px-8 py-4 glass-card text-white border border-white/10 rounded-xl font-bold text-lg hover:bg-white/10 transition-colors">
+                                View syllabus
+                            </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Upcoming Grid -->
+<section>
+<div class="flex justify-between items-end mb-8">
+<div>
+<h3 class="text-3xl font-manrope font-bold text-on-surface tracking-tight">Upcoming Journeys</h3>
+<p class="text-slate-500 mt-1">Reserve your seat for our elite masterclasses</p>
+</div>
+<div class="flex gap-2">
+<button class="p-2 rounded-full bg-surface-container hover:bg-surface-container-high transition-colors text-slate-600">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="p-2 rounded-full bg-primary text-on-primary hover:bg-primary-dim transition-colors shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- Session Card 1 -->
+<div class="glass-card rounded-xxl p-6 shadow-sm border border-slate-200/20 flex flex-col hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+<div class="mb-6 relative aspect-video rounded-xl overflow-hidden bg-slate-100">
+<img class="w-full h-full object-cover" data-alt="Elegant chalkboard filled with advanced calculus equations in a high-end classroom with soft natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD5WQkXPfR6Y-Ro8RRqgnwPczdr-uqQ-dc1NfnhOvwtpLg8QO794zfPLjnpar-f6u-gkG7bY8WAXg6ddzEXD6fql5b9WuvKjGgW6zWfwbcg56o7W-Ek82t_qXnz6fFi6jMb8JtgQz3BuGfKd8_GvxReadCyBcB-ytR4C_x-80g5XsvyXw6KHhueMWpJ3obclBgGlzIrLgW50PqaMw3Ej7X-7FKRB82ks9CTU_HuiUMvoKpXoVtZh0zSRi-Z9wjdy5vzYj2eJCe7biE"/>
+<div class="absolute top-3 left-3 px-2 py-1 bg-surface-bright/90 backdrop-blur text-[10px] font-bold text-primary rounded uppercase tracking-tighter">Advanced</div>
+</div>
+<h4 class="text-xl font-manrope font-bold text-on-surface mb-2 leading-tight">Advanced Calculus Q&amp;A: Stokes' Theorem</h4>
+<div class="space-y-2 mb-6">
+<div class="flex items-center gap-2 text-slate-500 text-sm">
+<span class="material-symbols-outlined text-sm">calendar_today</span>
+                                Tomorrow, 10:00 AM
+                            </div>
+<div class="flex items-center gap-2 text-slate-500 text-sm">
+<span class="material-symbols-outlined text-sm">schedule</span>
+                                90 Minutes
+                            </div>
+<div class="flex items-center gap-2 text-slate-500 text-sm">
+<span class="material-symbols-outlined text-sm">person</span>
+                                Prof. Elena Markov
+                            </div>
+</div>
+<div class="mt-auto flex items-center justify-between">
+<div class="text-2xl font-headline font-extrabold text-on-surface">$24.00</div>
+<button class="px-5 py-2.5 bg-surface-container-highest text-primary rounded-xl font-bold text-sm hover:bg-primary hover:text-on-primary transition-all">Pre-purchase</button>
+</div>
+</div>
+<!-- Session Card 2 -->
+<div class="glass-card rounded-xxl p-6 shadow-sm border border-slate-200/20 flex flex-col hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+<div class="mb-6 relative aspect-video rounded-xl overflow-hidden bg-slate-100">
+<img class="w-full h-full object-cover" data-alt="Digital representation of linear algebra matrices glowing in a minimalist clean 3D workspace" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDilueZTrM87ET_ukXK5m7UsnQR_p0wEACO2zrN6m8_gbGIFXgXUsSChVF7CqGQDqlrvuRh7M7VKRlRU3kBpLp_B_PkP_PXHKndBPfGMqRroENhsB9dVDkVogVJqxmFQH37bCg78Tyxgw6qw8ObqhbJdfcts4FBELjxg4rW281vlkAisrgE-Acv-NnMl6K6X8-nnJsHUy8QT97bHmmpgMBNRf6qrUKy5SBgdeMVgQYYysTuxVW5BfhfyzJm7Lpqjn3NcJU-YsTqzCU"/>
+<div class="absolute top-3 left-3 px-2 py-1 bg-surface-bright/90 backdrop-blur text-[10px] font-bold text-primary rounded uppercase tracking-tighter">Intermediate</div>
+</div>
+<h4 class="text-xl font-manrope font-bold text-on-surface mb-2 leading-tight">Linear Algebra Workshop: Eigenvalues</h4>
+<div class="space-y-2 mb-6">
+<div class="flex items-center gap-2 text-slate-500 text-sm">
+<span class="material-symbols-outlined text-sm">calendar_today</span>
+                                Oct 24, 02:00 PM
+                            </div>
+<div class="flex items-center gap-2 text-slate-500 text-sm">
+<span class="material-symbols-outlined text-sm">schedule</span>
+                                120 Minutes
+                            </div>
+<div class="flex items-center gap-2 text-slate-500 text-sm">
+<span class="material-symbols-outlined text-sm">person</span>
+                                Dr. Marcus Chen
+                            </div>
+</div>
+<div class="mt-auto flex items-center justify-between">
+<div class="text-2xl font-headline font-extrabold text-on-surface">$19.00</div>
+<button class="px-5 py-2.5 bg-surface-container-highest text-primary rounded-xl font-bold text-sm hover:bg-primary hover:text-on-primary transition-all">Pre-purchase</button>
+</div>
+</div>
+<!-- Session Card 3 -->
+<div class="glass-card rounded-xxl p-6 shadow-sm border border-slate-200/20 flex flex-col hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+<div class="mb-6 relative aspect-video rounded-xl overflow-hidden bg-slate-100">
+<img class="w-full h-full object-cover" data-alt="Ethereal purple and indigo gradient smoke flowing gracefully on a light grey background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8UPPI0T7GpmlN07Y2vuYjEHIshXZ2UosD6206prp6JFPsGtNNnvXqr_U4vImVwX5_betGN6rZmf99h4KveZtrt_o9a7PyG0Wdrj_EFvTP9S22cwQytcYWZucX2mRek-N6FHuAekNyxwyJeTniJM32tMHP3EuRBle_UJzfOGLpq-FDsPtaoEkPhPPQtyEBW5_mcSmyAIRKZajefAnScQWQpJY5xBbJXyIM0vyjwM_k1C6H7oGhEcDOxR3ailZPKaMjIofQFksT4EQ"/>
+<div class="absolute top-3 left-3 px-2 py-1 bg-surface-bright/90 backdrop-blur text-[10px] font-bold text-primary rounded uppercase tracking-tighter">Beginner</div>
+</div>
+<h4 class="text-xl font-manrope font-bold text-on-surface mb-2 leading-tight">Foundations: Probability &amp; Logic</h4>
+<div class="space-y-2 mb-6">
+<div class="flex items-center gap-2 text-slate-500 text-sm">
+<span class="material-symbols-outlined text-sm">calendar_today</span>
+                                Oct 25, 09:00 AM
+                            </div>
+<div class="flex items-center gap-2 text-slate-500 text-sm">
+<span class="material-symbols-outlined text-sm">schedule</span>
+                                60 Minutes
+                            </div>
+<div class="flex items-center gap-2 text-slate-500 text-sm">
+<span class="material-symbols-outlined text-sm">person</span>
+                                Sarah Jenkins, M.Sc.
+                            </div>
+</div>
+<div class="mt-auto flex items-center justify-between">
+<div class="text-2xl font-headline font-extrabold text-on-surface">$15.00</div>
+<button class="px-5 py-2.5 bg-surface-container-highest text-primary rounded-xl font-bold text-sm hover:bg-primary hover:text-on-primary transition-all">Pre-purchase</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Community Stats (Bento Fragment) -->
+<section class="mt-16 grid grid-cols-1 md:grid-cols-4 gap-6">
+<div class="md:col-span-2 glass-card p-8 rounded-xxl border border-slate-200/10 shadow-sm flex items-center justify-between">
+<div>
+<p class="text-slate-500 font-medium mb-1">Global Active Learners</p>
+<h5 class="text-4xl font-manrope font-extrabold text-primary tracking-tighter">128,402</h5>
+<p class="text-xs text-secondary mt-2 flex items-center gap-1 font-bold">
+<span class="material-symbols-outlined text-xs">trending_up</span> +12% this week
+                        </p>
+</div>
+<div class="w-32 h-32 opacity-20">
+<svg class="w-full h-full text-primary fill-none stroke-current stroke-2" viewbox="0 0 100 100">
+<path d="M10 80 Q 25 20, 40 50 T 70 30 T 90 60"></path>
+</svg>
+</div>
+</div>
+<div class="glass-card p-8 rounded-xxl border border-slate-200/10 shadow-sm">
+<p class="text-slate-500 font-medium mb-1">Pass Rate</p>
+<h5 class="text-4xl font-manrope font-extrabold text-on-surface tracking-tighter">94%</h5>
+<div class="w-full bg-slate-200 h-1 rounded-full mt-4">
+<div class="bg-primary h-full w-[94%] rounded-full shadow-[0_0_8px_rgba(74,64,224,0.5)]"></div>
+</div>
+</div>
+<div class="glass-card p-8 rounded-xxl border border-slate-200/10 shadow-sm bg-gradient-to-br from-tertiary/10 to-transparent">
+<p class="text-slate-500 font-medium mb-1">Mentors</p>
+<h5 class="text-4xl font-manrope font-extrabold text-tertiary tracking-tighter">450+</h5>
+<p class="text-xs text-slate-400 mt-2">World-class educators</p>
+</div>
+</section>
+</div>
+</main>
+</body></html>

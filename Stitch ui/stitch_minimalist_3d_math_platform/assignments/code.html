@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Assignments | The Mathematical Sanctuary</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;500;600;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-tint": "#4a40e0",
+                      "surface-container": "#e5e9eb",
+                      "primary-container": "#9795ff",
+                      "on-error": "#ffefef",
+                      "tertiary-dim": "#892a65",
+                      "secondary-fixed-dim": "#d0b8ff",
+                      "primary-fixed": "#9795ff",
+                      "primary-dim": "#3d30d4",
+                      "surface-dim": "#d0d5d8",
+                      "on-background": "#2c2f31",
+                      "secondary-container": "#dcc9ff",
+                      "surface-container-highest": "#d9dde0",
+                      "surface-container-high": "#dfe3e6",
+                      "primary": "#4a40e0",
+                      "on-error-container": "#510017",
+                      "outline-variant": "#abadaf",
+                      "on-surface": "#2c2f31",
+                      "on-primary-fixed": "#000000",
+                      "secondary": "#702ae1",
+                      "surface-container-lowest": "#ffffff",
+                      "error-dim": "#a70138",
+                      "on-tertiary-fixed": "#360024",
+                      "on-tertiary-fixed-variant": "#6d104e",
+                      "background": "#f5f7f9",
+                      "tertiary-container": "#fd8bca",
+                      "surface-variant": "#d9dde0",
+                      "on-tertiary": "#ffeff4",
+                      "inverse-primary": "#8582ff",
+                      "error-container": "#f74b6d",
+                      "tertiary-fixed-dim": "#ee7ebc",
+                      "error": "#b41340",
+                      "surface-container-low": "#eef1f3",
+                      "on-secondary-fixed": "#430097",
+                      "inverse-surface": "#0b0f10",
+                      "on-tertiary-container": "#610244",
+                      "on-secondary-fixed-variant": "#6514d6",
+                      "inverse-on-surface": "#9a9d9f",
+                      "surface": "#f5f7f9",
+                      "outline": "#747779",
+                      "on-primary-container": "#14007e",
+                      "tertiary-fixed": "#fd8bca",
+                      "secondary-dim": "#6411d5",
+                      "secondary-fixed": "#dcc9ff",
+                      "on-primary-fixed-variant": "#1a0099",
+                      "on-surface-variant": "#595c5e",
+                      "on-secondary-container": "#5b00c7",
+                      "tertiary": "#983772",
+                      "surface-bright": "#f5f7f9",
+                      "on-primary": "#f4f1ff",
+                      "on-secondary": "#f8f0ff",
+                      "primary-fixed-dim": "#8885ff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "1.5rem",
+                      "full": "9999px"
+              },
+              "fontFamily": {
+                      "headline": ["Manrope"],
+                      "body": ["Inter"],
+                      "label": ["Inter"]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .gradient-btn {
+            background: linear-gradient(135deg, #4a40e0 0%, #9795ff 100%);
+        }
+        .ethereal-bg {
+            background-image: radial-gradient(at 0% 0%, rgba(151, 149, 255, 0.1) 0, transparent 50%), 
+                              radial-gradient(at 100% 100%, rgba(74, 64, 224, 0.05) 0, transparent 50%);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface selection:bg-primary-container/30">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 bg-slate-50/80 backdrop-blur-xl shadow-sm">
+<div class="flex justify-between items-center h-16 px-6 md:px-12 w-full max-w-screen-2xl mx-auto">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold tracking-tighter text-slate-900">The Mathematical Sanctuary</span>
+<nav class="hidden md:flex gap-6 font-manrope text-sm tracking-tight">
+<a class="text-slate-600 font-medium hover:text-indigo-500 transition-colors" href="#">Curriculum</a>
+<a class="text-slate-600 font-medium hover:text-indigo-500 transition-colors" href="#">Study Space</a>
+<a class="text-slate-600 font-medium hover:text-indigo-500 transition-colors" href="#">Progress</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-sm">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-full text-xs w-64 focus:ring-2 focus:ring-primary/20" placeholder="Search resources..." type="text"/>
+</div>
+<button class="p-2 text-slate-600 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-slate-600 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<img alt="Student avatar" class="w-8 h-8 rounded-full object-cover" data-alt="Close-up portrait of a young male student with a thoughtful expression in a bright, modern library setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCmQUCxq1DVXlaphl19sbmg5vXMv3dMmNw6XNDY1iyFSdWoV3Vsbc-poh_jRFS2e-VUy64RBvi3aoVa23X8oPkU-qv-6hvt4XfzenzG2ykV-BPBao05TI6O_An8xGggytWyaJXnRmnMkEL4DtbOXOBWq5SMjigw6RbHHkpChUcls9xdwl2KuEj2KZAID_MozRVa1id6xiJZv3ULDQeg3AcbU-zYAOOXoGjIJNqaIeRDl_XMAAfioqgU1jBwkmKT5thPat7UwVJXti0"/>
+</div>
+</div>
+</header>
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full w-64 hidden lg:flex flex-col bg-slate-50 border-r border-slate-200/20 pt-20 z-40">
+<div class="p-6 flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-primary-container flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">account_circle</span>
+</div>
+<div>
+<h3 class="font-headline font-bold text-slate-900 leading-tight">Alex Morgan</h3>
+<p class="text-xs text-slate-500">Calculus II</p>
+</div>
+</div>
+<nav class="p-4 space-y-2 flex-grow">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-100 hover:text-indigo-500 rounded-xl transition-all group" href="#">
+<span class="material-symbols-outlined group-active:scale-95 duration-150">dashboard</span>
+<span class="font-manrope text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-white text-indigo-600 font-bold shadow-sm rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined">assignment</span>
+<span class="font-manrope text-sm">Assignments</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-100 hover:text-indigo-500 rounded-xl transition-all group" href="#">
+<span class="material-symbols-outlined group-active:scale-95 duration-150">library_books</span>
+<span class="font-manrope text-sm font-medium">Resources</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-100 hover:text-indigo-500 rounded-xl transition-all group" href="#">
+<span class="material-symbols-outlined group-active:scale-95 duration-150">functions</span>
+<span class="font-manrope text-sm font-medium">Formulas</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-100 hover:text-indigo-500 rounded-xl transition-all group" href="#">
+<span class="material-symbols-outlined group-active:scale-95 duration-150">help_center</span>
+<span class="font-manrope text-sm font-medium">Support</span>
+</a>
+</nav>
+<div class="p-6">
+<button class="w-full gradient-btn text-on-primary py-3 rounded-xl font-manrope font-bold text-sm shadow-lg shadow-primary/20 active:scale-95 transition-transform">
+                Start Practice
+            </button>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="lg:ml-64 pt-24 pb-24 px-6 md:px-12 min-h-screen ethereal-bg relative overflow-hidden">
+<!-- Decorative 3D Floating Objects (Subtle) -->
+<div class="absolute top-20 right-[-5%] w-96 h-96 opacity-20 pointer-events-none rotate-12">
+<img alt="3D Math Objects" class="w-full h-full object-contain" data-alt="Floating abstract 3D geometric shapes including a sphere, toroid, and pyramid in a soft matte finish with ethereal lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAG_EXLl1JLeARNKeQGix_cXUgY73uQ5N-CP4pWA15lqkGHDY39WG_chnxdRQQCZPNdncs5OYY4Gq3DOMfELIqgJXb-kKBN-ntBTkifvr-tki0WaQePOFcd8t8PwnJchN2FgVzbnw8l7nesC4wUlbAiR24xFsqpOSzfdPayAmdbj_Wk3DNV7Q0cFbqB2CoOz3rYLz8isYjxoG_rwV4eQgaEP4S0PUsoeBKBhmbI1E5_IgJpVnvgeyhjgv-e5xLKnE-xfYFTmwL-8ek"/>
+</div>
+<div class="absolute bottom-[-10%] left-[-5%] w-80 h-80 opacity-10 pointer-events-none -rotate-12 blur-sm">
+<img alt="3D Math Objects" class="w-full h-full object-contain" data-alt="Translucent 3D mathematical symbols and wireframe shapes floating in a clean white studio space" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD2lcwp5DdrRvXdh2X4LxQtUGfDD1SG8vmx3nlz8UAr9rCfGKGx_4r1lAsCnzt57zd3H9KQ45UdLLvdWW0Hbnt5SO0qxU27im8gBVyFg0vOKsDxZV4kp_tXeqIAUYjGWK4WNiXGMD6XSQ_hAmlTeAdtOrhkF_t3e2KQCzWJZZnNYGsSJv7awSAEjQGQQiDBiojX307ZCU4nvNrPU_e4QuPFX-yInhDvpZcEmzvmqX8XQ9fPgWERzfT4_ilS29awwPIyIvdHqr9L9uE"/>
+</div>
+<div class="max-w-6xl mx-auto relative z-10">
+<!-- Header Section -->
+<div class="mb-12">
+<h1 class="text-4xl md:text-5xl font-headline font-extrabold tracking-tighter text-on-surface mb-3">Assignments</h1>
+<p class="text-on-surface-variant max-w-2xl text-lg font-light leading-relaxed">
+                    Track your problem sets and laboratory reports. Review faculty feedback and upload your completed solutions in PDF format.
+                </p>
+</div>
+<!-- Bento Layout Concept: Stats Bar -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+<div class="glass-panel p-6 rounded-xl border border-white/40 shadow-sm flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">pending_actions</span>
+</div>
+<div>
+<p class="text-xs text-on-surface-variant font-bold uppercase tracking-widest">To Do</p>
+<p class="text-2xl font-headline font-bold">04 Tasks</p>
+</div>
+</div>
+<div class="glass-panel p-6 rounded-xl border border-white/40 shadow-sm flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined">verified</span>
+</div>
+<div>
+<p class="text-xs text-on-surface-variant font-bold uppercase tracking-widest">Completed</p>
+<p class="text-2xl font-headline font-bold">12 Sets</p>
+</div>
+</div>
+<div class="glass-panel p-6 rounded-xl border border-white/40 shadow-sm flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-tertiary-container/20 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined">analytics</span>
+</div>
+<div>
+<p class="text-xs text-on-surface-variant font-bold uppercase tracking-widest">Current GPA</p>
+<p class="text-2xl font-headline font-bold">3.8 / 4.0</p>
+</div>
+</div>
+</div>
+<!-- Assignments Table -->
+<div class="glass-panel rounded-xl shadow-sm overflow-hidden border border-white/50">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low/50">
+<th class="px-8 py-5 text-xs font-bold text-on-surface-variant uppercase tracking-widest">Assignment Name</th>
+<th class="px-6 py-5 text-xs font-bold text-on-surface-variant uppercase tracking-widest">Material</th>
+<th class="px-6 py-5 text-xs font-bold text-on-surface-variant uppercase tracking-widest">Submission</th>
+<th class="px-8 py-5 text-xs font-bold text-on-surface-variant uppercase tracking-widest text-right">Grade</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100/30">
+<!-- Row 1 -->
+<tr class="hover:bg-white/40 transition-colors group">
+<td class="px-8 py-6">
+<div class="flex items-center gap-4">
+<div class="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(74,64,224,0.4)]"></div>
+<div>
+<p class="font-manrope font-bold text-on-surface">Multivariable Calculus Set 1</p>
+<p class="text-xs text-on-surface-variant">Due Oct 24, 2023</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-6">
+<button class="gradient-btn text-white text-xs font-bold py-2.5 px-5 rounded-full flex items-center gap-2 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                                        Download PDF
+                                    </button>
+</td>
+<td class="px-6 py-6">
+<button class="bg-surface-container-high text-primary text-xs font-bold py-2.5 px-5 rounded-full border border-primary/20 flex items-center gap-2 hover:bg-primary/5 transition-colors">
+<span class="material-symbols-outlined text-[18px]">upload</span>
+                                        Upload Solution
+                                    </button>
+</td>
+<td class="px-8 py-6 text-right">
+<span class="bg-primary/5 text-primary px-4 py-1.5 rounded-full text-sm font-bold">95/100</span>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-white/40 transition-colors group">
+<td class="px-8 py-6">
+<div class="flex items-center gap-4">
+<div class="w-2 h-2 rounded-full bg-slate-300"></div>
+<div>
+<p class="font-manrope font-bold text-on-surface">Linear Transformations</p>
+<p class="text-xs text-on-surface-variant">Due Nov 02, 2023</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-6">
+<button class="gradient-btn text-white text-xs font-bold py-2.5 px-5 rounded-full flex items-center gap-2 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                                        Download PDF
+                                    </button>
+</td>
+<td class="px-6 py-6">
+<button class="bg-surface-container-high text-primary text-xs font-bold py-2.5 px-5 rounded-full border border-primary/20 flex items-center gap-2 hover:bg-primary/5 transition-colors">
+<span class="material-symbols-outlined text-[18px]">upload</span>
+                                        Upload Solution
+                                    </button>
+</td>
+<td class="px-8 py-6 text-right">
+<span class="bg-amber-100 text-amber-700 px-4 py-1.5 rounded-full text-sm font-bold">Pending</span>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-white/40 transition-colors group">
+<td class="px-8 py-6">
+<div class="flex items-center gap-4">
+<div class="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(74,64,224,0.4)]"></div>
+<div>
+<p class="font-manrope font-bold text-on-surface">Riemann Sum Integrals</p>
+<p class="text-xs text-on-surface-variant">Due Nov 08, 2023</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-6">
+<button class="gradient-btn text-white text-xs font-bold py-2.5 px-5 rounded-full flex items-center gap-2 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                                        Download PDF
+                                    </button>
+</td>
+<td class="px-6 py-6">
+<button class="bg-surface-container-high text-primary text-xs font-bold py-2.5 px-5 rounded-full border border-primary/20 flex items-center gap-2 hover:bg-primary/5 transition-colors">
+<span class="material-symbols-outlined text-[18px]">upload</span>
+                                        Upload Solution
+                                    </button>
+</td>
+<td class="px-8 py-6 text-right">
+<span class="bg-slate-100 text-slate-400 px-4 py-1.5 rounded-full text-sm font-bold">-- / 100</span>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-white/40 transition-colors group">
+<td class="px-8 py-6">
+<div class="flex items-center gap-4">
+<div class="w-2 h-2 rounded-full bg-slate-300"></div>
+<div>
+<p class="font-manrope font-bold text-on-surface">Vector Field Visualizations</p>
+<p class="text-xs text-on-surface-variant">Due Nov 15, 2023</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-6">
+<button class="gradient-btn text-white text-xs font-bold py-2.5 px-5 rounded-full flex items-center gap-2 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                                        Download PDF
+                                    </button>
+</td>
+<td class="px-6 py-6">
+<button class="bg-surface-container-high text-primary text-xs font-bold py-2.5 px-5 rounded-full border border-primary/20 flex items-center gap-2 hover:bg-primary/5 transition-colors">
+<span class="material-symbols-outlined text-[18px]">upload</span>
+                                        Upload Solution
+                                    </button>
+</td>
+<td class="px-8 py-6 text-right">
+<span class="bg-primary/5 text-primary px-4 py-1.5 rounded-full text-sm font-bold">88/100</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Contextual Help / Info Section -->
+<div class="mt-8 flex flex-col md:flex-row gap-6">
+<div class="flex-1 glass-panel p-8 rounded-xl border border-white/30 flex gap-6">
+<div class="shrink-0">
+<span class="material-symbols-outlined text-primary text-4xl">info_spark</span>
+</div>
+<div>
+<h4 class="font-headline font-bold text-lg mb-2">Late Policy</h4>
+<p class="text-sm text-on-surface-variant leading-relaxed">
+                            Submissions received after the deadline will incur a 5% reduction in grade per day. Please contact Support for extension requests.
+                        </p>
+</div>
+</div>
+<div class="flex-1 glass-panel p-8 rounded-xl border border-white/30 flex gap-6">
+<div class="shrink-0">
+<span class="material-symbols-outlined text-secondary text-4xl">auto_fix_high</span>
+</div>
+<div>
+<h4 class="font-headline font-bold text-lg mb-2">AI Feedback</h4>
+<p class="text-sm text-on-surface-variant leading-relaxed">
+                            Our sanctuary's predictive engine analyzes your submissions to suggest personalized study formulas. Check the Formulas tab after grading.
+                        </p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile) -->
+<nav class="fixed bottom-0 w-full z-50 lg:hidden rounded-t-3xl bg-slate-50/90 backdrop-blur-md border-t border-slate-200/30 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
+<div class="flex justify-around items-center h-20 px-4 pb-safe">
+<a class="flex flex-col items-center justify-center text-slate-400 px-5 py-2" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-manrope text-[10px] font-semibold uppercase tracking-widest mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-indigo-50 text-indigo-700 rounded-2xl px-5 py-2 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">task_alt</span>
+<span class="font-manrope text-[10px] font-semibold uppercase tracking-widest mt-1">Tasks</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 px-5 py-2" href="#">
+<span class="material-symbols-outlined">menu_book</span>
+<span class="font-manrope text-[10px] font-semibold uppercase tracking-widest mt-1">Vault</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 px-5 py-2" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-manrope text-[10px] font-semibold uppercase tracking-widest mt-1">Me</span>
+</a>
+</div>
+</nav>
+</body></html>
