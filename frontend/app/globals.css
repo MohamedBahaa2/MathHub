@@ -1,0 +1,100 @@
+@import "tailwindcss";
+
+/* ===== Tailwind v4 Theme: MathHub Brand Colors ===== */
+@theme inline {
+  /* Primary — Warm Rust */
+  --color-primary: #903311;
+  --color-primary-hover: #7A2B0E;
+  --color-primary-light: rgba(144, 51, 17, 0.10);
+  --color-primary-xlight: rgba(144, 51, 17, 0.05);
+  --color-primary-container: #B84A1C;
+
+  /* Secondary — Deep Teal */
+  --color-secondary: #285474;
+  --color-secondary-hover: #1E4460;
+  --color-secondary-light: rgba(40, 84, 116, 0.10);
+  --color-secondary-xlight: rgba(40, 84, 116, 0.05);
+  --color-secondary-container: #3A6E94;
+
+  /* Surfaces */
+  --color-surface: #E1E4E4;
+  --color-surface-low: #EAEDED;
+  --color-surface-lowest: #FFFFFF;
+  --color-surface-high: #D4D8D8;
+  --color-surface-highest: #C8CCCC;
+
+  /* Text */
+  --color-ink: #1A1A1A;
+  --color-ink-muted: #858585;
+  --color-ink-on-primary: #FFFFFF;
+  --color-ink-on-dark: #E1E4E4;
+
+  /* Utility */
+  --color-danger: #C62828;
+  --color-danger-light: rgba(198, 40, 40, 0.10);
+  --color-warning: #E6A817;
+  --color-warning-light: rgba(230, 168, 23, 0.12);
+
+  /* Fonts */
+  --font-headline: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+  --font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+  /* Shadows */
+  --shadow-glass: 0 2px 8px rgba(26, 26, 26, 0.04);
+  --shadow-card: 0 4px 16px rgba(26, 26, 26, 0.06);
+  --shadow-elevated: 0 8px 32px rgba(26, 26, 26, 0.06);
+  --shadow-primary: 0 8px 24px rgba(144, 51, 17, 0.20);
+  --shadow-teal: 0 8px 24px rgba(40, 84, 116, 0.20);
+}
+
+/* ===== Base Styles ===== */
+body {
+  font-family: var(--font-body);
+  background: var(--color-surface);
+  color: var(--color-ink);
+}
+
+::selection {
+  background: var(--color-primary-light);
+}
+
+/* ===== Glass Card Utility ===== */
+.glass {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* ===== Animations ===== */
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse-live {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.5; }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  opacity: 0;
+}
+
+.animate-pulse-live {
+  animation: pulse-live 2s ease-in-out infinite;
+}
+
+/* Stagger children */
+.stagger > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger > *:nth-child(2) { animation-delay: 0.10s; }
+.stagger > *:nth-child(3) { animation-delay: 0.15s; }
+.stagger > *:nth-child(4) { animation-delay: 0.20s; }
+.stagger > *:nth-child(5) { animation-delay: 0.25s; }
+.stagger > *:nth-child(6) { animation-delay: 0.30s; }
+
+/* ===== Custom Scrollbar ===== */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-surface-high); border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-ink-muted); }
