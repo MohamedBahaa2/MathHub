@@ -1,29 +1,118 @@
+"use client";
+
+import { useState } from "react";
+
+const MOCK_NOTIFICATIONS = [
+  { id: 1, icon: "live_tv", message: "Session is now live: Calculus I — Limits", time: "2 min ago", read: false },
+  { id: 2, icon: "grade", message: "Assignment graded: Riemann Sum Integrals — 95/100", time: "1 hour ago", read: false },
+  { id: 3, icon: "play_circle", message: "Recording available: Linear Algebra — Eigenvalues", time: "Yesterday", read: true },
+  { id: 4, icon: "payments", message: "Subscription renews in 3 days", time: "Yesterday", read: true },
+];
+
 export default function Topbar() {
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [notifications, setNotifications] = useState(MOCK_NOTIFICATIONS);
+
+  const unreadCount = notifications.filter((n) => !n.read).length;
+
+  function markAllRead() {
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+  }
+
   return (
     <header className="fixed top-0 left-[260px] right-0 h-16 bg-surface-low/85 backdrop-blur-xl flex items-center justify-between px-8 z-30 shadow-glass max-md:left-0">
       {/* Mobile menu button */}
-      <button className="hidden max-md:flex w-10 h-10 items-center justify-center rounded-full text-ink-muted hover:bg-primary-xlight hover:text-primary transition-colors" aria-label="Toggle menu">
+      <button
+        className="hidden max-md:flex w-10 h-10 items-center justify-center rounded-full text-ink-muted hover:bg-primary-xlight hover:text-primary transition-colors"
+        aria-label="Toggle menu"
+      >
         <span className="material-symbols-outlined">menu</span>
       </button>
 
       {/* Search */}
       <div className="relative w-80 max-md:w-auto max-md:flex-1 max-md:mx-4">
-        <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted text-lg">search</span>
+        <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted text-lg">
+          search
+        </span>
         <input
           type="text"
           placeholder="Search topics, lessons..."
-          className="w-full py-2 pl-10 pr-4 bg-surface-low rounded-full text-sm text-ink placeholder:text-ink-muted focus:bg-surface-lowest focus:ring-3 focus:ring-primary-light outline-none transition-all"
+          className="w-full py-2 pl-10 pr-4 bg-surface-low rounded-full text-sm text-ink placeholder:text-ink-muted focus:bg-surface-lowest focus:ring-2 focus:ring-primary-light outline-none transition-all"
         />
       </div>
 
       {/* Actions */}
-      <div className="flex items-center gap-4">
-        <button className="w-10 h-10 flex items-center justify-center rounded-full text-ink-muted hover:bg-primary-xlight hover:text-primary transition-colors" aria-label="Notifications">
-          <span className="material-symbols-outlined">notifications</span>
-        </button>
-        <button className="w-10 h-10 flex items-center justify-center rounded-full text-ink-muted hover:bg-primary-xlight hover:text-primary transition-colors" aria-label="Settings">
+      <div className="flex items-center gap-4 relative">
+        {/* Bell */}
+        <div className="relative">
+          <button
+            onClick={() => setNotifOpen((v) => !v)}
+            className="w-10 h-10 flex items-center justify-center rounded-full text-ink-muted hover:bg-primary-xlight hover:text-primary transition-colors"
+            aria-label="Notifications"
+          >
+            <span className="material-symbols-outlined">notifications</span>
+            {unreadCount > 0 && (
+              <span className="absolute top-1 right-1 w-4 h-4 bg-primary text-ink-on-primary text-[0.55rem] font-extrabold rounded-full flex items-center justify-center">
+                {unreadCount}
+              </span>
+            )}
+          </button>
+
+          {/* Dropdown */}
+          {notifOpen && (
+            <div className="absolute right-0 top-12 w-[340px] glass rounded-2xl shadow-elevated border border-surface-high overflow-hidden z-50 animate-fade-in-up">
+              {/* Header */}
+              <div className="flex items-center justify-between px-5 py-4 border-b border-surface-high">
+                <h4 className="font-headline font-bold text-sm">Notifications</h4>
+                <button
+                  onClick={markAllRead}
+                  className="text-xs text-secondary font-semibold hover:opacity-70 transition-opacity"
+                >
+                  Mark all read
+                </button>
+              </div>
+
+              {/* List */}
+              <div className="max-h-[340px] overflow-y-auto">
+                {notifications.map((n) => (
+                  <div
+                    key={n.id}
+                    className={`flex items-start gap-3 px-5 py-4 border-b border-surface-high/60 hover:bg-white/40 transition-colors ${
+                      !n.read ? "bg-primary-xlight border-l-2 border-l-primary" : ""
+                    }`}
+                  >
+                    <div className="w-8 h-8 rounded-full bg-primary-light text-primary flex items-center justify-center shrink-0">
+                      <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>
+                        {n.icon}
+                      </span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[0.8125rem] font-medium leading-snug">{n.message}</p>
+                      <span className="text-xs text-ink-muted mt-0.5 block">{n.time}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Footer */}
+              <div className="px-5 py-3 text-center">
+                <a href="#" className="text-xs font-bold text-secondary hover:opacity-70 transition-opacity">
+                  View all notifications →
+                </a>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Settings */}
+        <button
+          className="w-10 h-10 flex items-center justify-center rounded-full text-ink-muted hover:bg-primary-xlight hover:text-primary transition-colors"
+          aria-label="Settings"
+        >
           <span className="material-symbols-outlined">settings</span>
         </button>
+
+        {/* Avatar */}
         <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-ink-on-primary text-sm font-bold ring-2 ring-primary-light">
           A
         </div>

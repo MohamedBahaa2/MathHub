@@ -1,6 +1,6 @@
 export const metadata = {
   title: "MathHub — Dashboard",
-  description: "Track your mathematical journey, active modules, and daily challenges.",
+  description: "Track your mathematical journey, active modules, and daily challenges."
 };
 
 export default function DashboardPage() {
@@ -49,7 +49,7 @@ export default function DashboardPage() {
           <div className="w-full h-1.5 bg-surface-high rounded-full overflow-hidden">
             <div className="h-full bg-secondary rounded-full transition-all duration-500" style={{ width: "30%" }} />
           </div>
-          <p className="mt-4 text-sm text-ink-muted">Next: <strong className="text-ink">Eigenvalues & Vectors</strong> · 45 mins</p>
+          <p className="mt-4 text-sm text-ink-muted">Next: <strong className="text-ink">Eigenvalues &amp; Vectors</strong> · 45 mins</p>
         </div>
       </div>
 
@@ -62,7 +62,7 @@ export default function DashboardPage() {
             Daily Challenge
           </div>
           <h2 className="font-headline text-2xl lg:text-[1.75rem] font-extrabold text-white leading-tight mb-3">
-            The Riemann Hypothesis<br />Shortcut?
+            The Riemann Hypothesis<br/>Shortcut?
           </h2>
           <p className="text-white/70 text-[0.9375rem] max-w-[400px] leading-relaxed mb-8">
             Solve the partial differential equation for the flow of a frictionless fluid in a three-dimensional pipe.
@@ -89,11 +89,25 @@ export default function DashboardPage() {
               <h3 className="font-headline text-lg font-bold">Recent Activity</h3>
             </div>
             <div className="flex flex-col gap-5">
-              {[
-                { icon: "check_circle", color: "primary", title: 'Completed "Limits at Infinity"', desc: "Earned 150 Mastery Points in Calculus I", time: "2 hours ago" },
-                { icon: "lock_open", color: "secondary", title: "New Lesson Unlocked", desc: "Matrix Transformations available in Linear Algebra", time: "5 hours ago" },
-                { icon: "emoji_events", color: "warning", title: 'Achieved "Vector Voyager"', desc: "Solved 10 consecutive matrix problems without error", time: "Yesterday" },
-              ].map((item, i) => (
+              {[{
+                icon: "check_circle",
+                color: "primary",
+                title: 'Completed "Limits at Infinity"',
+                desc: "Earned 150 Mastery Points in Calculus I",
+                time: "2 hours ago"
+              }, {
+                icon: "lock_open",
+                color: "secondary",
+                title: "New Lesson Unlocked",
+                desc: "Matrix Transformations available in Linear Algebra",
+                time: "5 hours ago"
+              }, {
+                icon: "emoji_events",
+                color: "warning",
+                title: 'Achieved "Vector Voyager"',
+                desc: "Solved 10 consecutive matrix problems without error",
+                time: "Yesterday"
+              }].map((item, i) => (
                 <div key={i} className="flex gap-4">
                   <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${
                     item.color === "primary" ? "bg-primary-light text-primary" :
@@ -117,10 +131,7 @@ export default function DashboardPage() {
 
           {/* Quick Actions */}
           <div className="grid grid-cols-2 gap-4">
-            {[
-              { icon: "calculate", label: "Solver" },
-              { icon: "draw", label: "Whiteboard" },
-            ].map((tile) => (
+            {[{ icon: "calculate", label: "Solver" }, { icon: "draw", label: "Whiteboard" }].map((tile) => (
               <div key={tile.label} className="glass rounded-2xl p-5 flex flex-col items-center gap-3 shadow-glass cursor-pointer hover:shadow-card hover:-translate-y-1 transition-all duration-300">
                 <span className="material-symbols-outlined text-3xl text-ink-muted">{tile.icon}</span>
                 <span className="text-sm font-semibold">{tile.label}</span>
