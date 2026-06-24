@@ -2,10 +2,10 @@
 import { useState } from "react";
 
 const SESSIONS = [
-  { id: "1", title: "Calculus I — Limits & Continuity", date: "June 28, 2025", status: "UPCOMING", enrolled: 18, zoomLink: "" },
-  { id: "2", title: "Linear Algebra — Eigenvalues", date: "June 23, 2025", status: "LIVE", enrolled: 22, zoomLink: "https://zoom.us/j/123456" },
-  { id: "3", title: "Calculus II — Integration", date: "June 18, 2025", status: "RECORDING", enrolled: 20, zoomLink: "" },
-  { id: "4", title: "Differential Equations", date: "June 15, 2025", status: "ENDED", enrolled: 19, zoomLink: "" },
+  { id: "1", title: "Calculus I — Limits & Continuity", date: "June 28, 2025", status: "UPCOMING", enrolled: 18, zoomLink: "", pricing: { type: "course", course: "Calculus I", sessionPrice: 12, coursePrice: 45 } },
+  { id: "2", title: "Linear Algebra — Eigenvalues", date: "June 23, 2025", status: "LIVE", enrolled: 22, zoomLink: "https://zoom.us/j/123456", pricing: { type: "session", price: 15 } },
+  { id: "3", title: "Calculus II — Integration", date: "June 18, 2025", status: "RECORDING", enrolled: 20, zoomLink: "", pricing: { type: "course", course: "Calculus I", sessionPrice: 12, coursePrice: 45 } },
+  { id: "4", title: "Differential Equations", date: "June 15, 2025", status: "ENDED", enrolled: 19, zoomLink: "", pricing: { type: "session", price: 18 } },
 ];
 
 const STATES = ["UPCOMING", "LIVE", "ENDED", "RECORDING"];
@@ -16,10 +16,16 @@ const STATUS_COLORS = {
   RECORDING: "bg-secondary-light text-secondary",
 };
 
+const PRICING_TYPE_LABELS = {
+  session: { label: "Per Session", color: "bg-primary-light text-primary" },
+  course: { label: "Course Bundle", color: "bg-secondary-light text-secondary" },
+};
+
 export default function AdminSessionsPage() {
   const [sessions, setSessions] = useState(SESSIONS);
   const [showModal, setShowModal] = useState(false);
   const [editSession, setEditSession] = useState(null);
+  const [pricingType, setPricingType] = useState("session");
 
   function advance(id) {
     setSessions(prev => prev.map(s => {
@@ -52,7 +58,16 @@ export default function AdminSessionsPage() {
                 <tr key={s.id} className="hover:bg-white/50 transition-colors border-t border-surface-high/50">
                   <td className="px-6 py-4 font-headline font-bold text-sm">{s.title}</td>
                   <td className="px-6 py-4 text-sm text-ink-muted">{s.date}</td>
-                  <td className="px-6 py-4"><span className={`px-3 py-1 rounded-full text-xs font-bold ${STATUS_COLORS[s.status]}`}>{s.status}</span></td>
+                  <td className="px-6 py-4">
+                    <div className="flex flex-col gap-1">
+                      <span className={`w-fit px-3 py-1 rounded-full text-xs font-bold ${STATUS_COLORS[s.status]}`}>{s.status}</span>
+                      {s.pricing && (
+                        <span className={`w-fit px-2 py-0.5 rounded-full text-[0.625rem] font-bold ${PRICING_TYPE_LABELS[s.pricing.type].color}`}>
+                          {s.pricing.type === "course" ? `Course: ${s.pricing.course}` : `$${s.pricing.price}/session`}
+                        </span>
+                      )}
+                    </div>
+                  </td>
                   <td className="px-6 py-4 text-sm font-semibold">{s.enrolled} students</td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
@@ -90,16 +105,50 @@ export default function AdminSessionsPage() {
                 <label className="text-xs font-bold uppercase tracking-wide text-ink-muted block mb-1.5">Title</label>
                 <input type="text" defaultValue={editSession?.title} className="w-full px-4 py-3 bg-surface-low rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-light" />
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-xs font-bold uppercase tracking-wide text-ink-muted block mb-1.5">Date</label>
-                  <input type="datetime-local" className="w-full px-4 py-3 bg-surface-low rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-light" />
-                </div>
-                <div>
-                  <label className="text-xs font-bold uppercase tracking-wide text-ink-muted block mb-1.5">Price (USD)</label>
-                  <input type="number" placeholder="0 for free" className="w-full px-4 py-3 bg-surface-low rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-light" />
+              <div>
+                <label className="text-xs font-bold uppercase tracking-wide text-ink-muted block mb-1.5">Date</label>
+                <input type="datetime-local" className="w-full px-4 py-3 bg-surface-low rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-light" />
+              </div>
+              <div>
+                <label className="text-xs font-bold uppercase tracking-wide text-ink-muted block mb-2">Pricing Type</label>
+                <div className="flex gap-3">
+                  {["session", "course"].map(pt => (
+                    <button
+                      key={pt}
+                      type="button"
+                      onClick={() => setPricingType(pt)}
+                      className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition-all ${pricingType === pt ? (pt === "session" ? "bg-primary text-white" : "bg-secondary text-white") : "bg-surface-low text-ink-muted hover:bg-surface-high"}`}
+                    >
+                      {pt === "session" ? "Per Session" : "Course Bundle"}
+                    </button>
+                  ))}
                 </div>
               </div>
+              {pricingType === "session" && (
+                <div>
+                  <label className="text-xs font-bold uppercase tracking-wide text-ink-muted block mb-1.5">Session Price (USD)</label>
+                  <input type="number" placeholder="e.g. 15" defaultValue={editSession?.pricing?.price} className="w-full px-4 py-3 bg-surface-low rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-light" />
+                </div>
+              )}
+              {pricingType === "course" && (
+                <div className="flex flex-col gap-3">
+                  <div>
+                    <label className="text-xs font-bold uppercase tracking-wide text-ink-muted block mb-1.5">Course Name</label>
+                    <input type="text" placeholder="e.g. Calculus I" defaultValue={editSession?.pricing?.course} className="w-full px-4 py-3 bg-surface-low rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-light" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-xs font-bold uppercase tracking-wide text-ink-muted block mb-1.5">Per-Session Price</label>
+                      <input type="number" placeholder="e.g. 12" defaultValue={editSession?.pricing?.sessionPrice} className="w-full px-4 py-3 bg-surface-low rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-light" />
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold uppercase tracking-wide text-ink-muted block mb-1.5">Full Course Price</label>
+                      <input type="number" placeholder="e.g. 45" defaultValue={editSession?.pricing?.coursePrice} className="w-full px-4 py-3 bg-surface-low rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-light" />
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <div>
                 <label className="text-xs font-bold uppercase tracking-wide text-ink-muted block mb-1.5">Zoom Live Link</label>
                 <input type="url" placeholder="https://zoom.us/j/..." defaultValue={editSession?.zoomLink} className="w-full px-4 py-3 bg-surface-low rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-light" />
