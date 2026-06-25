@@ -15,12 +15,15 @@ export async function autoGradeAttempt(attemptId: string): Promise<void> {
   const attempt = await prisma.quizAttempt.findUniqueOrThrow({
     where: { id: attemptId },
     include: {
-      answers: {
+      quiz: {
         include: {
-          question: { include: { choices: true } },
-          choice: true,
+          questions: {
+            orderBy: { order: "asc" },
+            include: { choices: true },
+          },
         },
       },
+      answers: { include: { choice: true } },
     },
   });
 
@@ -30,9 +33,10 @@ export async function autoGradeAttempt(attemptId: string): Promise<void> {
 
   const updates: Array<Promise<unknown>> = [];
 
-  for (const answer of attempt.answers) {
-    const q = answer.question;
+  for (const q of attempt.quiz.questions) {
+    const answer = attempt.answers.find((item) => item.questionId === q.id);
     maxScore += q.points;
+    if (!answer) continue;
 
     if (q.type === QuestionType.MULTIPLE_CHOICE) {
       const isCorrect = answer.choice?.isCorrect ?? false;

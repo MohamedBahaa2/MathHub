@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { Role, SessionStatus, PricingType, NotificationType } from "@prisma/client";
+import { Role, SessionStatus, PricingType, NotificationType, PaymentStatus } from "@prisma/client";
 import { z } from "zod";
 import { prisma } from "../config/database";
 import { asyncHandler } from "../utils/async-handler";
@@ -12,6 +12,7 @@ import { audit } from "../services/audit.service";
 import { encryptZoomUrl, decryptZoomUrl } from "../services/zoom.service";
 import { signShortToken } from "../services/token.service";
 import { createBulkNotifications } from "../services/notification.service";
+import { assertEnrolled } from "../services/access.service";
 
 const router = Router();
 router.use(authenticate);
@@ -53,7 +54,13 @@ router.get("/", asyncHandler(async (req, res) => {
 
   // For students/parents — show only sessions they're enrolled in
   const enrollments = await prisma.enrollment.findMany({
-    where: { userId: user.id },
+    where: {
+      userId: user.id,
+      OR: [
+        { payment: { is: null } },
+        { payment: { is: { status: PaymentStatus.PAID } } },
+      ],
+    },
     select: { sessionId: true, courseId: true },
   });
   const sessionIds = enrollments.flatMap((e) => (e.sessionId ? [e.sessionId] : []));
@@ -74,6 +81,12 @@ router.get("/", asyncHandler(async (req, res) => {
 
 // GET /api/sessions/:id
 router.get("/:id", validate(z.object({ params: z.object({ id: z.string().min(1) }) })), asyncHandler(async (req, res) => {
+  const user = req.user!;
+  const isAdmin = user.role === Role.SUPERADMIN || user.role === Role.ASSISTANT;
+  if (!isAdmin) {
+    if (user.role !== Role.STUDENT) throw new AppError(403, "Access denied", "FORBIDDEN");
+    await assertEnrolled(user.id, req.params.id as string);
+  }
   const session = await prisma.session.findUnique({
     where: { id: req.params.id as string },
     include: { course: { select: { id: true, name: true } }, _count: { select: { enrollments: true } } },

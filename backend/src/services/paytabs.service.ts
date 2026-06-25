@@ -1,4 +1,5 @@
 import crypto from "node:crypto";
+import net from "node:net";
 import { env } from "../config/env";
 import { AppError } from "../utils/app-error";
 
@@ -24,6 +25,26 @@ export const PAYTABS_IPS = [
   "176.31.199.232",
   "54.246.175.116",
 ];
+
+function ipv4ToNumber(ip: string): number {
+  return ip.split(".").reduce((value, part) => ((value << 8) | Number(part)) >>> 0, 0);
+}
+
+export function isAllowedPayTabsIp(rawIp: string): boolean {
+  const ip = rawIp.replace(/^::ffff:/, "");
+  if (net.isIP(ip) !== 4) return false;
+
+  return PAYTABS_IPS.some((rule) => {
+    if (!rule.includes("/")) return ip === rule;
+    const [network, prefixText] = rule.split("/");
+    const prefix = Number(prefixText);
+    if (!network || net.isIP(network) !== 4 || !Number.isInteger(prefix) || prefix < 0 || prefix > 32) {
+      return false;
+    }
+    const mask = prefix === 0 ? 0 : (0xffffffff << (32 - prefix)) >>> 0;
+    return (ipv4ToNumber(ip) & mask) === (ipv4ToNumber(network) & mask);
+  });
+}
 
 function getBaseUrl(): string {
   const region = env.PAYTABS_REGION ?? "ARE";
@@ -101,11 +122,18 @@ export async function initiatePayment(opts: InitiatePaymentOptions): Promise<Ini
 }
 
 /** Verifies PayTabs webhook HMAC signature */
-export function verifyWebhookSignature(rawBody: Buffer, signatureHeader: string): boolean {
-  if (!env.PAYTABS_SERVER_KEY) return false;
+export function verifyHmacSha256(rawBody: Buffer, signatureHeader: string, secret: string): boolean {
   const expected = crypto
-    .createHmac("sha256", env.PAYTABS_SERVER_KEY)
+    .createHmac("sha256", secret)
     .update(rawBody)
     .digest("hex");
-  return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(signatureHeader));
+  const expectedBuffer = Buffer.from(expected, "utf8");
+  const signatureBuffer = Buffer.from(signatureHeader, "utf8");
+  return expectedBuffer.length === signatureBuffer.length &&
+    crypto.timingSafeEqual(expectedBuffer, signatureBuffer);
+}
+
+export function verifyWebhookSignature(rawBody: Buffer, signatureHeader: string): boolean {
+  if (!env.PAYTABS_SERVER_KEY) return false;
+  return verifyHmacSha256(rawBody, signatureHeader, env.PAYTABS_SERVER_KEY);
 }

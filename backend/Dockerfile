@@ -8,8 +8,8 @@ RUN npm ci --ignore-scripts
 COPY tsconfig*.json ./
 COPY src ./src
 COPY prisma ./prisma
-RUN npm run build
 RUN npx prisma generate
+RUN npm run build
 
 # ── Runtime Stage ─────────────────────────────────────────────────────────────
 FROM node:22-alpine AS runtime

@@ -12,7 +12,7 @@ export default function ForgotPasswordPage() {
             <span className="material-symbols-outlined text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>lock_reset</span>
           </div>
           <h1 className="font-headline text-2xl font-extrabold">Reset Password</h1>
-          <p className="text-ink-muted text-sm mt-1 text-center">Enter your email and we'll send a reset link</p>
+          <p className="text-ink-muted text-sm mt-1 text-center">Enter your email and we&apos;ll send a reset link</p>
         </div>
         {!sent ? (
           <div className="flex flex-col gap-4">

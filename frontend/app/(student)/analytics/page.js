@@ -22,12 +22,6 @@ export default function AnalyticsPage() {
     });
   }, []);
 
-  const topics = [
-    { name: "Sessions Enrolled", value: 100, color: "primary" },
-    { name: "Assignments Submitted", value: data ? Math.min(100, ((data.gradedSubs.length / Math.max(data.assignments.length, 1)) * 100).toFixed(0)) : 0, color: "secondary" },
-    { name: "Quizzes Available", value: data ? Math.min(100, data.quizList.length * 10) : 0, color: "danger" },
-  ];
-
   const avgGradeNum = parseFloat(data?.avgGrade ?? 0);
   const ringOffset = (502.6 * (1 - avgGradeNum / 100)).toFixed(1);
 
@@ -62,7 +56,11 @@ export default function AnalyticsPage() {
             </span>
             <span className="text-lg font-semibold text-ink-muted">Avg. Score</span>
           </div>
-          {data?.gradedSubs.length === 0 ? (
+          {!data ? (
+            <div className="text-center text-ink-muted py-8 bg-surface-low rounded-xl animate-pulse">
+              Loading performance…
+            </div>
+          ) : data.gradedSubs.length === 0 ? (
             <div className="text-center text-ink-muted py-8 bg-surface-low rounded-xl">
               <span className="material-symbols-outlined text-3xl block mb-2 opacity-30">assignment</span>
               <p className="font-semibold text-sm">No graded submissions yet</p>

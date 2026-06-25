@@ -1,6 +1,6 @@
 import path from "node:path";
 import { Router } from "express";
-import { Role, QuestionType } from "@prisma/client";
+import { PaymentStatus, Role, QuestionType } from "@prisma/client";
 import { z } from "zod";
 import multer from "multer";
 import { prisma } from "../config/database";
@@ -15,11 +15,26 @@ import { uploadFile, validateFile } from "../services/storage.service";
 import { createNotification } from "../services/notification.service";
 import { env } from "../config/env";
 import { NotificationType } from "@prisma/client";
+import { assertEnrolled } from "../services/access.service";
 
 const router = Router();
 router.use(authenticate);
 
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } });
+
+async function assertQuizAccess(user: { id: string; role: Role }, quizId: string) {
+  const quiz = await prisma.quiz.findUnique({
+    where: { id: quizId },
+    select: { id: true, sessionId: true, isPublished: true },
+  });
+  if (!quiz) throw new AppError(404, "Quiz not found", "NOT_FOUND");
+  if (user.role === Role.SUPERADMIN || user.role === Role.ASSISTANT) return quiz;
+  if (user.role !== Role.STUDENT || !quiz.isPublished) {
+    throw new AppError(403, "Access denied", "FORBIDDEN");
+  }
+  if (quiz.sessionId) await assertEnrolled(user.id, quiz.sessionId);
+  return quiz;
+}
 
 // ── Quiz CRUD ──────────────────────────────────────────
 
@@ -27,13 +42,41 @@ const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 
 router.get("/", asyncHandler(async (req, res) => {
   const user = req.user!;
   const isAdmin = user.role === Role.SUPERADMIN || user.role === Role.ASSISTANT;
-  const where = isAdmin ? {} : { isPublished: true };
+  if (!isAdmin && user.role !== Role.STUDENT) throw new AppError(403, "Access denied", "FORBIDDEN");
+  let where = {};
+  if (!isAdmin) {
+    const enrollments = await prisma.enrollment.findMany({
+      where: {
+        userId: user.id,
+        OR: [
+          { payment: { is: null } },
+          { payment: { is: { status: PaymentStatus.PAID } } },
+        ],
+      },
+      select: { sessionId: true, courseId: true },
+    });
+    const directSessionIds = enrollments.flatMap((e) => e.sessionId ? [e.sessionId] : []);
+    const courseIds = enrollments.flatMap((e) => e.courseId ? [e.courseId] : []);
+    const courseSessions = await prisma.session.findMany({
+      where: { courseId: { in: courseIds } },
+      select: { id: true },
+    });
+    const allowedSessionIds = [...new Set([...directSessionIds, ...courseSessions.map((s) => s.id)])];
+    where = {
+      isPublished: true,
+      OR: [{ sessionId: null }, { sessionId: { in: allowedSessionIds } }],
+    };
+  }
   const quizzes = await prisma.quiz.findMany({
     where,
     orderBy: { createdAt: "desc" },
     include: {
       session: { select: { id: true, title: true } },
       _count: { select: { questions: true, attempts: true } },
+      attempts: isAdmin ? false : {
+        where: { studentId: user.id },
+        select: { id: true, status: true, score: true, maxScore: true, submittedAt: true },
+      },
     },
   });
   res.json({ quizzes });
@@ -43,18 +86,43 @@ router.get("/", asyncHandler(async (req, res) => {
 router.get("/:id", validate(z.object({ params: z.object({ id: z.string().min(1) }) })), asyncHandler(async (req, res) => {
   const user = req.user!;
   const isAdmin = user.role === Role.SUPERADMIN || user.role === Role.ASSISTANT;
+  await assertQuizAccess(user, req.params.id as string);
   const quiz = await prisma.quiz.findUnique({
     where: { id: req.params.id as string },
     include: {
       questions: {
         orderBy: { order: "asc" },
-        include: {
+        select: {
+          id: true,
+          text: true,
+          mediaUrl: true,
+          type: true,
+          order: true,
+          points: true,
+          correctText: isAdmin,
           choices: {
             orderBy: { order: "asc" },
-            // Hide isCorrect from students
             select: {
               id: true, text: true, order: true,
-              isCorrect: isAdmin ? true : undefined,
+              isCorrect: isAdmin,
+            },
+          },
+        },
+      },
+      attempts: isAdmin ? false : {
+        where: { studentId: user.id },
+        select: {
+          id: true,
+          status: true,
+          score: true,
+          maxScore: true,
+          submittedAt: true,
+          answers: {
+            select: {
+              questionId: true,
+              choiceId: true,
+              textAnswer: true,
+              mediaUrl: true,
             },
           },
         },
@@ -62,7 +130,6 @@ router.get("/:id", validate(z.object({ params: z.object({ id: z.string().min(1) 
     },
   });
   if (!quiz) throw new AppError(404, "Quiz not found", "NOT_FOUND");
-  if (!isAdmin && !quiz.isPublished) throw new AppError(403, "Quiz is not published", "FORBIDDEN");
   res.json({ quiz });
 }));
 
@@ -210,9 +277,7 @@ router.post("/:id/attempt", validate(z.object({
 })), asyncHandler(async (req, res) => {
   const quizId = req.params.id as string;
   const studentId = req.user!.id;
-
-  const quiz = await prisma.quiz.findUnique({ where: { id: quizId } });
-  if (!quiz || !quiz.isPublished) throw new AppError(404, "Quiz not found or not published", "NOT_FOUND");
+  await assertQuizAccess(req.user!, quizId);
 
   const existing = await prisma.quizAttempt.findUnique({
     where: { quizId_studentId: { quizId, studentId } },
@@ -232,12 +297,25 @@ router.post("/:id/attempt/answer", upload.single("media"), validate(z.object({
   const { questionId, choiceId, textAnswer } = req.body as {
     questionId: string; choiceId?: string; textAnswer?: string;
   };
+  await assertQuizAccess(req.user!, quizId);
 
   const attempt = await prisma.quizAttempt.findUnique({
     where: { quizId_studentId: { quizId, studentId } },
   });
   if (!attempt || attempt.status !== "IN_PROGRESS") {
     throw new AppError(400, "No active attempt found", "NO_ACTIVE_ATTEMPT");
+  }
+  const question = await prisma.question.findFirst({
+    where: { id: questionId, quizId },
+    select: { id: true },
+  });
+  if (!question) throw new AppError(400, "Question does not belong to this quiz", "INVALID_QUESTION");
+  if (choiceId) {
+    const choice = await prisma.choice.findFirst({
+      where: { id: choiceId, questionId },
+      select: { id: true },
+    });
+    if (!choice) throw new AppError(400, "Choice does not belong to this question", "INVALID_CHOICE");
   }
 
   let mediaUrl: string | undefined;
@@ -261,6 +339,7 @@ router.post("/:id/attempt/submit", validate(z.object({
 })), asyncHandler(async (req, res) => {
   const quizId = req.params.id as string;
   const studentId = req.user!.id;
+  await assertQuizAccess(req.user!, quizId);
 
   const attempt = await prisma.quizAttempt.findUnique({
     where: { quizId_studentId: { quizId, studentId } },
