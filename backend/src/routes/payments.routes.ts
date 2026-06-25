@@ -6,7 +6,7 @@ import { prisma } from "../config/database";
 import { asyncHandler } from "../utils/async-handler";
 import { AppError } from "../utils/app-error";
 import { authenticate } from "../middlewares/auth";
-import { requireSuperAdmin } from "../middlewares/requireRole";
+
 import { validate } from "../middlewares/validate";
 import { audit } from "../services/audit.service";
 import { initiatePayment, verifyWebhookSignature, PAYTABS_IPS } from "../services/paytabs.service";
