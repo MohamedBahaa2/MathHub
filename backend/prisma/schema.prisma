@@ -1,0 +1,385 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ── Enums ──────────────────────────────────────────────
+enum Role {
+  SUPERADMIN
+  ASSISTANT
+  STUDENT
+  PARENT
+}
+
+enum SessionStatus {
+  UPCOMING
+  LIVE
+  ENDED
+  RECORDING
+}
+
+enum PricingType {
+  SESSION
+  COURSE
+}
+
+enum PurchaseType {
+  SESSION
+  COURSE
+  FREE
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+}
+
+enum QuestionType {
+  MULTIPLE_CHOICE
+  TEXT_ANSWER
+  MEDIA_UPLOAD
+  MIXED
+}
+
+enum AttemptStatus {
+  IN_PROGRESS
+  SUBMITTED
+  GRADED
+}
+
+enum NotificationType {
+  SESSION_LIVE
+  RECORDING_READY
+  ASSIGNMENT_GRADED
+  NEW_ASSIGNMENT
+  HELP_RESPONSE
+  QUIZ_GRADED
+}
+
+// ── Users ──────────────────────────────────────────────
+model User {
+  id           String  @id @default(cuid())
+  name         String
+  email        String  @unique
+  passwordHash String
+  role         Role    @default(STUDENT)
+  studentCode  String? @unique
+  avatarUrl    String?
+  isActive     Boolean @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  linkedChildren   ParentStudent[]        @relation("ParentLinks")
+  linkedParents    ParentStudent[]        @relation("StudentLinks")
+  enrollments      Enrollment[]
+  submissions      AssignmentSubmission[]
+  quizAttempts     QuizAttempt[]
+  payments         Payment[]
+  notifications    Notification[]
+  helpRequests     HelpRequest[]
+  reports          Report[]
+  refreshTokens    RefreshToken[]
+  passwordResets   PasswordReset[]
+  auditLogs        AuditLog[]
+
+  @@index([role, isActive])
+}
+
+model ParentStudent {
+  parentId  String
+  parent    User   @relation("ParentLinks", fields: [parentId], references: [id], onDelete: Cascade)
+  studentId String
+  student   User   @relation("StudentLinks", fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@id([parentId, studentId])
+}
+
+model RefreshToken {
+  id         String    @id @default(cuid())
+  tokenHash  String    @unique
+  userId     String
+  expiresAt  DateTime
+  revokedAt  DateTime?
+  replacedBy String?
+  userAgent  String?
+  ipAddress  String?
+  createdAt  DateTime  @default(now())
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expiresAt])
+}
+
+model PasswordReset {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+// ── Sessions & Courses ─────────────────────────────────
+model Course {
+  id           String    @id @default(cuid())
+  name         String
+  description  String?
+  coursePrice  Float
+  sessionPrice Float
+  isActive     Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  sessions     Session[]
+  enrollments  Enrollment[]
+}
+
+model Session {
+  id               String        @id @default(cuid())
+  title            String
+  topic            String
+  description      String?
+  scheduledAt      DateTime
+  durationMin      Int
+  status           SessionStatus @default(UPCOMING)
+  zoomLiveEnc      String?
+  zoomRecordingEnc String?
+  zoomPasscodeEnc  String?
+  pricingType      PricingType   @default(SESSION)
+  sessionPrice     Float?
+  courseId         String?
+  course           Course?       @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  enrollments      Enrollment[]
+  assignments      Assignment[]
+  quizzes          Quiz[]
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  @@index([status, scheduledAt])
+  @@index([courseId])
+}
+
+model Enrollment {
+  id           String       @id @default(cuid())
+  userId       String
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sessionId    String?
+  session      Session?     @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  courseId     String?
+  course       Course?      @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  purchaseType PurchaseType
+  grantedAt    DateTime     @default(now())
+  payment      Payment?
+
+  @@unique([userId, sessionId])
+  @@index([userId])
+  @@index([sessionId])
+}
+
+// ── Assignments ────────────────────────────────────────
+model Assignment {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  dueDate     DateTime
+  materialUrl String?
+  sessionId   String?
+  session     Session?  @relation(fields: [sessionId], references: [id], onDelete: SetNull)
+  submissions AssignmentSubmission[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model AssignmentSubmission {
+  id           String     @id @default(cuid())
+  assignmentId String
+  assignment   Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  studentId    String
+  student      User       @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  fileUrl      String
+  grade        Int?
+  feedback     String?
+  submittedAt  DateTime   @default(now())
+  gradedAt     DateTime?
+
+  @@unique([assignmentId, studentId])
+}
+
+// ── Quiz Engine ────────────────────────────────────────
+model Quiz {
+  id          String      @id @default(cuid())
+  title       String
+  description String?
+  sessionId   String?
+  session     Session?    @relation(fields: [sessionId], references: [id], onDelete: SetNull)
+  questions   Question[]
+  attempts    QuizAttempt[]
+  isPublished Boolean     @default(false)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([sessionId])
+}
+
+model Question {
+  id          String       @id @default(cuid())
+  quizId      String
+  quiz        Quiz         @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  text        String
+  mediaUrl    String?
+  type        QuestionType
+  order       Int
+  points      Int          @default(1)
+  correctText String?
+  choices     Choice[]
+  answers     Answer[]
+
+  @@index([quizId, order])
+}
+
+model Choice {
+  id         String   @id @default(cuid())
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  text       String
+  isCorrect  Boolean  @default(false)
+  order      Int
+  answers    Answer[]
+}
+
+model QuizAttempt {
+  id          String        @id @default(cuid())
+  quizId      String
+  quiz        Quiz          @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  studentId   String
+  student     User          @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  answers     Answer[]
+  score       Float?
+  maxScore    Float?
+  status      AttemptStatus @default(IN_PROGRESS)
+  startedAt   DateTime      @default(now())
+  submittedAt DateTime?
+
+  @@unique([quizId, studentId])
+  @@index([studentId])
+}
+
+model Answer {
+  id           String      @id @default(cuid())
+  attemptId    String
+  attempt      QuizAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  questionId   String
+  question     Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  choiceId     String?
+  choice       Choice?     @relation(fields: [choiceId], references: [id], onDelete: SetNull)
+  textAnswer   String?
+  mediaUrl     String?
+  isCorrect    Boolean?
+  pointsEarned Float?
+
+  @@unique([attemptId, questionId])
+}
+
+// ── Payments ───────────────────────────────────────────
+model Payment {
+  id            String        @id @default(cuid())
+  userId        String
+  user          User          @relation(fields: [userId], references: [id])
+  enrollmentId  String?       @unique
+  enrollment    Enrollment?   @relation(fields: [enrollmentId], references: [id], onDelete: SetNull)
+  amount        Float
+  currency      String        @default("USD")
+  type          PurchaseType
+  status        PaymentStatus @default(PENDING)
+  paytabsRef    String?
+  paytabsCartId String?       @unique
+  receiptUrl    String?
+  createdAt     DateTime      @default(now())
+  paidAt        DateTime?
+
+  @@index([userId, createdAt])
+  @@index([status])
+}
+
+// ── Notifications ──────────────────────────────────────
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      NotificationType
+  message   String
+  read      Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  @@index([userId, read, createdAt])
+}
+
+// ── Help Requests ──────────────────────────────────────
+model HelpRequest {
+  id          String       @id @default(cuid())
+  studentId   String
+  student     User         @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  topic       String
+  description String
+  priority    Priority     @default(MEDIUM)
+  status      TicketStatus @default(OPEN)
+  adminReply  String?
+  repliedAt   DateTime?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@index([status, createdAt])
+  @@index([studentId])
+}
+
+// ── Reports ────────────────────────────────────────────
+model Report {
+  id                   String   @id @default(cuid())
+  studentId            String
+  student              User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  weekStart            DateTime
+  weekEnd              DateTime
+  avgGrade             Float?
+  sessionsAttended     Int      @default(0)
+  assignmentsSubmitted Int      @default(0)
+  quizAvgScore         Float?
+  teacherNotes         String?
+  generatedAt          DateTime @default(now())
+
+  @@index([studentId, weekStart])
+}
+
+// ── Audit Log ──────────────────────────────────────────
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorId    String?
+  action     String
+  entityType String?
+  entityId   String?
+  ipAddress  String?
+  userAgent  String?
+  metadata   Json?
+  createdAt  DateTime @default(now())
+  actor      User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([actorId, createdAt])
+  @@index([action, createdAt])
+  @@index([entityType, entityId])
+}
