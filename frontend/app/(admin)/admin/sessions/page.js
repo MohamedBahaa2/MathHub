@@ -1,12 +1,6 @@
 "use client";
-import { useState } from "react";
-
-const SESSIONS = [
-  { id: "1", title: "Calculus I — Limits & Continuity", date: "June 28, 2025", status: "UPCOMING", enrolled: 18, zoomLink: "", pricing: { type: "course", course: "Calculus I", sessionPrice: 12, coursePrice: 45 } },
-  { id: "2", title: "Linear Algebra — Eigenvalues", date: "June 23, 2025", status: "LIVE", enrolled: 22, zoomLink: "https://zoom.us/j/123456", pricing: { type: "session", price: 15 } },
-  { id: "3", title: "Calculus II — Integration", date: "June 18, 2025", status: "RECORDING", enrolled: 20, zoomLink: "", pricing: { type: "course", course: "Calculus I", sessionPrice: 12, coursePrice: 45 } },
-  { id: "4", title: "Differential Equations", date: "June 15, 2025", status: "ENDED", enrolled: 19, zoomLink: "", pricing: { type: "session", price: 18 } },
-];
+import { useState, useEffect, useCallback } from "react";
+import { sessions as sessionsApi } from "@/lib/api";
 
 const STATES = ["UPCOMING", "LIVE", "ENDED", "RECORDING"];
 const STATUS_COLORS = {
@@ -15,24 +9,174 @@ const STATUS_COLORS = {
   ENDED: "bg-warning-light text-[#8B6914]",
   RECORDING: "bg-secondary-light text-secondary",
 };
+const STATUS_NEXT = { UPCOMING: "LIVE", LIVE: "ENDED", ENDED: "RECORDING" };
 
-const PRICING_TYPE_LABELS = {
-  session: { label: "Per Session", color: "bg-primary-light text-primary" },
-  course: { label: "Course Bundle", color: "bg-secondary-light text-secondary" },
-};
+function SessionModal({ session, onClose, onSaved }) {
+  const isEdit = !!session;
+  const [form, setForm] = useState({
+    title: session?.title ?? "",
+    topic: session?.topic ?? "",
+    description: session?.description ?? "",
+    scheduledAt: session?.scheduledAt ? new Date(session.scheduledAt).toISOString().slice(0, 16) : "",
+    durationMin: session?.durationMin ?? 60,
+    sessionPrice: session?.sessionPrice ?? "",
+    zoomLive: "",
+    zoomRecording: "",
+    zoomPasscode: "",
+  });
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setSaving(true); setError("");
+    const payload = {
+      title: form.title, topic: form.topic, description: form.description,
+      scheduledAt: new Date(form.scheduledAt).toISOString(),
+      durationMin: Number(form.durationMin),
+      pricingType: "SESSION",
+      sessionPrice: form.sessionPrice ? Number(form.sessionPrice) : undefined,
+      zoomLive: form.zoomLive || undefined,
+      zoomRecording: form.zoomRecording || undefined,
+      zoomPasscode: form.zoomPasscode || undefined,
+    };
+    try {
+      if (isEdit) await sessionsApi.update(session.id, payload);
+      else await sessionsApi.create(payload);
+      onSaved();
+      onClose();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
+      <div className="glass rounded-2xl shadow-elevated w-full max-w-[560px] p-8 animate-fade-in-up my-4">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="font-headline text-xl font-extrabold">{isEdit ? "Edit Session" : "New Session"}</h2>
+          <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center text-ink-muted hover:bg-surface-high">
+            <span className="material-symbols-outlined">close</span>
+          </button>
+        </div>
+        {error && <div className="mb-4 px-4 py-3 bg-danger-light text-danger rounded-xl text-sm">{error}</div>}
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          {[
+            { label: "Title", key: "title", type: "text", required: true },
+            { label: "Topic", key: "topic", type: "text", required: true },
+          ].map(f => (
+            <div key={f.key}>
+              <label className="text-xs font-bold uppercase tracking-wide text-ink-muted block mb-1.5">{f.label}</label>
+              <input required={f.required} type={f.type} value={form[f.key]}
+                onChange={e => setForm(p => ({ ...p, [f.key]: e.target.value }))}
+                className="w-full px-4 py-3 bg-surface-low rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-light" />
+            </div>
+          ))}
+          <div>
+            <label className="text-xs font-bold uppercase tracking-wide text-ink-muted block mb-1.5">Description</label>
+            <textarea rows={3} value={form.description}
+              onChange={e => setForm(p => ({ ...p, description: e.target.value }))}
+              className="w-full px-4 py-3 bg-surface-low rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-light resize-none" />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="text-xs font-bold uppercase tracking-wide text-ink-muted block mb-1.5">Scheduled At</label>
+              <input required type="datetime-local" value={form.scheduledAt}
+                onChange={e => setForm(p => ({ ...p, scheduledAt: e.target.value }))}
+                className="w-full px-4 py-3 bg-surface-low rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-light" />
+            </div>
+            <div>
+              <label className="text-xs font-bold uppercase tracking-wide text-ink-muted block mb-1.5">Duration (min)</label>
+              <input required type="number" value={form.durationMin}
+                onChange={e => setForm(p => ({ ...p, durationMin: e.target.value }))}
+                className="w-full px-4 py-3 bg-surface-low rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-light" />
+            </div>
+          </div>
+          <div>
+            <label className="text-xs font-bold uppercase tracking-wide text-ink-muted block mb-1.5">Session Price (USD)</label>
+            <input type="number" value={form.sessionPrice}
+              onChange={e => setForm(p => ({ ...p, sessionPrice: e.target.value }))}
+              placeholder="e.g. 15"
+              className="w-full px-4 py-3 bg-surface-low rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-light" />
+          </div>
+          <div>
+            <label className="text-xs font-bold uppercase tracking-wide text-ink-muted block mb-1.5">Zoom Live Link</label>
+            <input type="url" value={form.zoomLive}
+              onChange={e => setForm(p => ({ ...p, zoomLive: e.target.value }))}
+              placeholder="https://zoom.us/j/..."
+              className="w-full px-4 py-3 bg-surface-low rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-light" />
+          </div>
+          <div>
+            <label className="text-xs font-bold uppercase tracking-wide text-ink-muted block mb-1.5">Zoom Recording Link</label>
+            <input type="url" value={form.zoomRecording}
+              onChange={e => setForm(p => ({ ...p, zoomRecording: e.target.value }))}
+              placeholder="Paste Zoom cloud recording URL..."
+              className="w-full px-4 py-3 bg-surface-low rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-light" />
+          </div>
+          <div>
+            <label className="text-xs font-bold uppercase tracking-wide text-ink-muted block mb-1.5">Zoom Passcode</label>
+            <input type="text" value={form.zoomPasscode}
+              onChange={e => setForm(p => ({ ...p, zoomPasscode: e.target.value }))}
+              placeholder="Optional"
+              className="w-full px-4 py-3 bg-surface-low rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-light" />
+          </div>
+          <button type="submit" disabled={saving}
+            className="w-full py-3 bg-gradient-to-br from-primary to-primary-container text-ink-on-primary font-headline font-bold rounded-xl shadow-primary hover:brightness-110 active:scale-95 transition-all disabled:opacity-60 flex items-center justify-center gap-2">
+            {saving && <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
+            {saving ? "Saving…" : isEdit ? "Save Changes" : "Create Session"}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
 
 export default function AdminSessionsPage() {
-  const [sessions, setSessions] = useState(SESSIONS);
+  const [sessionsList, setSessionsList] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [editSession, setEditSession] = useState(null);
-  const [pricingType, setPricingType] = useState("session");
+  const [advancing, setAdvancing] = useState(null);
 
-  function advance(id) {
-    setSessions(prev => prev.map(s => {
-      if (s.id !== id) return s;
-      const nextStatus = STATES[STATES.indexOf(s.status) + 1] || s.status;
-      return { ...s, status: nextStatus };
-    }));
+  async function loadSessions() {
+    setLoading(true);
+    try {
+      const d = await sessionsApi.list();
+      setSessionsList(d.sessions || []);
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => { loadSessions(); }, []);
+
+  async function handleAdvance(s) {
+    const nextStatus = STATUS_NEXT[s.status];
+    if (!nextStatus) return;
+    setAdvancing(s.id);
+    try {
+      await sessionsApi.advanceStatus(s.id, nextStatus);
+      setSessionsList(prev => prev.map(item => item.id === s.id ? { ...item, status: nextStatus } : item));
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setAdvancing(null);
+    }
+  }
+
+  async function handleDelete(id) {
+    if (!confirm("Delete this session? This cannot be undone.")) return;
+    try {
+      await sessionsApi.delete(id);
+      setSessionsList(prev => prev.filter(s => s.id !== id));
+    } catch (err) {
+      setError(err.message);
+    }
   }
 
   return (
@@ -40,47 +184,70 @@ export default function AdminSessionsPage() {
       <div className="flex items-start justify-between mb-10 animate-fade-in-up">
         <div>
           <h1 className="font-headline text-4xl font-extrabold tracking-tight mb-2">Sessions</h1>
-          <p className="text-ink-muted text-base leading-relaxed">Manage all sessions — advance lifecycle, upload recordings, set paywall.</p>
+          <p className="text-ink-muted text-base leading-relaxed">Manage all sessions — lifecycle, Zoom links, pricing.</p>
         </div>
-        <button onClick={() => { setEditSession(null); setShowModal(true); }} className="px-6 py-3 bg-gradient-to-br from-primary to-primary-container text-ink-on-primary font-headline font-bold rounded-xl shadow-primary hover:brightness-110 active:scale-95 transition-all shrink-0">
+        <button onClick={() => { setEditSession(null); setShowModal(true); }}
+          className="px-6 py-3 bg-gradient-to-br from-primary to-primary-container text-ink-on-primary font-headline font-bold rounded-xl shadow-primary hover:brightness-110 active:scale-95 transition-all shrink-0">
           + Add Session
         </button>
       </div>
 
+      {error && <div className="mb-4 px-4 py-3 bg-danger-light text-danger rounded-xl text-sm">{error}</div>}
+
       <div className="glass rounded-2xl shadow-glass overflow-hidden animate-fade-in-up">
         <div className="overflow-x-auto">
           <table className="w-full text-left">
-            <thead><tr className="bg-surface-low">
-              {["Title", "Date", "Status", "Enrolled", "Actions"].map(h => <th key={h} className="px-6 py-4 text-[0.6875rem] font-bold uppercase tracking-widest text-ink-muted">{h}</th>)}
-            </tr></thead>
+            <thead>
+              <tr className="bg-surface-low">
+                {["Title", "Topic", "Scheduled", "Status", "Enrolled", "Price", "Actions"].map(h => (
+                  <th key={h} className="px-6 py-4 text-[0.6875rem] font-bold uppercase tracking-widest text-ink-muted">{h}</th>
+                ))}
+              </tr>
+            </thead>
             <tbody>
-              {sessions.map((s) => (
+              {loading ? (
+                [1,2,3,4].map(i => (
+                  <tr key={i} className="border-t border-surface-high/50">
+                    {[1,2,3,4,5,6,7].map(j => <td key={j} className="px-6 py-4"><div className="h-4 bg-surface-low rounded animate-pulse w-20" /></td>)}
+                  </tr>
+                ))
+              ) : sessionsList.map(s => (
                 <tr key={s.id} className="hover:bg-white/50 transition-colors border-t border-surface-high/50">
-                  <td className="px-6 py-4 font-headline font-bold text-sm">{s.title}</td>
-                  <td className="px-6 py-4 text-sm text-ink-muted">{s.date}</td>
-                  <td className="px-6 py-4">
-                    <div className="flex flex-col gap-1">
-                      <span className={`w-fit px-3 py-1 rounded-full text-xs font-bold ${STATUS_COLORS[s.status]}`}>{s.status}</span>
-                      {s.pricing && (
-                        <span className={`w-fit px-2 py-0.5 rounded-full text-[0.625rem] font-bold ${PRICING_TYPE_LABELS[s.pricing.type].color}`}>
-                          {s.pricing.type === "course" ? `Course: ${s.pricing.course}` : `$${s.pricing.price}/session`}
-                        </span>
-                      )}
-                    </div>
+                  <td className="px-6 py-4 font-headline font-bold text-sm max-w-[220px]">
+                    <p className="truncate">{s.title}</p>
                   </td>
-                  <td className="px-6 py-4 text-sm font-semibold">{s.enrolled} students</td>
+                  <td className="px-6 py-4 text-sm text-ink-muted">{s.topic}</td>
+                  <td className="px-6 py-4 text-sm text-ink-muted">
+                    {new Date(s.scheduledAt).toLocaleString()}
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${STATUS_COLORS[s.status] ?? "bg-surface-high text-ink-muted"}`}>
+                      {s.status}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-sm font-semibold">{s._count?.enrollments ?? 0}</td>
+                  <td className="px-6 py-4 text-sm font-bold text-primary">
+                    {s.sessionPrice ? `$${s.sessionPrice}` : "—"}
+                  </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
-                      {STATES.indexOf(s.status) < STATES.length - 1 && (
-                        <button onClick={() => advance(s.id)} className="flex items-center gap-1 px-3 py-1.5 bg-secondary-light text-secondary text-xs font-bold rounded-full hover:brightness-95 active:scale-95 transition-all">
-                          <span className="material-symbols-outlined text-sm">arrow_forward</span>
-                          Advance
+                      {STATUS_NEXT[s.status] && (
+                        <button
+                          onClick={() => handleAdvance(s)}
+                          disabled={advancing === s.id}
+                          className="flex items-center gap-1 px-3 py-1.5 bg-secondary-light text-secondary text-xs font-bold rounded-full hover:brightness-95 active:scale-95 transition-all disabled:opacity-40">
+                          {advancing === s.id
+                            ? <span className="w-3 h-3 border border-secondary/30 border-t-secondary rounded-full animate-spin" />
+                            : <span className="material-symbols-outlined text-sm">arrow_forward</span>}
+                          {advancing === s.id ? "..." : STATUS_NEXT[s.status]}
                         </button>
                       )}
-                      <button onClick={() => { setEditSession(s); setShowModal(true); }} className="w-8 h-8 flex items-center justify-center rounded-full text-ink-muted hover:text-primary hover:bg-primary-light transition-colors">
+                      <button onClick={() => { setEditSession(s); setShowModal(true); }}
+                        className="w-8 h-8 flex items-center justify-center rounded-full text-ink-muted hover:text-primary hover:bg-primary-light transition-colors">
                         <span className="material-symbols-outlined text-lg">edit</span>
                       </button>
-                      <button className="w-8 h-8 flex items-center justify-center rounded-full text-ink-muted hover:text-danger hover:bg-danger-light transition-colors">
+                      <button onClick={() => handleDelete(s.id)}
+                        className="w-8 h-8 flex items-center justify-center rounded-full text-ink-muted hover:text-danger hover:bg-danger-light transition-colors">
                         <span className="material-symbols-outlined text-lg">delete</span>
                       </button>
                     </div>
@@ -89,82 +256,18 @@ export default function AdminSessionsPage() {
               ))}
             </tbody>
           </table>
+          {!loading && sessionsList.length === 0 && (
+            <div className="p-10 text-center text-ink-muted">No sessions yet.</div>
+          )}
         </div>
       </div>
 
-      {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="glass rounded-2xl shadow-elevated w-full max-w-[560px] p-8 animate-fade-in-up">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="font-headline text-xl font-extrabold">{editSession ? "Edit Session" : "New Session"}</h2>
-              <button onClick={() => setShowModal(false)} className="w-8 h-8 rounded-full flex items-center justify-center text-ink-muted hover:bg-surface-high transition-colors"><span className="material-symbols-outlined">close</span></button>
-            </div>
-            <div className="flex flex-col gap-4">
-              <div>
-                <label className="text-xs font-bold uppercase tracking-wide text-ink-muted block mb-1.5">Title</label>
-                <input type="text" defaultValue={editSession?.title} className="w-full px-4 py-3 bg-surface-low rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-light" />
-              </div>
-              <div>
-                <label className="text-xs font-bold uppercase tracking-wide text-ink-muted block mb-1.5">Date</label>
-                <input type="datetime-local" className="w-full px-4 py-3 bg-surface-low rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-light" />
-              </div>
-              <div>
-                <label className="text-xs font-bold uppercase tracking-wide text-ink-muted block mb-2">Pricing Type</label>
-                <div className="flex gap-3">
-                  {["session", "course"].map(pt => (
-                    <button
-                      key={pt}
-                      type="button"
-                      onClick={() => setPricingType(pt)}
-                      className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition-all ${pricingType === pt ? (pt === "session" ? "bg-primary text-white" : "bg-secondary text-white") : "bg-surface-low text-ink-muted hover:bg-surface-high"}`}
-                    >
-                      {pt === "session" ? "Per Session" : "Course Bundle"}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              {pricingType === "session" && (
-                <div>
-                  <label className="text-xs font-bold uppercase tracking-wide text-ink-muted block mb-1.5">Session Price (USD)</label>
-                  <input type="number" placeholder="e.g. 15" defaultValue={editSession?.pricing?.price} className="w-full px-4 py-3 bg-surface-low rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-light" />
-                </div>
-              )}
-              {pricingType === "course" && (
-                <div className="flex flex-col gap-3">
-                  <div>
-                    <label className="text-xs font-bold uppercase tracking-wide text-ink-muted block mb-1.5">Course Name</label>
-                    <input type="text" placeholder="e.g. Calculus I" defaultValue={editSession?.pricing?.course} className="w-full px-4 py-3 bg-surface-low rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-light" />
-                  </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="text-xs font-bold uppercase tracking-wide text-ink-muted block mb-1.5">Per-Session Price</label>
-                      <input type="number" placeholder="e.g. 12" defaultValue={editSession?.pricing?.sessionPrice} className="w-full px-4 py-3 bg-surface-low rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-light" />
-                    </div>
-                    <div>
-                      <label className="text-xs font-bold uppercase tracking-wide text-ink-muted block mb-1.5">Full Course Price</label>
-                      <input type="number" placeholder="e.g. 45" defaultValue={editSession?.pricing?.coursePrice} className="w-full px-4 py-3 bg-surface-low rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-light" />
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              <div>
-                <label className="text-xs font-bold uppercase tracking-wide text-ink-muted block mb-1.5">Zoom Live Link</label>
-                <input type="url" placeholder="https://zoom.us/j/..." defaultValue={editSession?.zoomLink} className="w-full px-4 py-3 bg-surface-low rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-light" />
-              </div>
-              {editSession?.status === "ENDED" && (
-                <div>
-                  <label className="text-xs font-bold uppercase tracking-wide text-ink-muted block mb-1.5">Zoom Recording Link</label>
-                  <input type="url" placeholder="Paste Zoom cloud recording URL..." className="w-full px-4 py-3 bg-surface-low rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-light" />
-                </div>
-              )}
-              <button onClick={() => setShowModal(false)} className="w-full py-3 bg-gradient-to-br from-primary to-primary-container text-ink-on-primary font-headline font-bold rounded-xl shadow-primary hover:brightness-110 active:scale-95 transition-all">
-                {editSession ? "Save Changes" : "Create Session"}
-              </button>
-            </div>
-          </div>
-        </div>
+        <SessionModal
+          session={editSession}
+          onClose={() => setShowModal(false)}
+          onSaved={loadSessions}
+        />
       )}
     </>
   );

@@ -1,23 +1,38 @@
 "use client";
 
-import { useState } from "react";
-
-const MOCK_NOTIFICATIONS = [
-  { id: 1, icon: "live_tv", message: "Session is now live: Calculus I — Limits", time: "2 min ago", read: false },
-  { id: 2, icon: "grade", message: "Assignment graded: Riemann Sum Integrals — 95/100", time: "1 hour ago", read: false },
-  { id: 3, icon: "play_circle", message: "Recording available: Linear Algebra — Eigenvalues", time: "Yesterday", read: true },
-  { id: 4, icon: "payments", message: "Subscription renews in 3 days", time: "Yesterday", read: true },
-];
+import { useState, useEffect } from "react";
+import { notifications as notifApi, clearToken, getUser } from "@/lib/api";
+import { useRouter } from "next/navigation";
 
 export default function Topbar() {
+  const router = useRouter();
   const [notifOpen, setNotifOpen] = useState(false);
-  const [notifications, setNotifications] = useState(MOCK_NOTIFICATIONS);
+  const [notifList, setNotifList] = useState([]);
+  const user = getUser();
 
-  const unreadCount = notifications.filter((n) => !n.read).length;
+  useEffect(() => {
+    notifApi.list().then(d => setNotifList(d?.notifications || [])).catch(() => {});
+  }, []);
+
+  const unreadCount = notifList.filter(n => !n.read).length;
 
   function markAllRead() {
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+    notifApi.markAllRead().catch(() => {});
+    setNotifList(prev => prev.map(n => ({ ...n, read: true })));
   }
+
+  const initials = user?.name
+    ? user.name.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase()
+    : "?";
+
+  const NOTIF_ICONS = {
+    SESSION_LIVE: "live_tv",
+    RECORDING_READY: "play_circle",
+    ASSIGNMENT_GRADED: "grade",
+    NEW_ASSIGNMENT: "assignment",
+    HELP_RESPONSE: "support_agent",
+    QUIZ_GRADED: "quiz",
+  };
 
   return (
     <header className="fixed top-0 left-[260px] right-0 h-16 bg-surface-low/85 backdrop-blur-xl flex items-center justify-between px-8 z-30 shadow-glass max-md:left-0">
@@ -46,7 +61,7 @@ export default function Topbar() {
         {/* Bell */}
         <div className="relative">
           <button
-            onClick={() => setNotifOpen((v) => !v)}
+            onClick={() => setNotifOpen(v => !v)}
             className="w-10 h-10 flex items-center justify-center rounded-full text-ink-muted hover:bg-primary-xlight hover:text-primary transition-colors"
             aria-label="Notifications"
           >
@@ -74,7 +89,9 @@ export default function Topbar() {
 
               {/* List */}
               <div className="max-h-[340px] overflow-y-auto">
-                {notifications.map((n) => (
+                {notifList.length === 0 ? (
+                  <div className="px-5 py-8 text-center text-ink-muted text-sm">No notifications</div>
+                ) : notifList.map(n => (
                   <div
                     key={n.id}
                     className={`flex items-start gap-3 px-5 py-4 border-b border-surface-high/60 hover:bg-white/40 transition-colors ${
@@ -83,12 +100,14 @@ export default function Topbar() {
                   >
                     <div className="w-8 h-8 rounded-full bg-primary-light text-primary flex items-center justify-center shrink-0">
                       <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>
-                        {n.icon}
+                        {NOTIF_ICONS[n.type] || "notifications"}
                       </span>
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-[0.8125rem] font-medium leading-snug">{n.message}</p>
-                      <span className="text-xs text-ink-muted mt-0.5 block">{n.time}</span>
+                      <span className="text-xs text-ink-muted mt-0.5 block">
+                        {new Date(n.createdAt).toLocaleString()}
+                      </span>
                     </div>
                   </div>
                 ))}
@@ -96,25 +115,24 @@ export default function Topbar() {
 
               {/* Footer */}
               <div className="px-5 py-3 text-center">
-                <a href="#" className="text-xs font-bold text-secondary hover:opacity-70 transition-opacity">
-                  View all notifications →
-                </a>
+                <button onClick={() => setNotifOpen(false)} className="text-xs font-bold text-secondary hover:opacity-70 transition-opacity">
+                  Close
+                </button>
               </div>
             </div>
           )}
         </div>
 
-        {/* Settings */}
-        <button
-          className="w-10 h-10 flex items-center justify-center rounded-full text-ink-muted hover:bg-primary-xlight hover:text-primary transition-colors"
-          aria-label="Settings"
-        >
-          <span className="material-symbols-outlined">settings</span>
-        </button>
+        {/* User name */}
+        {user?.name && (
+          <span className="text-sm font-semibold text-ink-muted hidden md:block max-w-[120px] truncate">
+            {user.name.split(" ")[0]}
+          </span>
+        )}
 
         {/* Avatar */}
         <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-ink-on-primary text-sm font-bold ring-2 ring-primary-light">
-          A
+          {initials}
         </div>
       </div>
     </header>

@@ -11,7 +11,7 @@ import { validate } from "../middlewares/validate";
 import { audit } from "../services/audit.service";
 import { encryptZoomUrl, decryptZoomUrl } from "../services/zoom.service";
 import { signShortToken } from "../services/token.service";
-import { createNotification, createBulkNotifications } from "../services/notification.service";
+import { createBulkNotifications } from "../services/notification.service";
 
 const router = Router();
 router.use(authenticate);
@@ -31,7 +31,10 @@ const sessionBody = z.object({
 });
 
 const safeSession = (s: Record<string, unknown>) => {
-  const { zoomLiveEnc, zoomRecordingEnc, zoomPasscodeEnc, ...rest } = s;
+  const rest = { ...s };
+  delete rest.zoomLiveEnc;
+  delete rest.zoomRecordingEnc;
+  delete rest.zoomPasscodeEnc;
   return rest;
 };
 

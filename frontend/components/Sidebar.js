@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { auth as authApi, clearToken, getUser } from "@/lib/api";
 
 const studentNav = [
   { href: "/", label: "Dashboard", icon: "dashboard" },
@@ -19,6 +20,7 @@ const adminNav = [
   { href: "/admin/users", label: "Students & Parents", icon: "group" },
   { href: "/admin/sessions", label: "Sessions", icon: "play_circle" },
   { href: "/admin/assignments", label: "Assignments", icon: "assignment" },
+  { href: "/admin/help", label: "Help Requests", icon: "support_agent" },
   { href: "/admin/reports", label: "Reports", icon: "assessment" },
   { href: "/admin/payments", label: "Payments & Plans", icon: "payments" },
   { href: "/admin/settings", label: "Settings", icon: "settings" },
@@ -37,7 +39,16 @@ const BRAND_LABELS = { student: "Student Portal", admin: "Admin Portal", parent:
 
 export default function Sidebar({ role = "student" }) {
   const pathname = usePathname();
+  const router = useRouter();
   const nav = NAV_MAP[role] ?? studentNav;
+
+  async function handleLogout() {
+    try {
+      await authApi.logout();
+    } catch {}
+    clearToken();
+    router.push("/login");
+  }
 
   return (
     <>
@@ -87,10 +98,13 @@ export default function Sidebar({ role = "student" }) {
 
         {/* Footer */}
         <div className="mt-auto pt-6 flex flex-col gap-1">
-          <a href="/login" className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold font-headline text-ink-muted hover:text-danger hover:bg-danger-light hover:translate-x-1 transition-all duration-300">
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold font-headline text-ink-muted hover:text-danger hover:bg-danger-light hover:translate-x-1 transition-all duration-300 w-full"
+          >
             <span className="material-symbols-outlined text-xl">logout</span>
             <span>Sign Out</span>
-          </a>
+          </button>
         </div>
       </aside>
       <div className="fixed inset-0 bg-black/30 z-35 hidden" id="sidebar-overlay" />
