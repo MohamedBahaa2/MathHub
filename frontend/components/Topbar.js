@@ -1,14 +1,29 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { notifications as notifApi, clearToken, getUser } from "@/lib/api";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, useMemo, useSyncExternalStore } from "react";
+import { notifications as notifApi } from "@/lib/api";
+
+const subscribeToUserStorage = () => () => {};
+const getUserSnapshot = () => (
+  typeof window === "undefined" ? null : localStorage.getItem("user")
+);
+const getServerUserSnapshot = () => null;
 
 export default function Topbar() {
-  const router = useRouter();
   const [notifOpen, setNotifOpen] = useState(false);
   const [notifList, setNotifList] = useState([]);
-  const user = getUser();
+  const userJson = useSyncExternalStore(
+    subscribeToUserStorage,
+    getUserSnapshot,
+    getServerUserSnapshot
+  );
+  const user = useMemo(() => {
+    try {
+      return JSON.parse(userJson || "null");
+    } catch {
+      return null;
+    }
+  }, [userJson]);
 
   useEffect(() => {
     notifApi.list().then(d => setNotifList(d?.notifications || [])).catch(() => {});
