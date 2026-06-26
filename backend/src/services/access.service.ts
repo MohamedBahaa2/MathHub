@@ -1,3 +1,4 @@
+import { PaymentStatus } from "@prisma/client";
 import { prisma } from "../config/database";
 import { AppError } from "../utils/app-error";
 
@@ -12,9 +13,19 @@ export async function assertEnrolled(userId: string, sessionId: string): Promise
   const enrollment = await prisma.enrollment.findFirst({
     where: {
       userId,
-      OR: [
-        { sessionId },
-        ...(session.courseId ? [{ courseId: session.courseId }] : []),
+      AND: [
+        {
+          OR: [
+            { sessionId },
+            ...(session.courseId ? [{ courseId: session.courseId }] : []),
+          ],
+        },
+        {
+          OR: [
+            { payment: { is: null } },
+            { payment: { is: { status: PaymentStatus.PAID } } },
+          ],
+        },
       ],
     },
   });

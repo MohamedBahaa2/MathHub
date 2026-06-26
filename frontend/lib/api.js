@@ -1,6 +1,11 @@
 // Central API client – talks to the backend at http://localhost:4010
 
-const BASE = "http://localhost:4010/api";
+const BASE = (
+  process.env.NEXT_PUBLIC_API_URL ||
+  (process.env.NODE_ENV === "production" ? "/api" : "http://localhost:4010/api")
+).replace(/\/$/, "");
+
+let refreshPromise = null;
 
 // ── Token / User storage ─────────────────────────────────────────────────────
 export function getToken() {
@@ -19,9 +24,30 @@ export function getUser() {
 export function setUser(user) { localStorage.setItem("user", JSON.stringify(user)); }
 
 // ── Core fetch helper ─────────────────────────────────────────────────────────
-async function request(path, options = {}) {
+async function refreshAccessToken() {
+  if (!refreshPromise) {
+    refreshPromise = fetch(`${BASE}/auth/refresh`, {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({}),
+    })
+      .then(async (res) => {
+        if (!res.ok) throw new Error("Session expired");
+        const data = await res.json();
+        setToken(data.accessToken);
+        return data.accessToken;
+      })
+      .finally(() => {
+        refreshPromise = null;
+      });
+  }
+  return refreshPromise;
+}
+
+async function request(path, options = {}, retry = true) {
   const token = getToken();
-  const isFormData = options.body instanceof FormData;
+  const isFormData = typeof FormData !== "undefined" && options.body instanceof FormData;
   const headers = {
     ...(isFormData ? {} : { "Content-Type": "application/json" }),
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -32,9 +58,23 @@ async function request(path, options = {}) {
     ...options,
     headers,
   });
+  if (res.status === 401 && retry && path !== "/auth/login" && path !== "/auth/refresh") {
+    try {
+      await refreshAccessToken();
+      return request(path, options, false);
+    } catch {
+      clearToken();
+      if (typeof window !== "undefined" && window.location.pathname !== "/login") {
+        window.location.assign("/login");
+      }
+    }
+  }
   if (!res.ok) {
     let msg = `HTTP ${res.status}`;
-    try { const b = await res.json(); msg = b.message || b.error || msg; } catch {}
+    try {
+      const b = await res.json();
+      msg = b.message || b.error?.message || (typeof b.error === "string" ? b.error : msg);
+    } catch {}
     throw new Error(msg);
   }
   if (res.status === 204) return null;
@@ -45,7 +85,7 @@ async function request(path, options = {}) {
 export const auth = {
   login: (email, password) =>
     request("/auth/login", { method: "POST", body: JSON.stringify({ email, password }) }),
-  logout: () => request("/auth/logout", { method: "POST" }),
+  logout: () => request("/auth/logout", { method: "POST" }, false),
   me: () => request("/auth/me"),
   updateMe: (data) => request("/auth/me", { method: "PATCH", body: JSON.stringify(data) }),
 };
@@ -91,8 +131,20 @@ export const quizzes = {
   update: (id, data) => request(`/quizzes/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
   delete: (id) => request(`/quizzes/${id}`, { method: "DELETE" }),
   startAttempt: (id) => request(`/quizzes/${id}/attempt`, { method: "POST" }),
-  saveAnswer: (id, data) =>
-    request(`/quizzes/${id}/attempt/answer`, { method: "POST", body: JSON.stringify(data) }),
+  saveAnswer: (id, data) => {
+    if (data.file) {
+      const form = new FormData();
+      form.append("questionId", data.questionId);
+      if (data.choiceId) form.append("choiceId", data.choiceId);
+      if (data.textAnswer) form.append("textAnswer", data.textAnswer);
+      form.append("media", data.file);
+      return request(`/quizzes/${id}/attempt/answer`, { method: "POST", body: form });
+    }
+    return request(`/quizzes/${id}/attempt/answer`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+  },
   submitAttempt: (id) => request(`/quizzes/${id}/attempt/submit`, { method: "POST" }),
   getAttempts: (id) => request(`/quizzes/${id}/attempts`),
 };

@@ -1,6 +1,6 @@
 import path from "node:path";
 import { Router } from "express";
-import { Role } from "@prisma/client";
+import { PaymentStatus, Role } from "@prisma/client";
 import { z } from "zod";
 import multer from "multer";
 import { prisma } from "../config/database";
@@ -14,6 +14,7 @@ import { uploadFile, validateFile } from "../services/storage.service";
 import { createNotification, createBulkNotifications } from "../services/notification.service";
 import { env } from "../config/env";
 import { NotificationType } from "@prisma/client";
+import { assertEnrolled } from "../services/access.service";
 
 const router = Router();
 router.use(authenticate);
@@ -42,10 +43,17 @@ router.get("/", asyncHandler(async (req, res) => {
     });
     return res.json({ assignments });
   }
+  if (user.role !== Role.STUDENT) throw new AppError(403, "Access denied", "FORBIDDEN");
 
   // Students: assignments for sessions they're enrolled in
   const enrollments = await prisma.enrollment.findMany({
-    where: { userId: user.id },
+    where: {
+      userId: user.id,
+      OR: [
+        { payment: { is: null } },
+        { payment: { is: { status: PaymentStatus.PAID } } },
+      ],
+    },
     select: { sessionId: true, courseId: true },
   });
   const sessionIds = enrollments.flatMap((e) => (e.sessionId ? [e.sessionId] : []));
@@ -58,18 +66,33 @@ router.get("/", asyncHandler(async (req, res) => {
   const assignments = await prisma.assignment.findMany({
     where: { sessionId: { in: allSessionIds } },
     orderBy: { dueDate: "asc" },
-    include: { session: { select: { id: true, title: true } } },
+    include: {
+      session: { select: { id: true, title: true } },
+      submissions: { where: { studentId: user.id } },
+    },
   });
   res.json({ assignments });
 }));
 
 // GET /api/assignments/:id — Auth
 router.get("/:id", validate(z.object({ params: z.object({ id: z.string().min(1) }) })), asyncHandler(async (req, res) => {
+  const user = req.user!;
   const assignment = await prisma.assignment.findUnique({
     where: { id: req.params.id as string },
-    include: { session: { select: { id: true, title: true } }, _count: { select: { submissions: true } } },
+    include: {
+      session: { select: { id: true, title: true } },
+      _count: { select: { submissions: true } },
+      submissions: user.role === Role.STUDENT ? { where: { studentId: user.id } } : false,
+    },
   });
   if (!assignment) throw new AppError(404, "Assignment not found", "NOT_FOUND");
+  const isAdmin = user.role === Role.SUPERADMIN || user.role === Role.ASSISTANT;
+  if (!isAdmin) {
+    if (user.role !== Role.STUDENT || !assignment.sessionId) {
+      throw new AppError(403, "Access denied", "FORBIDDEN");
+    }
+    await assertEnrolled(user.id, assignment.sessionId);
+  }
   res.json({ assignment });
 }));
 
@@ -90,7 +113,13 @@ router.post("/", requireAdmin, validate(z.object({
   // Notify enrolled students
   if (body.sessionId) {
     const enrollments = await prisma.enrollment.findMany({
-      where: { OR: [{ sessionId: body.sessionId }] },
+      where: {
+        sessionId: body.sessionId,
+        OR: [
+          { payment: { is: null } },
+          { payment: { is: { status: PaymentStatus.PAID } } },
+        ],
+      },
       select: { userId: true },
     });
     await createBulkNotifications(
@@ -135,6 +164,14 @@ router.post("/:id/submit", upload.single("file"), validate(z.object({
 })), asyncHandler(async (req, res) => {
   const { id } = req.params as { id: string };
   const user = req.user!;
+  if (user.role !== Role.STUDENT) throw new AppError(403, "Only students can submit assignments", "FORBIDDEN");
+  const assignment = await prisma.assignment.findUnique({
+    where: { id },
+    select: { sessionId: true, dueDate: true },
+  });
+  if (!assignment) throw new AppError(404, "Assignment not found", "NOT_FOUND");
+  if (!assignment.sessionId) throw new AppError(403, "Assignment is not available for submission", "FORBIDDEN");
+  await assertEnrolled(user.id, assignment.sessionId);
   if (!req.file) throw new AppError(400, "File is required", "FILE_REQUIRED");
 
   validateFile(req.file.mimetype, req.file.size, ALLOWED_SUBMISSION_TYPES);
@@ -163,8 +200,12 @@ router.patch("/:id/submissions/:subId/grade", requireAdmin, validate(z.object({
   const { subId } = req.params as { id: string; subId: string };
   const { grade, feedback } = req.body as { grade: number; feedback?: string };
 
+  const existing = await prisma.assignmentSubmission.findFirst({
+    where: { id: subId, assignmentId: req.params.id as string },
+  });
+  if (!existing) throw new AppError(404, "Submission not found", "NOT_FOUND");
   const submission = await prisma.assignmentSubmission.update({
-    where: { id: subId },
+    where: { id: existing.id },
     data: { grade, feedback, gradedAt: new Date() },
   });
   await createNotification(

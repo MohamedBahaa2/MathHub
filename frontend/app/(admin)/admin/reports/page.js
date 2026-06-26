@@ -207,7 +207,7 @@ export default function AdminReportsPage() {
                 <tr>
                   <td colSpan={8} className="px-6 py-12 text-center text-ink-muted">
                     <span className="material-symbols-outlined text-4xl mb-2 block opacity-30">assessment</span>
-                    No reports generated yet. Click "Generate Report" to start.
+                    No reports generated yet. Click &quot;Generate Report&quot; to start.
                   </td>
                 </tr>
               ) : reportsList.map(r => (

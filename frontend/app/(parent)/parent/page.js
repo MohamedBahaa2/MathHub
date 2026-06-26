@@ -15,7 +15,7 @@ export default function ParentDashboardPage() {
       <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-10 animate-fade-in-up">
         <div>
           <h1 className="font-headline text-4xl font-extrabold tracking-tight mb-2">Parent Overview</h1>
-          <p className="text-ink-muted text-base leading-relaxed">Monitor your child's progress and performance.</p>
+          <p className="text-ink-muted text-base leading-relaxed">Monitor your child&apos;s progress and performance.</p>
         </div>
         <div className="flex gap-2">
           {LINKED_STUDENTS.map(s => (
@@ -65,7 +65,7 @@ export default function ParentDashboardPage() {
               ))}
             </div>
           </div>
-          <p className="text-sm text-ink-muted italic">Teacher note: "Performing consistently. Encourage more practice on integration techniques."</p>
+          <p className="text-sm text-ink-muted italic">Teacher note: &quot;Performing consistently. Encourage more practice on integration techniques.&quot;</p>
         </div>
 
         <div className="glass rounded-2xl p-6 shadow-glass animate-fade-in-up">

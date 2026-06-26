@@ -9,7 +9,7 @@ import { authenticate } from "../middlewares/auth";
 
 import { validate } from "../middlewares/validate";
 import { audit } from "../services/audit.service";
-import { initiatePayment, verifyWebhookSignature, PAYTABS_IPS } from "../services/paytabs.service";
+import { initiatePayment, verifyWebhookSignature, isAllowedPayTabsIp } from "../services/paytabs.service";
 
 const router = Router();
 
@@ -17,7 +17,7 @@ const router = Router();
 function assertPayTabsIp(req: Request, _res: Response, next: NextFunction) {
   const ip = req.ip ?? "";
   const isDev = process.env.NODE_ENV !== "production";
-  if (!isDev && !PAYTABS_IPS.some((allowed) => ip.startsWith((allowed.split("/")[0] ?? "").substring(0, 8)))) {
+  if (!isDev && !isAllowedPayTabsIp(ip)) {
     return next(new AppError(403, "Webhook source not allowed", "FORBIDDEN"));
   }
   next();
@@ -53,40 +53,69 @@ router.post("/initiate", authenticate, validate(z.object({
   } else {
     throw new AppError(400, "Provide sessionId for SESSION type or courseId for COURSE type", "VALIDATION_ERROR");
   }
+  if (amount <= 0) throw new AppError(400, "This item does not require an online payment", "PAYMENT_NOT_REQUIRED");
 
   const cartId = `MH-${crypto.randomUUID()}`;
   const fullUser = await prisma.user.findUniqueOrThrow({ where: { id: user.id } });
+  const target = type === PurchaseType.SESSION ? { sessionId } : { courseId };
+  const existingEnrollment = await prisma.enrollment.findFirst({
+    where: { userId: user.id, ...target },
+    include: { payment: { select: { id: true, status: true } } },
+  });
+  if (existingEnrollment?.payment?.status === PaymentStatus.PENDING) {
+    throw new AppError(409, "A payment is already pending for this item", "PAYMENT_PENDING");
+  }
+  if (existingEnrollment && existingEnrollment.payment?.status !== PaymentStatus.FAILED) {
+    throw new AppError(409, "You are already enrolled in this item", "ALREADY_ENROLLED");
+  }
+  if (existingEnrollment?.payment?.status === PaymentStatus.FAILED) {
+    await prisma.$transaction([
+      prisma.payment.delete({ where: { id: existingEnrollment.payment.id } }),
+      prisma.enrollment.delete({ where: { id: existingEnrollment.id } }),
+    ]);
+  }
 
-  // Create pending enrollment + payment record
-  const enrollment = await prisma.enrollment.create({
-    data: {
-      userId: user.id,
-      sessionId: type === PurchaseType.SESSION ? sessionId : undefined,
-      courseId: type === PurchaseType.COURSE ? courseId : undefined,
-      purchaseType: type,
-    },
+  // The enrollment remains inaccessible until its related payment is PAID.
+  const { enrollment, payment } = await prisma.$transaction(async (tx) => {
+    const enrollment = await tx.enrollment.create({
+      data: {
+        userId: user.id,
+        sessionId: type === PurchaseType.SESSION ? sessionId : undefined,
+        courseId: type === PurchaseType.COURSE ? courseId : undefined,
+        purchaseType: type,
+      },
+    });
+    const payment = await tx.payment.create({
+      data: {
+        userId: user.id,
+        enrollmentId: enrollment.id,
+        amount,
+        currency: "USD",
+        type,
+        status: PaymentStatus.PENDING,
+        paytabsCartId: cartId,
+      },
+    });
+    return { enrollment, payment };
   });
 
-  const payment = await prisma.payment.create({
-    data: {
-      userId: user.id,
-      enrollmentId: enrollment.id,
+  let result;
+  try {
+    result = await initiatePayment({
+      cartId,
+      cartDescription: description,
       amount,
       currency: "USD",
-      type,
-      status: PaymentStatus.PENDING,
-      paytabsCartId: cartId,
-    },
-  });
-
-  const result = await initiatePayment({
-    cartId,
-    cartDescription: description,
-    amount,
-    currency: "USD",
-    customerName: fullUser.name,
-    customerEmail: fullUser.email,
-  });
+      customerName: fullUser.name,
+      customerEmail: fullUser.email,
+    });
+  } catch (error) {
+    await prisma.$transaction([
+      prisma.payment.delete({ where: { id: payment.id } }),
+      prisma.enrollment.delete({ where: { id: enrollment.id } }),
+    ]);
+    throw error;
+  }
 
   await prisma.payment.update({
     where: { id: payment.id },
@@ -115,6 +144,7 @@ router.post("/webhook", assertPayTabsIp, asyncHandler(async (req, res) => {
 
   const payment = await prisma.payment.findUnique({ where: { paytabsCartId: cartId } });
   if (!payment) return res.status(404).json({ error: "Payment not found" });
+  if (payment.status === PaymentStatus.PAID) return res.json({ received: true });
 
   const status = body.payment_result?.response_status;
   const newStatus = status === "A" ? PaymentStatus.PAID : PaymentStatus.FAILED;
@@ -127,11 +157,6 @@ router.post("/webhook", assertPayTabsIp, asyncHandler(async (req, res) => {
       paidAt: newStatus === PaymentStatus.PAID ? new Date() : undefined,
     },
   });
-
-  // If failed → remove enrollment
-  if (newStatus === PaymentStatus.FAILED && payment.enrollmentId) {
-    await prisma.enrollment.delete({ where: { id: payment.enrollmentId } }).catch(() => undefined);
-  }
 
   res.json({ received: true });
 }));

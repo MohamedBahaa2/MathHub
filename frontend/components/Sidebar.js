@@ -1,8 +1,9 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { auth as authApi, clearToken, getUser } from "@/lib/api";
+import { auth as authApi, clearToken } from "@/lib/api";
 
 const studentNav = [
   { href: "/", label: "Dashboard", icon: "dashboard" },
@@ -37,10 +38,61 @@ const NAV_MAP = { student: studentNav, admin: adminNav, parent: parentNav };
 
 const BRAND_LABELS = { student: "Student Portal", admin: "Admin Portal", parent: "Parent Portal" };
 
+const warmedRoutes = new Set();
+
+function warmRoute(href, router) {
+  if (typeof window === "undefined" || warmedRoutes.has(href)) return;
+  warmedRoutes.add(href);
+
+  router.prefetch?.(href);
+  fetch(href, {
+    credentials: "same-origin",
+    priority: "low",
+  }).catch(() => {
+    warmedRoutes.delete(href);
+  });
+}
+
 export default function Sidebar({ role = "student" }) {
   const pathname = usePathname();
   const router = useRouter();
   const nav = NAV_MAP[role] ?? studentNav;
+  const [pendingHref, setPendingHref] = useState(null);
+
+  useEffect(() => {
+    const routesToWarm = nav
+      .map(item => item.href)
+      .filter(href => href !== pathname);
+
+    let cancelled = false;
+    let index = 0;
+    let idleId;
+    let timeoutId;
+
+    const warmNext = () => {
+      if (cancelled || index >= routesToWarm.length) return;
+
+      warmRoute(routesToWarm[index], router);
+      index += 1;
+      timeoutId = window.setTimeout(scheduleNext, 350);
+    };
+
+    const scheduleNext = () => {
+      if ("requestIdleCallback" in window) {
+        idleId = window.requestIdleCallback(warmNext, { timeout: 1500 });
+      } else {
+        timeoutId = window.setTimeout(warmNext, 600);
+      }
+    };
+
+    timeoutId = window.setTimeout(scheduleNext, 800);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timeoutId);
+      if (idleId) window.cancelIdleCallback?.(idleId);
+    };
+  }, [nav, pathname, router]);
 
   async function handleLogout() {
     try {
@@ -71,26 +123,42 @@ export default function Sidebar({ role = "student" }) {
         <nav className="flex-1 flex flex-col gap-1">
           {nav.map((item) => {
             const isActive = pathname === item.href || (item.href !== "/" && item.href !== "/admin" && item.href !== "/parent" && pathname.startsWith(item.href));
+            const isPending = pendingHref === item.href && !isActive;
             return (
               <Link
                 key={item.href}
                 href={item.href}
+                prefetch
+                onMouseEnter={() => warmRoute(item.href, router)}
+                onFocus={() => warmRoute(item.href, router)}
+                onClick={() => {
+                  if (!isActive) {
+                    setPendingHref(item.href);
+                    warmRoute(item.href, router);
+                    window.setTimeout(() => {
+                      setPendingHref(current => current === item.href ? null : current);
+                    }, 3500);
+                  }
+                }}
                 className={`relative flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold font-headline transition-all duration-300 ${
-                  isActive
-                    ? "text-primary bg-primary-light font-bold"
+                  isActive || isPending
+                    ? "text-primary bg-primary-light font-bold shadow-glass translate-x-1"
                     : "text-ink-muted hover:text-ink hover:bg-white/50 hover:translate-x-1"
                 }`}
               >
-                {isActive && (
-                  <span className="absolute -left-4 top-1/2 -translate-y-1/2 w-1 h-6 bg-primary rounded-r-full" />
+                {(isActive || isPending) && (
+                  <span className="absolute -left-4 top-1/2 -translate-y-1/2 w-1 h-6 bg-primary rounded-r-full transition-all" />
                 )}
                 <span
                   className="material-symbols-outlined text-xl"
-                  style={isActive ? { fontVariationSettings: "'FILL' 1" } : undefined}
+                  style={isActive || isPending ? { fontVariationSettings: "'FILL' 1" } : undefined}
                 >
                   {item.icon}
                 </span>
-                <span>{item.label}</span>
+                <span className="flex-1">{item.label}</span>
+                {isPending && (
+                  <span className="w-3.5 h-3.5 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
+                )}
               </Link>
             );
           })}
