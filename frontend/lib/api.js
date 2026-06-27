@@ -34,7 +34,18 @@ async function request(path, options = {}) {
   });
   if (!res.ok) {
     let msg = `HTTP ${res.status}`;
-    try { const b = await res.json(); msg = b.message || b.error || msg; } catch {}
+    try { 
+      const b = await res.json(); 
+      if (b.error && typeof b.error === 'object') {
+        msg = b.error.message || msg;
+        if (b.error.details && b.error.details.fieldErrors) {
+          const fields = Object.entries(b.error.details.fieldErrors).map(([k, v]) => `${k}: ${v.join(', ')}`);
+          if (fields.length > 0) msg += ` (${fields.join(' | ')})`;
+        }
+      } else {
+        msg = b.message || b.error || msg; 
+      }
+    } catch {}
     throw new Error(msg);
   }
   if (res.status === 204) return null;
@@ -48,6 +59,16 @@ export const auth = {
   logout: () => request("/auth/logout", { method: "POST" }),
   me: () => request("/auth/me"),
   updateMe: (data) => request("/auth/me", { method: "PATCH", body: JSON.stringify(data) }),
+};
+
+// ── Courses ───────────────────────────────────────────────────────────────────
+export const courses = {
+  list: () => request("/courses"),
+  get: (id) => request(`/courses/${id}`),
+  create: (data) => request("/courses", { method: "POST", body: JSON.stringify(data) }),
+  update: (id, data) => request(`/courses/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
+  delete: (id) => request(`/courses/${id}`, { method: "DELETE" }),
+  enroll: (id, userId, purchaseType) => request(`/courses/${id}/enroll`, { method: "POST", body: JSON.stringify({ userId, purchaseType }) }),
 };
 
 // ── Sessions ──────────────────────────────────────────────────────────────────

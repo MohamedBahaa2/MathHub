@@ -1,10 +1,25 @@
 import bcrypt from "bcryptjs";
-import { PrismaClient, Role, PricingType, SessionStatus, PurchaseType } from "@prisma/client";
+import { PrismaClient, Role, PricingType, SessionStatus, PurchaseType, PaymentStatus } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 async function main() {
   console.log("🌱 Seeding MathHub database...");
+
+  // Clean existing tables to avoid duplicate key violations
+  await prisma.auditLog.deleteMany({});
+  await prisma.payment.deleteMany({});
+  await prisma.enrollment.deleteMany({});
+  await prisma.assignmentSubmission.deleteMany({});
+  await prisma.assignment.deleteMany({});
+  await prisma.choice.deleteMany({});
+  await prisma.question.deleteMany({});
+  await prisma.quizAttempt.deleteMany({});
+  await prisma.quiz.deleteMany({});
+  await prisma.session.deleteMany({});
+  await prisma.course.deleteMany({});
+  await prisma.parentStudent.deleteMany({});
+  await prisma.user.deleteMany({});
 
   // ── Users ──
   const superAdmin = await prisma.user.upsert({
@@ -72,8 +87,8 @@ async function main() {
     create: { parentId: parent.id, studentId: student1.id },
   });
 
-  // ── Course ──
-  const course = await prisma.course.upsert({
+  // ── Courses ──
+  const course1 = await prisma.course.upsert({
     where: { id: "seed-course-001" },
     update: {},
     create: {
@@ -85,22 +100,47 @@ async function main() {
     },
   });
 
+  const course2 = await prisma.course.upsert({
+    where: { id: "seed-course-002" },
+    update: {},
+    create: {
+      id: "seed-course-002",
+      name: "Linear Algebra — Foundations",
+      description: "Master matrices, vector spaces, eigenvalues, and eigenvectors.",
+      coursePrice: 250,
+      sessionPrice: 40,
+    },
+  });
+
+  const course3 = await prisma.course.upsert({
+    where: { id: "seed-course-003" },
+    update: {},
+    create: {
+      id: "seed-course-003",
+      name: "Differential Equations",
+      description: "First-order equations, linear systems, Laplace transforms, and numerical methods.",
+      coursePrice: 280,
+      sessionPrice: 45,
+    },
+  });
+
   // ── Sessions ──
   const now = new Date();
 
+  // Calculus I Sessions
   const session1 = await prisma.session.upsert({
     where: { id: "seed-session-001" },
     update: {},
     create: {
       id: "seed-session-001",
       title: "Introduction to Limits",
-      topic: "Limits",
-      description: "Understanding what limits are and how to compute them.",
+      topic: "Limits & Continuity",
+      description: "Understanding what limits are and how to compute them algebraically and graphically.",
       scheduledAt: new Date(now.getTime() + 2 * 24 * 60 * 60 * 1000),
       durationMin: 90,
       status: SessionStatus.UPCOMING,
       pricingType: PricingType.COURSE,
-      courseId: course.id,
+      courseId: course1.id,
     },
   });
 
@@ -111,12 +151,14 @@ async function main() {
       id: "seed-session-002",
       title: "Derivatives — Rules & Applications",
       topic: "Derivatives",
-      description: "Power rule, chain rule, product rule, and real-world applications.",
-      scheduledAt: new Date(now.getTime() + 5 * 24 * 60 * 60 * 1000),
+      description: "Power rule, chain rule, product rule, and optimization problems.",
+      scheduledAt: now, // Live right now!
       durationMin: 90,
-      status: SessionStatus.UPCOMING,
+      status: SessionStatus.LIVE,
       pricingType: PricingType.COURSE,
-      courseId: course.id,
+      courseId: course1.id,
+      zoomLiveEnc: "d3A5cHJvdy56b29tLnVzL2ovMTIzNDU2Nzg5MA==", // Mock encrypted Zoom link
+      zoomPasscodeEnc: "MTIzNDU2",
     },
   });
 
@@ -127,25 +169,136 @@ async function main() {
       id: "seed-session-003",
       title: "Integration Basics",
       topic: "Integration",
+      description: "Introduction to anti-derivatives, Riemann sums, and the Fundamental Theorem of Calculus.",
       scheduledAt: new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000),
       durationMin: 90,
       status: SessionStatus.RECORDING,
       pricingType: PricingType.SESSION,
       sessionPrice: 50,
+      courseId: course1.id,
+      zoomRecordingEnc: "d3A5cHJvdy56b29tLnVzL3JlYy8xMjM0NTY3ODkw",
+    },
+  });
+
+  const session4 = await prisma.session.upsert({
+    where: { id: "seed-session-004" },
+    update: {},
+    create: {
+      id: "seed-session-004",
+      title: "Applications of Definite Integrals",
+      topic: "Integration",
+      description: "Finding area between curves and volumes of solids of revolution.",
+      scheduledAt: new Date(now.getTime() - 4 * 24 * 60 * 60 * 1000),
+      durationMin: 90,
+      status: SessionStatus.ENDED,
+      pricingType: PricingType.COURSE,
+      courseId: course1.id,
+    },
+  });
+
+  // Linear Algebra Sessions
+  const session5 = await prisma.session.upsert({
+    where: { id: "seed-session-005" },
+    update: {},
+    create: {
+      id: "seed-session-005",
+      title: "Matrix Operations & Determinants",
+      topic: "Matrices",
+      description: "Row reduction, matrix multiplication, inverses, and determinant properties.",
+      scheduledAt: new Date(now.getTime() - 5 * 24 * 60 * 60 * 1000),
+      durationMin: 75,
+      status: SessionStatus.RECORDING,
+      pricingType: PricingType.SESSION,
+      sessionPrice: 40,
+      courseId: course2.id,
+      zoomRecordingEnc: "d3A5cHJvdy56b29tLnVzL3JlYy85ODc2NTQzMjE=",
+    },
+  });
+
+  const session6 = await prisma.session.upsert({
+    where: { id: "seed-session-006" },
+    update: {},
+    create: {
+      id: "seed-session-006",
+      title: "Vector Spaces & Subspaces",
+      topic: "Vector Spaces",
+      description: "Understanding linear independence, basis, dimension, and span.",
+      scheduledAt: new Date(now.getTime() + 4 * 24 * 60 * 60 * 1000),
+      durationMin: 90,
+      status: SessionStatus.UPCOMING,
+      pricingType: PricingType.COURSE,
+      courseId: course2.id,
+    },
+  });
+
+  // Differential Equations Sessions
+  const session7 = await prisma.session.upsert({
+    where: { id: "seed-session-007" },
+    update: {},
+    create: {
+      id: "seed-session-007",
+      title: "First-Order Separable Equations",
+      topic: "First-Order ODEs",
+      description: "Solving separable differential equations and modeling population growth.",
+      scheduledAt: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000),
+      durationMin: 90,
+      status: SessionStatus.RECORDING,
+      pricingType: PricingType.SESSION,
+      sessionPrice: 45,
+      courseId: course3.id,
+      zoomRecordingEnc: "d3A5cHJvdy56b29tLnVzL3JlYy81NTU0NDQzMzM=",
     },
   });
 
   // ── Enrollments ──
-  await prisma.enrollment.upsert({
-    where: { userId_sessionId: { userId: student1.id, sessionId: session1.id } },
-    update: {},
-    create: { userId: student1.id, sessionId: session1.id, purchaseType: PurchaseType.FREE },
+  // Student 1 (Ahmed) is enrolled in Course 1 (Calculus I) and Course 3 (Differential Equations)
+  await prisma.enrollment.create({
+    data: { userId: student1.id, courseId: course1.id, purchaseType: PurchaseType.COURSE },
   });
 
-  await prisma.enrollment.upsert({
-    where: { userId_sessionId: { userId: student2.id, sessionId: session1.id } },
-    update: {},
-    create: { userId: student2.id, sessionId: session1.id, purchaseType: PurchaseType.FREE },
+  await prisma.enrollment.create({
+    data: { userId: student1.id, courseId: course3.id, purchaseType: PurchaseType.COURSE },
+  });
+
+  // Student 1 is also enrolled in an individual session from Course 2 (Linear Algebra)
+  await prisma.enrollment.create({
+    data: { userId: student1.id, sessionId: session5.id, purchaseType: PurchaseType.SESSION },
+  });
+
+  // Student 2 (Lina) is enrolled in Course 2 (Linear Algebra) and Course 1 (Calculus I)
+  await prisma.enrollment.create({
+    data: { userId: student2.id, courseId: course2.id, purchaseType: PurchaseType.COURSE },
+  });
+
+  await prisma.enrollment.create({
+    data: { userId: student2.id, courseId: course1.id, purchaseType: PurchaseType.COURSE },
+  });
+
+  // Also seed some initial mock payments for Total Revenue calculation
+  await prisma.payment.create({
+    data: {
+      userId: student1.id,
+      amount: 300,
+      currency: "USD",
+      type: PurchaseType.COURSE,
+      status: PaymentStatus.PAID,
+      paytabsRef: "REF-CALC-I",
+      receiptUrl: "https://receipts.mathhub.app/seed-1.pdf",
+      paidAt: now,
+    },
+  });
+
+  await prisma.payment.create({
+    data: {
+      userId: student1.id,
+      amount: 40,
+      currency: "USD",
+      type: PurchaseType.SESSION,
+      status: PaymentStatus.PAID,
+      paytabsRef: "REF-LA-5",
+      receiptUrl: "https://receipts.mathhub.app/seed-2.pdf",
+      paidAt: now,
+    },
   });
 
   // ── Assignment ──
