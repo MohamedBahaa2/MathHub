@@ -47,7 +47,7 @@ export default function AdminDashboardPage() {
     { icon: "person_add", label: "Add Student", href: "/admin/users" },
     { icon: "assessment", label: "Generate Report", href: "/admin/reports" },
     { icon: "support_agent", label: "Help Tickets", href: "/admin/help", badge: openTickets },
-    { icon: "quiz", label: "Quizzes", href: "/admin/sessions" },
+    { icon: "quiz", label: "Quizzes", href: "/admin/quizzes" },
   ];
 
   return (

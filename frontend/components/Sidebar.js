@@ -21,6 +21,7 @@ const adminNav = [
   { href: "/admin/users", label: "Students & Parents", icon: "group" },
   { href: "/admin/sessions", label: "Sessions", icon: "play_circle" },
   { href: "/admin/assignments", label: "Assignments", icon: "assignment" },
+  { href: "/admin/quizzes", label: "Quizzes & Exams", icon: "quiz" },
   { href: "/admin/help", label: "Help Requests", icon: "support_agent" },
   { href: "/admin/reports", label: "Reports", icon: "assessment" },
   { href: "/admin/payments", label: "Payments & Plans", icon: "payments" },

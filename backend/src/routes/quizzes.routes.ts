@@ -7,7 +7,7 @@ import { prisma } from "../config/database";
 import { asyncHandler } from "../utils/async-handler";
 import { AppError } from "../utils/app-error";
 import { authenticate } from "../middlewares/auth";
-import { requireAdmin, requireSuperAdmin } from "../middlewares/requireRole";
+import { requireAdmin } from "../middlewares/requireRole";
 import { validate } from "../middlewares/validate";
 import { audit } from "../services/audit.service";
 import { autoGradeAttempt, manualGradeAttempt } from "../services/quiz.service";
@@ -152,6 +152,7 @@ router.patch("/:id", requireAdmin, validate(z.object({
   body: z.object({
     title: z.string().min(2).max(200).optional(),
     description: z.string().max(2000).optional(),
+    sessionId: z.string().nullable().optional(),
     isPublished: z.boolean().optional(),
   }),
 })), asyncHandler(async (req, res) => {
@@ -162,7 +163,7 @@ router.patch("/:id", requireAdmin, validate(z.object({
 }));
 
 // DELETE /api/quizzes/:id — SUPERADMIN only
-router.delete("/:id", requireSuperAdmin, validate(z.object({
+router.delete("/:id", requireAdmin, validate(z.object({
   params: z.object({ id: z.string().min(1) }),
 })), asyncHandler(async (req, res) => {
   const { id } = req.params as { id: string };
@@ -215,16 +216,20 @@ router.patch("/:id/questions/:qId", requireAdmin, validate(z.object({
     correctText: z.string().nullable().optional(),
   }),
 })), asyncHandler(async (req, res) => {
-  const { qId } = req.params as { id: string; qId: string };
-  const question = await prisma.question.update({ where: { id: qId }, data: req.body });
-  res.json({ question });
+  const { id, qId } = req.params as { id: string; qId: string };
+  const question = await prisma.question.findFirst({ where: { id: qId, quizId: id } });
+  if (!question) throw new AppError(404, "Question not found", "NOT_FOUND");
+  const updated = await prisma.question.update({ where: { id: qId }, data: req.body });
+  res.json({ question: updated });
 }));
 
 // DELETE /api/quizzes/:id/questions/:qId — ASSISTANT+
 router.delete("/:id/questions/:qId", requireAdmin, validate(z.object({
   params: z.object({ id: z.string().min(1), qId: z.string().min(1) }),
 })), asyncHandler(async (req, res) => {
-  const { qId } = req.params as { id: string; qId: string };
+  const { id, qId } = req.params as { id: string; qId: string };
+  const question = await prisma.question.findFirst({ where: { id: qId, quizId: id } });
+  if (!question) throw new AppError(404, "Question not found", "NOT_FOUND");
   await prisma.question.delete({ where: { id: qId } });
   res.status(204).send();
 }));
@@ -371,6 +376,21 @@ router.get("/:id/attempts", requireAdmin, validate(z.object({
     where: { quizId },
     include: {
       student: { select: { id: true, name: true, email: true, studentCode: true } },
+      answers: {
+        orderBy: { question: { order: "asc" } },
+        include: {
+          choice: { select: { id: true, text: true } },
+          question: {
+            select: {
+              id: true, text: true, type: true, points: true, order: true,
+              choices: {
+                orderBy: { order: "asc" },
+                select: { id: true, text: true, isCorrect: true },
+              },
+            },
+          },
+        },
+      },
       _count: { select: { answers: true } },
     },
     orderBy: { startedAt: "desc" },
@@ -389,10 +409,22 @@ router.patch("/:id/attempts/:aId/grade", requireAdmin, validate(z.object({
     })),
   }),
 })), asyncHandler(async (req, res) => {
-  const { aId } = req.params as { id: string; aId: string };
+  const { id, aId } = req.params as { id: string; aId: string };
   const { grades } = req.body as { grades: Array<{ answerId: string; pointsEarned: number; isCorrect: boolean }> };
 
-  const attempt = await prisma.quizAttempt.findUniqueOrThrow({ where: { id: aId } });
+  const attempt = await prisma.quizAttempt.findFirst({
+    where: { id: aId, quizId: id },
+    include: { answers: { include: { question: { select: { points: true } } } } },
+  });
+  if (!attempt) throw new AppError(404, "Quiz attempt not found", "NOT_FOUND");
+  const answersById = new Map(attempt.answers.map((answer) => [answer.id, answer]));
+  for (const grade of grades) {
+    const answer = answersById.get(grade.answerId);
+    if (!answer) throw new AppError(400, "Answer does not belong to this attempt", "INVALID_ANSWER");
+    if (grade.pointsEarned > answer.question.points) {
+      throw new AppError(400, "Points cannot exceed the question maximum", "INVALID_GRADE");
+    }
+  }
   await manualGradeAttempt(aId, grades);
   const updated = await prisma.quizAttempt.findUnique({ where: { id: aId } });
   await createNotification(

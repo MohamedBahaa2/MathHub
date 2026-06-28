@@ -130,6 +130,26 @@ export const quizzes = {
   create: (data) => request("/quizzes", { method: "POST", body: JSON.stringify(data) }),
   update: (id, data) => request(`/quizzes/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
   delete: (id) => request(`/quizzes/${id}`, { method: "DELETE" }),
+  addQuestion: (id, data) => {
+    const form = new FormData();
+    form.append("text", data.text);
+    form.append("type", data.type);
+    form.append("order", String(data.order));
+    form.append("points", String(data.points));
+    if (data.correctText) form.append("correctText", data.correctText);
+    if (data.file) form.append("media", data.file);
+    return request(`/quizzes/${id}/questions`, { method: "POST", body: form });
+  },
+  updateQuestion: (id, questionId, data) =>
+    request(`/quizzes/${id}/questions/${questionId}`, {
+      method: "PATCH", body: JSON.stringify(data),
+    }),
+  deleteQuestion: (id, questionId) =>
+    request(`/quizzes/${id}/questions/${questionId}`, { method: "DELETE" }),
+  addChoice: (id, questionId, data) =>
+    request(`/quizzes/${id}/questions/${questionId}/choices`, {
+      method: "POST", body: JSON.stringify(data),
+    }),
   startAttempt: (id) => request(`/quizzes/${id}/attempt`, { method: "POST" }),
   saveAnswer: (id, data) => {
     if (data.file) {
@@ -147,6 +167,10 @@ export const quizzes = {
   },
   submitAttempt: (id) => request(`/quizzes/${id}/attempt/submit`, { method: "POST" }),
   getAttempts: (id) => request(`/quizzes/${id}/attempts`),
+  gradeAttempt: (id, attemptId, grades) =>
+    request(`/quizzes/${id}/attempts/${attemptId}/grade`, {
+      method: "PATCH", body: JSON.stringify({ grades }),
+    }),
 };
 
 // ── Users (admin) ─────────────────────────────────────────────────────────────

@@ -12,6 +12,18 @@ import { prisma } from "../config/database";
  * If all questions are auto-gradeable → status = GRADED. Otherwise → SUBMITTED.
  */
 export async function autoGradeAttempt(attemptId: string): Promise<void> {
+  const attemptQuestions = await prisma.quizAttempt.findUniqueOrThrow({
+    where: { id: attemptId },
+    select: { quiz: { select: { questions: { select: { id: true } } } } },
+  });
+  await prisma.answer.createMany({
+    data: attemptQuestions.quiz.questions.map((question) => ({
+      attemptId,
+      questionId: question.id,
+    })),
+    skipDuplicates: true,
+  });
+
   const attempt = await prisma.quizAttempt.findUniqueOrThrow({
     where: { id: attemptId },
     include: {
@@ -104,7 +116,11 @@ export async function manualGradeAttempt(
     include: { question: true },
   });
 
-  const maxScore = allAnswers.reduce((sum, a) => sum + a.question.points, 0);
+  const attempt = await prisma.quizAttempt.findUniqueOrThrow({
+    where: { id: attemptId },
+    select: { quiz: { select: { questions: { select: { points: true } } } } },
+  });
+  const maxScore = attempt.quiz.questions.reduce((sum, question) => sum + question.points, 0);
   const score = allAnswers.reduce((sum, a) => sum + (a.pointsEarned ?? 0), 0);
   const allGraded = allAnswers.every((a) => a.isCorrect !== null);
 
