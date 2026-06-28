@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { payments as paymentsApi } from "@/lib/api";
 
 export default function PaymentsPage() {
@@ -71,7 +72,7 @@ export default function PaymentsPage() {
       <div className="glass rounded-2xl shadow-glass overflow-hidden animate-fade-in-up">
         <div className="px-6 py-4 border-b border-surface-high flex items-center justify-between">
           <h3 className="font-headline font-bold text-lg">Payment History</h3>
-          <a href="/sessions" className="text-sm font-bold text-secondary hover:opacity-70 transition-opacity">+ Buy more →</a>
+          <Link href="/sessions" className="text-sm font-bold text-secondary hover:opacity-70 transition-opacity">+ Buy more →</Link>
         </div>
         {loading ? (
           <div className="p-8">{[1,2,3].map(i => <div key={i} className="h-12 animate-pulse bg-surface-low rounded-xl mb-3" />)}</div>

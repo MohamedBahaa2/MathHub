@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { users as usersApi } from "@/lib/api";
 
 const ROLE_COLORS = {
@@ -95,7 +95,7 @@ export default function AdminUsersPage() {
   const [showModal, setShowModal] = useState(false);
   const [toggling, setToggling] = useState(null);
 
-  function buildQuery() {
+  const buildQuery = useCallback(() => {
     const params = new URLSearchParams();
     if (tab === "Students") params.set("role", "STUDENT");
     else if (tab === "Parents") params.set("role", "PARENT");
@@ -103,9 +103,9 @@ export default function AdminUsersPage() {
     if (search) params.set("search", search);
     params.set("limit", "50");
     return "?" + params.toString();
-  }
+  }, [tab, search]);
 
-  async function loadUsers() {
+  const loadUsers = useCallback(async () => {
     setLoading(true);
     try {
       const d = await usersApi.list(buildQuery());
@@ -116,9 +116,9 @@ export default function AdminUsersPage() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [buildQuery]);
 
-  useEffect(() => { loadUsers(); }, [tab, search]);
+  useEffect(() => { void loadUsers(); }, [loadUsers]);
 
   async function toggleActive(user) {
     setToggling(user.id);

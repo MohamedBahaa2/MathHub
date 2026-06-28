@@ -76,6 +76,16 @@ body {
   50%      { opacity: 0.5; }
 }
 
+@keyframes route-shimmer {
+  0%   { background-position: 120% 0; }
+  100% { background-position: -120% 0; }
+}
+
+@keyframes page-enter {
+  from { opacity: 0; transform: translateY(10px) scale(0.995); filter: blur(2px); }
+  to   { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+
 @keyframes math-float-a {
   0%   { transform: translateY(0px)   translateX(0px)   rotate(0deg)  scale(1); }
   20%  { transform: translateY(-32px) translateX(14px)  rotate(8deg)  scale(1.08); }
@@ -107,6 +117,21 @@ body {
 
 .animate-pulse-live {
   animation: pulse-live 2s ease-in-out infinite;
+}
+
+.animate-page-enter {
+  animation: page-enter 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.route-shimmer {
+  background-image: linear-gradient(
+    90deg,
+    var(--color-surface-high) 0%,
+    var(--color-surface-lowest) 45%,
+    var(--color-surface-high) 90%
+  );
+  background-size: 220% 100%;
+  animation: route-shimmer 1.25s ease-in-out infinite;
 }
 
 /* Stagger children */

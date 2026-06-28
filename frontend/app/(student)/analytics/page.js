@@ -22,12 +22,6 @@ export default function AnalyticsPage() {
     });
   }, []);
 
-  const topics = [
-    { name: "Sessions Enrolled", value: 100, color: "primary" },
-    { name: "Assignments Submitted", value: data ? Math.min(100, ((data.gradedSubs.length / Math.max(data.assignments.length, 1)) * 100).toFixed(0)) : 0, color: "secondary" },
-    { name: "Quizzes Available", value: data ? Math.min(100, data.quizList.length * 10) : 0, color: "danger" },
-  ];
-
   const avgGradeNum = parseFloat(data?.avgGrade ?? 0);
   const ringOffset = (502.6 * (1 - avgGradeNum / 100)).toFixed(1);
 
