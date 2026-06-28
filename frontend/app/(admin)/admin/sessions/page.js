@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
-import { sessions as sessionsApi } from "@/lib/api";
+import { sessions as sessionsApi, courses as coursesApi } from "@/lib/api";
 
 const STATES = ["UPCOMING", "LIVE", "ENDED", "RECORDING"];
 const STATUS_COLORS = {
@@ -11,7 +11,7 @@ const STATUS_COLORS = {
 };
 const STATUS_NEXT = { UPCOMING: "LIVE", LIVE: "ENDED", ENDED: "RECORDING" };
 
-function SessionModal({ session, onClose, onSaved }) {
+function SessionModal({ session, courses, onClose, onSaved }) {
   const isEdit = !!session;
   const [form, setForm] = useState({
     title: session?.title ?? "",
@@ -20,6 +20,7 @@ function SessionModal({ session, onClose, onSaved }) {
     scheduledAt: session?.scheduledAt ? new Date(session.scheduledAt).toISOString().slice(0, 16) : "",
     durationMin: session?.durationMin ?? 60,
     sessionPrice: session?.sessionPrice ?? "",
+    courseId: session?.courseId ?? "",
     zoomLive: "",
     zoomRecording: "",
     zoomPasscode: "",
@@ -34,8 +35,9 @@ function SessionModal({ session, onClose, onSaved }) {
       title: form.title, topic: form.topic, description: form.description,
       scheduledAt: new Date(form.scheduledAt).toISOString(),
       durationMin: Number(form.durationMin),
-      pricingType: "SESSION",
+      pricingType: form.courseId ? "COURSE" : "SESSION",
       sessionPrice: form.sessionPrice ? Number(form.sessionPrice) : undefined,
+      courseId: form.courseId || undefined,
       zoomLive: form.zoomLive || undefined,
       zoomRecording: form.zoomRecording || undefined,
       zoomPasscode: form.zoomPasscode || undefined,
@@ -94,12 +96,22 @@ function SessionModal({ session, onClose, onSaved }) {
                 className="w-full px-4 py-3 bg-surface-low rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-light" />
             </div>
           </div>
-          <div>
-            <label className="text-xs font-bold uppercase tracking-wide text-ink-muted block mb-1.5">Session Price (USD)</label>
-            <input type="number" value={form.sessionPrice}
-              onChange={e => setForm(p => ({ ...p, sessionPrice: e.target.value }))}
-              placeholder="e.g. 15"
-              className="w-full px-4 py-3 bg-surface-low rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-light" />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="text-xs font-bold uppercase tracking-wide text-ink-muted block mb-1.5">Session Price (USD)</label>
+              <input type="number" value={form.sessionPrice}
+                onChange={e => setForm(p => ({ ...p, sessionPrice: e.target.value }))}
+                placeholder="e.g. 15"
+                className="w-full px-4 py-3 bg-surface-low rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-light" />
+            </div>
+            <div>
+              <label className="text-xs font-bold uppercase tracking-wide text-ink-muted block mb-1.5">Course (Optional)</label>
+              <select value={form.courseId} onChange={e => setForm(p => ({ ...p, courseId: e.target.value }))}
+                className="w-full px-4 py-3 bg-surface-low rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-light">
+                <option value="">None (Standalone Session)</option>
+                {courses.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+              </select>
+            </div>
           </div>
           <div>
             <label className="text-xs font-bold uppercase tracking-wide text-ink-muted block mb-1.5">Zoom Live Link</label>
@@ -135,17 +147,19 @@ function SessionModal({ session, onClose, onSaved }) {
 
 export default function AdminSessionsPage() {
   const [sessionsList, setSessionsList] = useState([]);
+  const [coursesList, setCoursesList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [editSession, setEditSession] = useState(null);
   const [advancing, setAdvancing] = useState(null);
 
-  async function loadSessions() {
+  async function loadData() {
     setLoading(true);
     try {
-      const d = await sessionsApi.list();
-      setSessionsList(d.sessions || []);
+      const [sRes, cRes] = await Promise.all([sessionsApi.list(), coursesApi.list()]);
+      setSessionsList(sRes.sessions || []);
+      setCoursesList(cRes.courses || []);
     } catch (e) {
       setError(e.message);
     } finally {
@@ -153,7 +167,7 @@ export default function AdminSessionsPage() {
     }
   }
 
-  useEffect(() => { loadSessions(); }, []);
+  useEffect(() => { loadData(); }, []);
 
   async function handleAdvance(s) {
     const nextStatus = STATUS_NEXT[s.status];
@@ -199,7 +213,7 @@ export default function AdminSessionsPage() {
           <table className="w-full text-left">
             <thead>
               <tr className="bg-surface-low">
-                {["Title", "Topic", "Scheduled", "Status", "Enrolled", "Price", "Actions"].map(h => (
+                {["Title", "Course", "Topic", "Scheduled", "Status", "Enrolled", "Price", "Actions"].map(h => (
                   <th key={h} className="px-6 py-4 text-[0.6875rem] font-bold uppercase tracking-widest text-ink-muted">{h}</th>
                 ))}
               </tr>
@@ -215,6 +229,9 @@ export default function AdminSessionsPage() {
                 <tr key={s.id} className="hover:bg-white/50 transition-colors border-t border-surface-high/50">
                   <td className="px-6 py-4 font-headline font-bold text-sm max-w-[220px]">
                     <p className="truncate">{s.title}</p>
+                  </td>
+                  <td className="px-6 py-4 text-sm font-semibold max-w-[180px]">
+                    <p className="truncate">{s.course?.name ?? "—"}</p>
                   </td>
                   <td className="px-6 py-4 text-sm text-ink-muted">{s.topic}</td>
                   <td className="px-6 py-4 text-sm text-ink-muted">
@@ -265,8 +282,9 @@ export default function AdminSessionsPage() {
       {showModal && (
         <SessionModal
           session={editSession}
+          courses={coursesList}
           onClose={() => setShowModal(false)}
-          onSaved={loadSessions}
+          onSaved={loadData}
         />
       )}
     </>
