@@ -25,6 +25,7 @@ const loginSchema = z.object({
   body: z.object({
     email: z.string().email().transform((v) => v.toLowerCase().trim()),
     password: z.string().min(1),
+    rememberMe: z.boolean().default(false),
   }),
 });
 
@@ -56,21 +57,22 @@ const publicUser = {
   createdAt: true,
 } as const;
 
-function refreshCookieOptions() {
+function refreshCookieOptions(ttlDays: number) {
   return {
     httpOnly: true,
     secure: env.NODE_ENV === "production",
     sameSite: "strict" as const,
     path: "/api/auth",
     domain: env.COOKIE_DOMAIN || undefined,
-    maxAge: env.REFRESH_TOKEN_TTL_DAYS * 24 * 60 * 60 * 1000,
+    maxAge: ttlDays * 24 * 60 * 60 * 1000,
   };
 }
 
 async function issueTokens(
   user: { id: string; email: string; role: Role },
-  context: { ipAddress?: string; userAgent?: string }
+  context: { ipAddress?: string; userAgent?: string; ttlDays?: number }
 ) {
+  const ttlDays = context.ttlDays ?? env.REFRESH_TOKEN_TTL_DAYS;
   const tokenId = crypto.randomUUID();
   const refreshToken = signRefreshToken(user.id, tokenId);
   await prisma.refreshToken.create({
@@ -78,17 +80,17 @@ async function issueTokens(
       id: tokenId,
       tokenHash: hashToken(refreshToken),
       userId: user.id,
-      expiresAt: new Date(Date.now() + env.REFRESH_TOKEN_TTL_DAYS * 86_400_000),
+      expiresAt: new Date(Date.now() + ttlDays * 86_400_000),
       ipAddress: context.ipAddress,
       userAgent: context.userAgent,
     },
   });
-  return { accessToken: signAccessToken(user), refreshToken };
+  return { accessToken: signAccessToken(user), refreshToken, ttlDays };
 }
 
 // POST /api/auth/login
 router.post("/login", authRateLimit, validate(loginSchema), asyncHandler(async (req, res) => {
-  const { email, password } = req.body as z.infer<typeof loginSchema>["body"];
+  const { email, password, rememberMe } = req.body as z.infer<typeof loginSchema>["body"];
   const user = await prisma.user.findUnique({ where: { email } });
   if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
     await audit(req, "AUTH_LOGIN_FAILED", { metadata: { email } });
@@ -96,8 +98,10 @@ router.post("/login", authRateLimit, validate(loginSchema), asyncHandler(async (
   }
   if (!user.isActive) throw new AppError(403, "Account is deactivated", "ACCOUNT_UNAVAILABLE");
 
-  const tokens = await issueTokens(user, { ipAddress: req.ip, userAgent: req.get("user-agent") });
-  res.cookie("refreshToken", tokens.refreshToken, refreshCookieOptions());
+  // rememberMe: 30-day token; session-only: 1-day token
+  const ttlDays = rememberMe ? env.REFRESH_TOKEN_TTL_DAYS : 1;
+  const tokens = await issueTokens(user, { ipAddress: req.ip, userAgent: req.get("user-agent"), ttlDays });
+  res.cookie("refreshToken", tokens.refreshToken, refreshCookieOptions(tokens.ttlDays));
   await audit(req, "AUTH_LOGIN", { actorId: user.id, entityType: "User", entityId: user.id });
   const safeUser = await prisma.user.findUnique({ where: { id: user.id }, select: publicUser });
   res.json({ user: safeUser, accessToken: tokens.accessToken });
@@ -123,7 +127,10 @@ router.post("/refresh", authRateLimit, validate(refreshSchema), asyncHandler(asy
     where: { id: stored.id },
     data: { revokedAt: new Date(), replacedBy: replacementClaims.jti },
   });
-  res.cookie("refreshToken", tokens.refreshToken, refreshCookieOptions());
+  // Preserve the original TTL from the stored token
+  const remainingMs = stored.expiresAt.getTime() - Date.now();
+  const remainingDays = Math.max(1, Math.ceil(remainingMs / 86_400_000));
+  res.cookie("refreshToken", tokens.refreshToken, refreshCookieOptions(remainingDays));
   res.json({ accessToken: tokens.accessToken });
 }));
 
@@ -141,7 +148,7 @@ router.post("/logout", validate(refreshSchema), asyncHandler(async (req, res) =>
       // Logout is idempotent
     }
   }
-  res.clearCookie("refreshToken", refreshCookieOptions());
+  res.clearCookie("refreshToken", refreshCookieOptions(1));
   res.status(204).send();
 }));
 

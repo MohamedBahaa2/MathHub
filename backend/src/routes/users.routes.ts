@@ -189,11 +189,46 @@ router.get("/:id", requireAdmin, validate(z.object({
       ...userSelect,
       linkedChildren: { include: { student: { select: userSelect } } },
       linkedParents: { include: { parent: { select: userSelect } } },
+      enrollments: {
+        include: {
+          course: { select: { id: true, name: true } },
+          session: { select: { id: true, title: true } },
+        },
+        orderBy: { grantedAt: "desc" },
+      },
       _count: { select: { enrollments: true, submissions: true, quizAttempts: true } },
     },
   });
   if (!user) throw new AppError(404, "User not found", "NOT_FOUND");
   res.json({ user });
+}));
+
+// GET /api/users/:id/enrollments — ASSISTANT+
+router.get("/:id/enrollments", requireAdmin, validate(z.object({
+  params: z.object({ id: z.string().min(1) }),
+})), asyncHandler(async (req, res) => {
+  const enrollments = await prisma.enrollment.findMany({
+    where: { userId: req.params.id as string },
+    include: {
+      course: { select: { id: true, name: true, coursePrice: true } },
+      session: { select: { id: true, title: true } },
+      payment: { select: { status: true, amount: true } },
+    },
+    orderBy: { grantedAt: "desc" },
+  });
+  res.json({ enrollments });
+}));
+
+// DELETE /api/enrollments/:enrollmentId — SUPERADMIN only
+router.delete("/enrollments/:enrollmentId", requireSuperAdmin, validate(z.object({
+  params: z.object({ enrollmentId: z.string().min(1) }),
+})), asyncHandler(async (req, res) => {
+  const { enrollmentId } = req.params as { enrollmentId: string };
+  const enrollment = await prisma.enrollment.findUnique({ where: { id: enrollmentId } });
+  if (!enrollment) throw new AppError(404, "Enrollment not found", "NOT_FOUND");
+  await prisma.enrollment.delete({ where: { id: enrollmentId } });
+  await audit(req, "ENROLLMENT_REVOKED", { entityType: "Enrollment", entityId: enrollmentId });
+  res.status(204).send();
 }));
 
 export default router;
