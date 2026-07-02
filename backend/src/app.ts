@@ -23,6 +23,7 @@ import notificationRoutes from "./routes/notification.routes";
 import helpRoutes from "./routes/help.routes";
 import reportsRoutes from "./routes/reports.routes";
 import walletRoutes from "./routes/wallet.routes";
+import zoomRoutes from "./routes/zoom.routes";
 
 export const app = express();
 
@@ -69,6 +70,7 @@ app.use("/api/notifications", notificationRoutes);
 app.use("/api/help", helpRoutes);
 app.use("/api/reports", reportsRoutes);
 app.use("/api/wallet", walletRoutes);
+app.use("/api/zoom", zoomRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

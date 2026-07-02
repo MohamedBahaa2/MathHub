@@ -273,3 +273,9 @@ export const help = {
     return request(`/help/${id}/messages`, { method: "POST", body: form });
   },
 };
+
+// ── Zoom Meeting SDK ──────────────────────────────────────────────────────────
+export const zoom = {
+  getSignature: (sessionId) =>
+    request("/zoom/signature", { method: "POST", body: JSON.stringify({ sessionId }) }),
+};
