@@ -2,6 +2,7 @@ import compression from "compression";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
+import path from "node:path";
 import helmet from "helmet";
 import pinoHttp from "pino-http";
 import { env } from "./config/env";
@@ -50,6 +51,10 @@ app.use(express.json({
 }));
 app.use(express.urlencoded({ extended: false, limit: "100kb" }));
 app.use(cookieParser());
+app.use("/uploads", express.static(path.resolve(process.cwd(), "uploads"), {
+  fallthrough: false,
+  maxAge: env.NODE_ENV === "production" ? "1d" : 0,
+}));
 
 // Health checks
 app.get("/health/live", (_req, res) => res.json({ status: "ok" }));

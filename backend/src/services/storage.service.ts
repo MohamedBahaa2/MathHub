@@ -1,8 +1,36 @@
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import fs from "node:fs/promises";
+import nodePath from "node:path";
 import { env } from "../config/env";
 import { AppError } from "../utils/app-error";
 
 let _client: SupabaseClient | undefined;
+const localStorageRoot = nodePath.resolve(process.cwd(), "uploads");
+
+function shouldUseLocalStorage(): boolean {
+  return env.NODE_ENV !== "production" && (
+    !env.SUPABASE_URL ||
+    !env.SUPABASE_SERVICE_KEY ||
+    env.SUPABASE_URL.includes("placeholder") ||
+    env.SUPABASE_SERVICE_KEY === "placeholder"
+  );
+}
+
+function safeLocalPath(bucket: string, objectPath: string): string {
+  const target = nodePath.resolve(localStorageRoot, bucket, objectPath);
+  if (!target.startsWith(`${localStorageRoot}${nodePath.sep}`)) {
+    throw new AppError(400, "Invalid storage path", "INVALID_STORAGE_PATH");
+  }
+  return target;
+}
+
+async function uploadLocal(bucket: string, objectPath: string, buffer: Buffer): Promise<string> {
+  const target = safeLocalPath(bucket, objectPath);
+  await fs.mkdir(nodePath.dirname(target), { recursive: true });
+  await fs.writeFile(target, buffer);
+  const encodedPath = [bucket, ...objectPath.split("/")].map(encodeURIComponent).join("/");
+  return `http://localhost:${env.PORT}/uploads/${encodedPath}`;
+}
 
 function getClient(): SupabaseClient {
   if (!env.SUPABASE_URL || !env.SUPABASE_SERVICE_KEY) {
@@ -22,6 +50,9 @@ export async function uploadFile(
   buffer: Buffer,
   mimetype: string
 ): Promise<string> {
+  if (shouldUseLocalStorage()) {
+    return uploadLocal(bucket, path, buffer);
+  }
   const supabase = getClient();
   const { error } = await supabase.storage
     .from(bucket)
@@ -34,6 +65,10 @@ export async function uploadFile(
 }
 
 export async function deleteFile(bucket: string, path: string): Promise<void> {
+  if (shouldUseLocalStorage()) {
+    await fs.rm(safeLocalPath(bucket, path), { force: true });
+    return;
+  }
   const supabase = getClient();
   const { error } = await supabase.storage.from(bucket).remove([path]);
   if (error) {
@@ -42,6 +77,10 @@ export async function deleteFile(bucket: string, path: string): Promise<void> {
 }
 
 export function getPublicUrl(bucket: string, path: string): string {
+  if (shouldUseLocalStorage()) {
+    const encodedPath = [bucket, ...path.split("/")].map(encodeURIComponent).join("/");
+    return `http://localhost:${env.PORT}/uploads/${encodedPath}`;
+  }
   const supabase = getClient();
   const { data } = supabase.storage.from(bucket).getPublicUrl(path);
   return data.publicUrl;
