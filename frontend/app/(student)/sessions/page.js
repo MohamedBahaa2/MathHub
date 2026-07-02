@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { sessions as sessionsApi } from "@/lib/api";
 
@@ -8,11 +8,11 @@ const STATUS_CONFIG = {
   UPCOMING: { label: "Upcoming",  color: "bg-surface-high text-ink-muted",       dot: "bg-ink-muted" },
   LIVE:     { label: "Live Now",  color: "bg-danger-light text-danger",           dot: "bg-danger" },
   ENDED:    { label: "Ended",     color: "bg-warning-light text-[#8B6914]",       dot: "bg-warning" },
-  RECORDING:{ label: "Recording", color: "bg-secondary-light text-secondary",     dot: "bg-secondary" },
+  RECORDED: { label: "Recording", color: "bg-secondary-light text-secondary",     dot: "bg-secondary" },
 };
 const FILTERS = ["All", "Live", "Recordings", "Upcoming"];
 
-function SessionCard({ session, onJoin }) {
+function SessionCard({ session }) {
   const cfg = STATUS_CONFIG[session.status] ?? STATUS_CONFIG.UPCOMING;
   const price = session.sessionPrice ?? session.course?.sessionPrice ?? 0;
 
@@ -40,14 +40,14 @@ function SessionCard({ session, onJoin }) {
         </div>
         <div className="mt-auto">
           {session.status === "LIVE" && (
-            <button onClick={() => onJoin(session.id, "live")} className="w-full flex items-center justify-center gap-2 py-3 bg-gradient-to-br from-danger to-[#C62828] text-white font-headline font-bold rounded-xl shadow-sm hover:brightness-110 active:scale-95 transition-all">
+            <Link href={`/sessions/${session.id}`} prefetch className="w-full flex items-center justify-center gap-2 py-3 bg-gradient-to-br from-danger to-[#C62828] text-white font-headline font-bold rounded-xl shadow-sm hover:brightness-110 active:scale-95 transition-all">
               <span className="material-symbols-outlined text-lg">live_tv</span> Join Live Session
-            </button>
+            </Link>
           )}
-          {session.status === "RECORDING" && (
-            <button onClick={() => onJoin(session.id, "recording")} className="w-full flex items-center justify-center gap-2 py-3 bg-gradient-to-br from-primary to-primary-container text-ink-on-primary font-headline font-bold rounded-xl shadow-primary hover:brightness-110 active:scale-95 transition-all">
+          {session.status === "RECORDED" && (
+            <Link href={`/sessions/${session.id}`} prefetch className="w-full flex items-center justify-center gap-2 py-3 bg-gradient-to-br from-primary to-primary-container text-ink-on-primary font-headline font-bold rounded-xl shadow-primary hover:brightness-110 active:scale-95 transition-all">
               <span className="material-symbols-outlined text-lg">play_circle</span> Watch Recording
-            </button>
+            </Link>
           )}
           {session.status === "UPCOMING" && (
             <div className="w-full py-3 bg-surface-high text-ink-muted font-headline font-bold rounded-xl text-center text-sm">
@@ -71,7 +71,7 @@ export default function SessionsPage() {
   const [error, setError] = useState("");
   const [activeFilter, setActiveFilter] = useState("All");
   const [zoomModal, setZoomModal] = useState(null);
-  const [zoomLoading, setZoomLoading] = useState(false);
+  const zoomLoading = false;
 
   useEffect(() => {
     sessionsApi.list()
@@ -80,24 +80,10 @@ export default function SessionsPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  async function handleJoin(sessionId, type) {
-    setZoomLoading(true);
-    try {
-      const data = type === "live"
-        ? await sessionsApi.getZoomLink(sessionId)
-        : await sessionsApi.getRecordingUrl(sessionId);
-      setZoomModal({ type, url: data.zoomUrl ?? data.recordingUrl, passcode: data.passcode });
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setZoomLoading(false);
-    }
-  }
-
   const filtered = allSessions.filter(s => {
     if (activeFilter === "All") return true;
     if (activeFilter === "Live") return s.status === "LIVE";
-    if (activeFilter === "Recordings") return s.status === "RECORDING";
+    if (activeFilter === "Recordings") return s.status === "RECORDED";
     if (activeFilter === "Upcoming") return s.status === "UPCOMING";
     return true;
   });
@@ -138,7 +124,7 @@ export default function SessionsPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 stagger">
-          {filtered.map(s => <SessionCard key={s.id} session={s} onJoin={handleJoin} />)}
+          {filtered.map(s => <SessionCard key={s.id} session={s} />)}
         </div>
       )}
 

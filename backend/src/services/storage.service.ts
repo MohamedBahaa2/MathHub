@@ -86,6 +86,21 @@ export function getPublicUrl(bucket: string, path: string): string {
   return data.publicUrl;
 }
 
+export function getObjectPathFromPublicUrl(publicUrl: string, bucket: string): string {
+  const url = new URL(publicUrl);
+  const markers = [
+    `/uploads/${bucket}/`,
+    `/storage/v1/object/public/${bucket}/`,
+  ];
+  const marker = markers.find((candidate) => url.pathname.includes(candidate));
+  if (!marker) {
+    throw new AppError(400, "The stored media URL is not managed by this storage bucket", "INVALID_STORAGE_URL");
+  }
+  const objectPath = decodeURIComponent(url.pathname.split(marker)[1] ?? "");
+  if (!objectPath) throw new AppError(400, "Invalid stored media URL", "INVALID_STORAGE_URL");
+  return objectPath;
+}
+
 /** Validates MIME type and file size for uploads */
 export function validateFile(
   mimetype: string,

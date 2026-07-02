@@ -11,7 +11,7 @@ import { requireAdmin } from "../middlewares/requireRole";
 import { validate } from "../middlewares/validate";
 import { audit } from "../services/audit.service";
 import { autoGradeAttempt, manualGradeAttempt } from "../services/quiz.service";
-import { uploadFile, validateFile } from "../services/storage.service";
+import { deleteFile, getObjectPathFromPublicUrl, uploadFile, validateFile } from "../services/storage.service";
 import { createNotification } from "../services/notification.service";
 import { env } from "../config/env";
 import { NotificationType } from "@prisma/client";
@@ -434,6 +434,41 @@ router.patch("/:id/attempts/:aId/grade", requireAdmin, validate(z.object({
   );
   await audit(req, "QUIZ_GRADED", { entityType: "QuizAttempt", entityId: aId });
   res.json({ attempt: updated });
+}));
+
+// DELETE uploaded answer media after the attempt has been graded.
+router.delete("/:id/attempts/:aId/answers/:answerId/media", requireAdmin, validate(z.object({
+  params: z.object({
+    id: z.string().min(1),
+    aId: z.string().min(1),
+    answerId: z.string().min(1),
+  }),
+})), asyncHandler(async (req, res) => {
+  const { id, aId, answerId } = req.params as { id: string; aId: string; answerId: string };
+  const attempt = await prisma.quizAttempt.findFirst({
+    where: { id: aId, quizId: id },
+    select: { id: true, status: true },
+  });
+  if (!attempt) throw new AppError(404, "Quiz attempt not found", "NOT_FOUND");
+  if (attempt.status !== "GRADED") {
+    throw new AppError(409, "Grade the attempt before deleting its uploaded media", "ATTEMPT_NOT_GRADED");
+  }
+  const answer = await prisma.answer.findFirst({
+    where: { id: answerId, attemptId: aId },
+    select: { id: true, mediaUrl: true },
+  });
+  if (!answer) throw new AppError(404, "Answer not found", "NOT_FOUND");
+  if (!answer.mediaUrl) throw new AppError(409, "This answer has no uploaded media", "NO_MEDIA");
+
+  const objectPath = getObjectPathFromPublicUrl(answer.mediaUrl, env.SUPABASE_BUCKET_QUIZ_MEDIA);
+  await deleteFile(env.SUPABASE_BUCKET_QUIZ_MEDIA, objectPath);
+  await prisma.answer.update({ where: { id: answer.id }, data: { mediaUrl: null } });
+  await audit(req, "QUIZ_ANSWER_MEDIA_DELETED", {
+    entityType: "Answer",
+    entityId: answer.id,
+    metadata: { attemptId: aId, quizId: id, objectPath },
+  });
+  res.status(204).send();
 }));
 
 export default router;

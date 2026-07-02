@@ -255,6 +255,8 @@ function GradePanel({ quiz, attempt, onClose, onGraded }) {
   ));
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [deletingMedia, setDeletingMedia] = useState(null);
+  const [deletedMedia, setDeletedMedia] = useState(() => new Set());
 
   async function submit(event) {
     event.preventDefault();
@@ -271,6 +273,21 @@ function GradePanel({ quiz, attempt, onClose, onGraded }) {
       setError(err.message);
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function removeMedia(answer) {
+    if (!window.confirm("Permanently delete this uploaded answer? The grade and written answer will remain.")) return;
+    setDeletingMedia(answer.id);
+    setError("");
+    try {
+      await quizzesApi.deleteAnswerMedia(quiz.id, attempt.id, answer.id);
+      setDeletedMedia((current) => new Set([...current, answer.id]));
+      await onGraded();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setDeletingMedia(null);
     }
   }
 
@@ -307,11 +324,23 @@ function GradePanel({ quiz, attempt, onClose, onGraded }) {
                 {!answer.choice && !answer.textAnswer && !answer.mediaUrl && (
                   <p className="p-3 bg-danger-light text-danger rounded-xl text-sm">No answer submitted</p>
                 )}
-                {answer.mediaUrl && (
-                  <a href={answer.mediaUrl} target="_blank" rel="noreferrer"
-                    className="inline-flex mt-2 items-center gap-2 text-secondary font-bold text-sm">
-                    <span className="material-symbols-outlined">open_in_new</span> Open uploaded answer
-                  </a>
+                {answer.mediaUrl && !deletedMedia.has(answer.id) && (
+                  <div className="flex flex-wrap items-center gap-2 mt-3">
+                    <a href={answer.mediaUrl} target="_blank" rel="noreferrer"
+                      className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-secondary-light text-secondary font-bold text-sm">
+                      <span className="material-symbols-outlined">open_in_new</span> View uploaded answer
+                    </a>
+                    {attempt.status === "GRADED" && (
+                      <button type="button" onClick={() => void removeMedia(answer)} disabled={deletingMedia === answer.id}
+                        className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-danger-light text-danger font-bold text-sm disabled:opacity-50">
+                        <span className="material-symbols-outlined text-lg">delete</span>
+                        {deletingMedia === answer.id ? "Deletingâ€¦" : "Delete media"}
+                      </button>
+                    )}
+                  </div>
+                )}
+                {deletedMedia.has(answer.id) && (
+                  <p className="mt-3 px-3 py-2 rounded-xl bg-primary-light text-primary text-sm font-bold">Media deleted; grade retained.</p>
                 )}
                 {needsReview && (
                   <label className="flex items-center justify-end gap-3 mt-4 text-sm font-bold">
@@ -556,8 +585,11 @@ export default function AdminQuizzesPage() {
                             <td className="px-5 py-4 font-bold">{attempt.score != null ? `${attempt.score}/${attempt.maxScore}` : "—"}</td>
                             <td className="px-5 py-4"><Pill tone={attempt.status === "GRADED" ? "success" : attempt.status === "SUBMITTED" ? "warning" : "neutral"}>{attempt.status.replace("_", " ")}</Pill></td>
                             <td className="px-5 py-4 text-right">
-                              {attempt.status === "SUBMITTED" && (
-                                <button onClick={() => setGrading(attempt)} className="px-4 py-2 rounded-xl bg-primary text-white text-xs font-bold">Grade</button>
+                              {(attempt.status === "SUBMITTED" || (attempt.status === "GRADED" && attempt.answers?.some(answer => answer.mediaUrl))) && (
+                                <button onClick={() => setGrading(attempt)}
+                                  className={`px-4 py-2 rounded-xl text-xs font-bold ${attempt.status === "SUBMITTED" ? "bg-primary text-white" : "bg-secondary-light text-secondary"}`}>
+                                  {attempt.status === "SUBMITTED" ? "Grade" : "Review media"}
+                                </button>
                               )}
                             </td>
                           </tr>

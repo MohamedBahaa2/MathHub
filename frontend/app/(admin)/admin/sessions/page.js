@@ -187,6 +187,38 @@ function SessionModal({ session, courses, onClose, onSaved }) {
                 className="w-full px-4 py-3 bg-surface-low rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-light" />
             </div>
           )}
+          {!form.recordingOnly && (
+            <div className="grid grid-cols-1 gap-4 rounded-xl border border-surface-high bg-surface-low/50 p-4">
+              <div>
+                <label className="text-xs font-bold uppercase tracking-wide text-ink-muted block mb-1.5">
+                  Live Zoom Meeting URL
+                </label>
+                <input
+                  required={!isEdit || !session?.hasZoomLive}
+                  type="url"
+                  value={form.zoomLive}
+                  onChange={e => setForm(f => ({ ...f, zoomLive: e.target.value }))}
+                  placeholder={session?.hasZoomLive ? "Live meeting already configured — enter a URL only to replace it" : "https://zoom.us/j/123456789"}
+                  className="w-full px-4 py-3 bg-white/70 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-light"
+                />
+                {session?.hasZoomLive && !form.zoomLive && (
+                  <p className="mt-1.5 text-xs font-semibold text-secondary">A live meeting is already secured for this session.</p>
+                )}
+              </div>
+              <div>
+                <label className="text-xs font-bold uppercase tracking-wide text-ink-muted block mb-1.5">
+                  Meeting Passcode (optional)
+                </label>
+                <input
+                  type="text"
+                  value={form.zoomPasscode}
+                  onChange={e => setForm(f => ({ ...f, zoomPasscode: e.target.value }))}
+                  placeholder={session?.hasZoomPasscode ? "Passcode already configured — enter one only to replace it" : "Zoom meeting passcode"}
+                  className="w-full px-4 py-3 bg-white/70 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-light"
+                />
+              </div>
+            </div>
+          )}
           <button type="submit" disabled={saving}
             className="w-full py-3 bg-gradient-to-br from-primary to-primary-container text-ink-on-primary font-headline font-bold rounded-xl shadow-primary hover:brightness-110 active:scale-95 transition-all disabled:opacity-60 flex items-center justify-center gap-2">
             {saving && <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />}

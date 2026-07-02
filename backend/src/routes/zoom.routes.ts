@@ -23,17 +23,18 @@ function generateZoomSignature(meetingNumber: string, role: 0 | 1): string {
   if (!env.ZOOM_SDK_KEY || !env.ZOOM_SDK_SECRET) {
     throw new AppError(503, "Zoom SDK is not configured on this server", "ZOOM_NOT_CONFIGURED");
   }
-  const iat = Math.floor(Date.now() / 1000);
+  // Zoom recommends a small clock-skew allowance for Meeting SDK JWTs.
+  const iat = Math.floor(Date.now() / 1000) - 30;
   const exp = iat + 7200;
   const header = Buffer.from(JSON.stringify({ alg: "HS256", typ: "JWT" })).toString("base64url");
   const payload = Buffer.from(JSON.stringify({
-    sdkKey: env.ZOOM_SDK_KEY,
     mn: meetingNumber,
     role,
     iat,
     exp,
     appKey: env.ZOOM_SDK_KEY,
     tokenExp: exp,
+    video_webrtc_mode: 1,
   })).toString("base64url");
   const signingInput = `${header}.${payload}`;
   const sig = crypto.createHmac("sha256", env.ZOOM_SDK_SECRET!).update(signingInput).digest("base64url");

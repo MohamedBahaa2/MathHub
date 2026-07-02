@@ -2,13 +2,18 @@ import { PaymentStatus } from "@prisma/client";
 import { prisma } from "../config/database";
 import { AppError } from "../utils/app-error";
 
-/** Asserts that a user is enrolled in a session (directly or via course). */
+/**
+ * Asserts that a user may access a session.
+ * Standalone sessions are available to authenticated users; course-linked
+ * sessions require a paid or free enrollment in that session/course.
+ */
 export async function assertEnrolled(userId: string, sessionId: string): Promise<void> {
   const session = await prisma.session.findUnique({
     where: { id: sessionId },
     select: { courseId: true },
   });
   if (!session) throw new AppError(404, "Session not found", "NOT_FOUND");
+  if (!session.courseId) return;
 
   const enrollment = await prisma.enrollment.findFirst({
     where: {

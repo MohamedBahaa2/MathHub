@@ -52,7 +52,7 @@ app.use(express.json({
 app.use(express.urlencoded({ extended: false, limit: "100kb" }));
 app.use(cookieParser());
 app.use("/uploads", express.static(path.resolve(process.cwd(), "uploads"), {
-  fallthrough: false,
+  fallthrough: true,
   maxAge: env.NODE_ENV === "production" ? "1d" : 0,
 }));
 

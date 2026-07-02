@@ -198,6 +198,8 @@ export const quizzes = {
     request(`/quizzes/${id}/attempts/${attemptId}/grade`, {
       method: "PATCH", body: JSON.stringify({ grades }),
     }),
+  deleteAnswerMedia: (id, attemptId, answerId) =>
+    request(`/quizzes/${id}/attempts/${attemptId}/answers/${answerId}/media`, { method: "DELETE" }),
 };
 
 // ── Users (admin) ─────────────────────────────────────────────────────────────

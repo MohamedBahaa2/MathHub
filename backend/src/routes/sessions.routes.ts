@@ -10,11 +10,34 @@ import { requireEnrollment } from "../middlewares/requireEnrollment";
 import { validate } from "../middlewares/validate";
 import { audit } from "../services/audit.service";
 import { encryptZoomUrl, decryptZoomUrl } from "../services/zoom.service";
-import { signShortToken } from "../services/token.service";
+import { signShortToken, verifyShortToken } from "../services/token.service";
 import { createBulkNotifications } from "../services/notification.service";
 import { assertEnrolled } from "../services/access.service";
 
 const router = Router();
+
+// Short-lived recording viewer used by an iframe. The stored Zoom URL is never
+// returned to application JavaScript; only this signed MathHub URL is exposed.
+router.get("/:id/recording-view", asyncHandler(async (req, res) => {
+  const id = req.params.id as string;
+  const token = typeof req.query.token === "string" ? req.query.token : "";
+  const claims = verifyShortToken(token);
+  if (claims.sessionId !== id || claims.purpose !== "zoom-recording") {
+    throw new AppError(403, "Recording token is not valid for this session", "INVALID_RECORDING_TOKEN");
+  }
+  const session = await prisma.session.findUnique({
+    where: { id },
+    select: { status: true, zoomRecordingEnc: true },
+  });
+  if (!session?.zoomRecordingEnc) throw new AppError(404, "Recording not found", "NO_RECORDING");
+  if (session.status !== SessionStatus.RECORDED && session.status !== SessionStatus.PROCESSING) {
+    throw new AppError(403, "Recording not yet available", "RECORDING_NOT_AVAILABLE");
+  }
+  res.setHeader("Cache-Control", "no-store, private");
+  res.setHeader("Referrer-Policy", "no-referrer");
+  res.redirect(302, decryptZoomUrl(session.zoomRecordingEnc));
+}));
+
 router.use(authenticate);
 
 const sessionBody = z.object({
@@ -33,6 +56,9 @@ const sessionBody = z.object({
 
 const safeSession = (s: Record<string, unknown>) => {
   const rest = { ...s };
+  rest.hasZoomLive = Boolean(rest.zoomLiveEnc);
+  rest.hasZoomRecording = Boolean(rest.zoomRecordingEnc);
+  rest.hasZoomPasscode = Boolean(rest.zoomPasscodeEnc);
   delete rest.zoomLiveEnc;
   delete rest.zoomRecordingEnc;
   delete rest.zoomPasscodeEnc;
@@ -128,14 +154,15 @@ router.patch("/:id", requireAdmin, validate(z.object({
 
   const existing = await prisma.session.findUnique({ where: { id } });
   if (!existing) throw new AppError(404, "Session not found", "NOT_FOUND");
+  const { zoomLive, zoomRecording, zoomPasscode, ...sessionData } = body;
 
   const session = await prisma.session.update({
     where: { id },
     data: {
-      ...body,
-      zoomLiveEnc: body.zoomLive ? encryptZoomUrl(body.zoomLive) : undefined,
-      zoomRecordingEnc: body.zoomRecording ? encryptZoomUrl(body.zoomRecording) : undefined,
-      zoomPasscodeEnc: body.zoomPasscode ? encryptZoomUrl(body.zoomPasscode) : undefined,
+      ...sessionData,
+      zoomLiveEnc: zoomLive ? encryptZoomUrl(zoomLive) : undefined,
+      zoomRecordingEnc: zoomRecording ? encryptZoomUrl(zoomRecording) : undefined,
+      zoomPasscodeEnc: zoomPasscode ? encryptZoomUrl(zoomPasscode) : undefined,
     },
   });
   await audit(req, "SESSION_UPDATED", { entityType: "Session", entityId: id });
@@ -149,6 +176,16 @@ router.patch("/:id/status", requireAdmin, validate(z.object({
 })), asyncHandler(async (req, res) => {
   const { id } = req.params as { id: string };
   const { status } = req.body as { status: SessionStatus };
+  if (status === SessionStatus.LIVE) {
+    const existing = await prisma.session.findUnique({
+      where: { id },
+      select: { zoomLiveEnc: true },
+    });
+    if (!existing) throw new AppError(404, "Session not found", "NOT_FOUND");
+    if (!existing.zoomLiveEnc) {
+      throw new AppError(400, "Add a Zoom live meeting URL before starting this session", "NO_ZOOM_LINK");
+    }
+  }
 
   const session = await prisma.session.update({
     where: { id },
@@ -182,6 +219,9 @@ router.post("/:id/start", requireAdmin, validate(z.object({
   if (!existing) throw new AppError(404, "Session not found", "NOT_FOUND");
   if (existing.status !== SessionStatus.SCHEDULED) {
     throw new AppError(400, `Cannot start a session with status ${existing.status}`, "INVALID_STATUS");
+  }
+  if (!existing.zoomLiveEnc) {
+    throw new AppError(400, "Add a Zoom live meeting URL before starting this session", "NO_ZOOM_LINK");
   }
   const session = await prisma.session.update({
     where: { id },
@@ -288,9 +328,11 @@ router.get("/:id/recording-url", requireEnrollment, validate(z.object({
   if (session.status !== SessionStatus.RECORDED && session.status !== SessionStatus.PROCESSING) {
     throw new AppError(403, "Recording not yet available", "RECORDING_NOT_AVAILABLE");
   }
-  const recordingUrl = decryptZoomUrl(session.zoomRecordingEnc);
+  const passcode = session.zoomPasscodeEnc ? decryptZoomUrl(session.zoomPasscodeEnc) : undefined;
   const token = signShortToken(req.user!.id, id, "zoom-recording");
-  res.json({ token, recordingUrl, expiresInSeconds: 300 });
+  const origin = `${req.protocol}://${req.get("host")}`;
+  const playerUrl = `${origin}/api/sessions/${encodeURIComponent(id)}/recording-view?token=${encodeURIComponent(token)}`;
+  res.json({ playerUrl, passcode, expiresInSeconds: 300 });
 }));
 
 export default router;
