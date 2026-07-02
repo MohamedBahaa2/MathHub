@@ -2,6 +2,7 @@ import compression from "compression";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
+import path from "node:path";
 import helmet from "helmet";
 import pinoHttp from "pino-http";
 import { env } from "./config/env";
@@ -22,6 +23,8 @@ import paymentsRoutes from "./routes/payments.routes";
 import notificationRoutes from "./routes/notification.routes";
 import helpRoutes from "./routes/help.routes";
 import reportsRoutes from "./routes/reports.routes";
+import walletRoutes from "./routes/wallet.routes";
+import zoomRoutes from "./routes/zoom.routes";
 
 export const app = express();
 
@@ -48,6 +51,10 @@ app.use(express.json({
 }));
 app.use(express.urlencoded({ extended: false, limit: "100kb" }));
 app.use(cookieParser());
+app.use("/uploads", express.static(path.resolve(process.cwd(), "uploads"), {
+  fallthrough: false,
+  maxAge: env.NODE_ENV === "production" ? "1d" : 0,
+}));
 
 // Health checks
 app.get("/health/live", (_req, res) => res.json({ status: "ok" }));
@@ -67,6 +74,8 @@ app.use("/api/payments", paymentsRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/help", helpRoutes);
 app.use("/api/reports", reportsRoutes);
+app.use("/api/wallet", walletRoutes);
+app.use("/api/zoom", zoomRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

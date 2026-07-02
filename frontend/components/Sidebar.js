@@ -7,6 +7,7 @@ import { auth as authApi, clearToken } from "@/lib/api";
 
 const studentNav = [
   { href: "/", label: "Dashboard", icon: "dashboard" },
+  { href: "/courses", label: "Explore Courses", icon: "explore" },
   { href: "/sessions", label: "Sessions", icon: "play_circle" },
   { href: "/assignments", label: "Assignments", icon: "assignment" },
   { href: "/quizzes", label: "Quizzes", icon: "quiz" },
@@ -18,9 +19,11 @@ const studentNav = [
 
 const adminNav = [
   { href: "/admin", label: "Dashboard", icon: "dashboard" },
+  { href: "/admin/courses", label: "Courses", icon: "school" },
   { href: "/admin/users", label: "Students & Parents", icon: "group" },
   { href: "/admin/sessions", label: "Sessions", icon: "play_circle" },
   { href: "/admin/assignments", label: "Assignments", icon: "assignment" },
+  { href: "/admin/quizzes", label: "Quizzes & Exams", icon: "quiz" },
   { href: "/admin/help", label: "Help Requests", icon: "support_agent" },
   { href: "/admin/reports", label: "Reports", icon: "assessment" },
   { href: "/admin/payments", label: "Payments & Plans", icon: "payments" },

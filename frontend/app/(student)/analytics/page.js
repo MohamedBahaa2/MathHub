@@ -56,11 +56,7 @@ export default function AnalyticsPage() {
             </span>
             <span className="text-lg font-semibold text-ink-muted">Avg. Score</span>
           </div>
-          {!data ? (
-            <div className="text-center text-ink-muted py-8 bg-surface-low rounded-xl animate-pulse">
-              Loading performance…
-            </div>
-          ) : data.gradedSubs.length === 0 ? (
+          {!data || data.gradedSubs.length === 0 ? (
             <div className="text-center text-ink-muted py-8 bg-surface-low rounded-xl">
               <span className="material-symbols-outlined text-3xl block mb-2 opacity-30">assignment</span>
               <p className="font-semibold text-sm">No graded submissions yet</p>

@@ -9,6 +9,7 @@ export default function LoginPage() {
   const [show, setShow] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -17,10 +18,9 @@ export default function LoginPage() {
     setError("");
     setLoading(true);
     try {
-      const data = await auth.login(email, password);
+      const data = await auth.login(email, password, rememberMe);
       setToken(data.accessToken);
       setUser(data.user);
-      // Redirect based on role
       const role = data.user.role;
       if (role === "SUPERADMIN" || role === "ASSISTANT") {
         router.push("/admin");
@@ -86,9 +86,21 @@ export default function LoginPage() {
               </button>
             </div>
           </div>
-          <div className="flex justify-end">
+
+          {/* Remember me + Forgot */}
+          <div className="flex items-center justify-between">
+            <label className="flex items-center gap-2.5 cursor-pointer select-none group">
+              <div
+                onClick={() => setRememberMe(r => !r)}
+                className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all cursor-pointer ${rememberMe ? "bg-primary border-primary" : "border-surface-high bg-surface-low group-hover:border-primary/50"}`}
+              >
+                {rememberMe && <span className="material-symbols-outlined text-white text-sm" style={{ fontVariationSettings: "'FILL' 1, 'wght' 700" }}>check</span>}
+              </div>
+              <span className="text-xs text-ink-muted font-medium">Keep me signed in</span>
+            </label>
             <Link href="/forgot-password" className="text-xs text-secondary font-semibold hover:opacity-70 transition-opacity">Forgot Password?</Link>
           </div>
+
           <button
             type="submit"
             disabled={loading}

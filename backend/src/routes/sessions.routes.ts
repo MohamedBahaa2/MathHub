@@ -52,7 +52,7 @@ router.get("/", asyncHandler(async (req, res) => {
     return res.json({ sessions: sessions.map((s) => safeSession(s as unknown as Record<string, unknown>)) });
   }
 
-  // For students/parents — show only sessions they're enrolled in
+  // For students/parents — show enrolled sessions + all standalone sessions (no courseId)
   const enrollments = await prisma.enrollment.findMany({
     where: {
       userId: user.id,
@@ -71,6 +71,7 @@ router.get("/", asyncHandler(async (req, res) => {
       OR: [
         { id: { in: sessionIds } },
         { courseId: { in: courseIds } },
+        { courseId: null }, // Always show standalone sessions
       ],
     },
     orderBy: { scheduledAt: "asc" },
@@ -156,7 +157,7 @@ router.patch("/:id/status", requireAdmin, validate(z.object({
   await audit(req, "SESSION_STATUS_CHANGED", { entityType: "Session", entityId: id, metadata: { status } });
 
   // Fire notifications
-  if (status === SessionStatus.LIVE || status === SessionStatus.RECORDING) {
+  if (status === SessionStatus.LIVE || status === SessionStatus.RECORDED) {
     const enrollments = await prisma.enrollment.findMany({
       where: { OR: [{ sessionId: id }, { courseId: session.courseId ?? undefined }] },
       select: { userId: true },
@@ -169,6 +170,83 @@ router.patch("/:id/status", requireAdmin, validate(z.object({
     await createBulkNotifications(userIds, type, msg);
   }
 
+  res.json({ session: safeSession(session as unknown as Record<string, unknown>) });
+}));
+
+// POST /api/sessions/:id/start — ASSISTANT+ (SCHEDULED → LIVE)
+router.post("/:id/start", requireAdmin, validate(z.object({
+  params: z.object({ id: z.string().min(1) }),
+})), asyncHandler(async (req, res) => {
+  const { id } = req.params as { id: string };
+  const existing = await prisma.session.findUnique({ where: { id } });
+  if (!existing) throw new AppError(404, "Session not found", "NOT_FOUND");
+  if (existing.status !== SessionStatus.SCHEDULED) {
+    throw new AppError(400, `Cannot start a session with status ${existing.status}`, "INVALID_STATUS");
+  }
+  const session = await prisma.session.update({
+    where: { id },
+    data: { status: SessionStatus.LIVE },
+  });
+  // Notify enrolled students
+  const enrollments = await prisma.enrollment.findMany({
+    where: { OR: [{ sessionId: id }, { courseId: session.courseId ?? undefined }] },
+    select: { userId: true },
+  });
+  const userIds = [...new Set(enrollments.map((e) => e.userId))];
+  await createBulkNotifications(userIds, NotificationType.SESSION_LIVE, `Session "${session.title}" is now LIVE!`);
+  await audit(req, "SESSION_STARTED", { entityType: "Session", entityId: id });
+  res.json({ session: safeSession(session as unknown as Record<string, unknown>) });
+}));
+
+// POST /api/sessions/:id/end — ASSISTANT+ (LIVE → PROCESSING)
+router.post("/:id/end", requireAdmin, validate(z.object({
+  params: z.object({ id: z.string().min(1) }),
+})), asyncHandler(async (req, res) => {
+  const { id } = req.params as { id: string };
+  const existing = await prisma.session.findUnique({ where: { id } });
+  if (!existing) throw new AppError(404, "Session not found", "NOT_FOUND");
+  if (existing.status !== SessionStatus.LIVE) {
+    throw new AppError(400, `Cannot end a session with status ${existing.status}`, "INVALID_STATUS");
+  }
+  const session = await prisma.session.update({
+    where: { id },
+    data: { status: SessionStatus.PROCESSING },
+  });
+  await audit(req, "SESSION_ENDED", { entityType: "Session", entityId: id });
+  res.json({ session: safeSession(session as unknown as Record<string, unknown>) });
+}));
+
+// POST /api/sessions/:id/publish-recording — ASSISTANT+ (PROCESSING → RECORDED)
+router.post("/:id/publish-recording", requireAdmin, validate(z.object({
+  params: z.object({ id: z.string().min(1) }),
+  body: z.object({
+    zoomRecording: z.string().url(),
+    zoomPasscode: z.string().optional(),
+  }),
+})), asyncHandler(async (req, res) => {
+  const { id } = req.params as { id: string };
+  const body = req.body as { zoomRecording: string; zoomPasscode?: string };
+  const existing = await prisma.session.findUnique({ where: { id } });
+  if (!existing) throw new AppError(404, "Session not found", "NOT_FOUND");
+  if (existing.status !== SessionStatus.PROCESSING) {
+    throw new AppError(400, `Session must be in PROCESSING status to publish recording`, "INVALID_STATUS");
+  }
+  const session = await prisma.session.update({
+    where: { id },
+    data: {
+      status: SessionStatus.RECORDED,
+      zoomRecordingEnc: encryptZoomUrl(body.zoomRecording),
+      zoomPasscodeEnc: body.zoomPasscode ? encryptZoomUrl(body.zoomPasscode) : undefined,
+    },
+  });
+  // Notify enrolled students
+  const enrollments = await prisma.enrollment.findMany({
+    where: { OR: [{ sessionId: id }, { courseId: session.courseId ?? undefined }] },
+    select: { userId: true },
+  });
+  const userIds = [...new Set(enrollments.map((e) => e.userId))];
+  await createBulkNotifications(userIds, NotificationType.RECORDING_READY, `Recording for "${session.title}" is now available.`);
+  await audit(req, "SESSION_RECORDING_PUBLISHED", { entityType: "Session", entityId: id });
   res.json({ session: safeSession(session as unknown as Record<string, unknown>) });
 }));
 
@@ -207,7 +285,7 @@ router.get("/:id/recording-url", requireEnrollment, validate(z.object({
   const session = await prisma.session.findUnique({ where: { id } });
   if (!session) throw new AppError(404, "Session not found", "NOT_FOUND");
   if (!session.zoomRecordingEnc) throw new AppError(404, "No recording available for this session", "NO_RECORDING");
-  if (session.status !== SessionStatus.RECORDING && session.status !== SessionStatus.ENDED) {
+  if (session.status !== SessionStatus.RECORDED && session.status !== SessionStatus.PROCESSING) {
     throw new AppError(403, "Recording not yet available", "RECORDING_NOT_AVAILABLE");
   }
   const recordingUrl = decryptZoomUrl(session.zoomRecordingEnc);

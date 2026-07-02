@@ -39,6 +39,10 @@ const schema = z.object({
   // Resend (email)
   RESEND_API_KEY: z.string().optional(),
   EMAIL_FROM: z.string().default("noreply@mathhub.app"),
+
+  // Zoom Meeting SDK
+  ZOOM_SDK_KEY: z.string().optional(),
+  ZOOM_SDK_SECRET: z.string().optional(),
 });
 
 const parsed = schema.safeParse(process.env);
